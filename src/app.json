@@ -1,0 +1,99 @@
+{
+    "pages": [
+        "pages/start/login/main",
+        "pages/start/mobile/main",
+        "pages/index/main",
+        "pages/search/main",
+        "pages/web/main",
+        "pages/orders/list/main",
+        "pages/orders/details/main",
+        "pages/orders/qrcode/main",
+        "pages/orders/evaluate/main",
+        "pages/orders/refund/main",
+        "pages/orders/confirm/main",
+        "pages/mine/index/main",
+        "pages/mine/help/main",
+        "pages/mine/reshop/main",
+        "pages/mine/patronage/main",
+        "pages/mine/message/main",
+        "pages/mine/evaluate/main",
+        "pages/mine/about/main",
+        "pages/money/index/main",
+        "pages/money/withdraw/main",
+        "pages/money/list/main",
+        "pages/filter/near/main",
+        "pages/filter/repast/main",
+        "pages/filter/hotel/main",
+        "pages/filter/pastime/main",
+        "pages/filter/icar/main",
+        "pages/filter/all/main",
+        "pages/filter/category/main",
+        "pages/shop/index/main",
+        "pages/shop/paythebill/main",
+        "pages/shop/photos/main",
+        "pages/shop/item/main",
+        "pages/shop/pay/main",
+        "pages/shop/payok/main"
+    ],
+    "window": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#2a8cfa",
+        "navigationBarTitleText": "减付宝",
+        "navigationBarTextStyle": "white",
+        "backgroundColor": "#2a8cfa"
+    },
+    "tabBar": {
+        "color": "#999",
+        "backgroundColor": "#fafafa",
+        "selectedColor": "#2a8cfa",
+        "borderStyle": "white",
+        "list": [{
+            "text": "首页",
+            "pagePath": "pages/index/main",
+            "iconPath": "static/tabs/home.png",
+            "selectedIconPath": "static/tabs/home-active.png"
+        }, {
+            "text": "附近",
+            "pagePath": "pages/filter/near/main",
+            "iconPath": "static/tabs/near.png",
+            "selectedIconPath": "static/tabs/near-active.png"
+        }, {
+            "text": "订单",
+            "pagePath": "pages/orders/list/main",
+            "iconPath": "static/tabs/orders.png",
+            "selectedIconPath": "static/tabs/orders-active.png"
+        }, {
+            "text": "我的",
+            "pagePath": "pages/mine/index/main",
+            "iconPath": "static/tabs/mine.png",
+            "selectedIconPath": "static/tabs/mine-active.png"
+        }],
+        "items": [{
+            "name": "首页",
+            "pagePath": "pages/index/main",
+            "icon": "static/tabs/home.png",
+            "activeIcon": "static/tabs/home-active.png"
+        }, {
+            "name": "附近",
+            "pagePath": "pages/filter/near/main",
+            "icon": "static/tabs/near.png",
+            "activeIcon": "static/tabs/near-active.png"
+        }, {
+            "name": "订单",
+            "pagePath": "pages/orders/list/main",
+            "icon": "static/tabs/orders.png",
+            "activeIcon": "static/tabs/orders-active.png"
+        }, {
+            "name": "我的",
+            "pagePath": "pages/mine/index/main",
+            "icon": "static/tabs/mine.png",
+            "activeIcon": "static/tabs/mine-active.png"
+        }],
+        "position": "bottom"
+    },
+    "permission": {
+        "scope.userLocation": {
+            "desc": "您的位置信息将用于获取附近的商铺信息"
+        }
+    }
+}

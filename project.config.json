@@ -1,0 +1,191 @@
+{
+	"description": "项目配置文件。",
+	"setting": {
+		"urlCheck": false,
+		"es6": false,
+		"enhance": false,
+		"postcss": true,
+		"minified": true,
+		"newFeature": true,
+		"coverView": true,
+		"autoAudits": false,
+		"uglifyFileName": true,
+		"checkInvalidKey": true,
+		"checkSiteMap": true,
+		"uploadWithSourceMap": true,
+		"babelSetting": {
+			"ignore": [],
+			"disablePlugins": [],
+			"outputPath": ""
+		}
+	},
+	"miniprogramRoot": "dist/wx/",
+	"compileType": "miniprogram",
+	"appid": "wx69776027a4757fb1",
+	"projectname": "mpvue-jfb",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"currentL": -1,
+			"list": []
+		},
+		"miniprogram": {
+			"current": 11,
+			"list": [
+				{
+					"id": -1,
+					"name": "index",
+					"pathName": "pages/index/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 2,
+					"name": "login",
+					"pathName": "pages/start/login/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "search",
+					"pathName": "pages/search/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 4,
+					"name": "orders/list/",
+					"pathName": "pages/orders/list/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 5,
+					"name": "mine/index",
+					"pathName": "pages/mine/index/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 6,
+					"name": "filter/repast",
+					"pathName": "pages/filter/repast/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 6,
+					"name": "orders/details/",
+					"pathName": "pages/orders/details/main",
+					"query": "order=201907051705572323480425",
+					"scene": null
+				},
+				{
+					"id": 8,
+					"name": "orders/refund",
+					"pathName": "pages/orders/refund/main",
+					"query": "order=201906181634416055891317",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "mine/reshop",
+					"pathName": "pages/mine/reshop/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "filter/category",
+					"pathName": "pages/filter/category/main",
+					"query": "sort_id=49",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "filter/all",
+					"pathName": "pages/filter/all/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 11,
+					"name": "shop",
+					"pathName": "pages/shop/index/main",
+					"query": "shop_id=2",
+					"scene": null
+				},
+				{
+					"id": 13,
+					"name": "paythebill",
+					"pathName": "pages/shop/paythebill/main",
+					"query": "shop_id=31",
+					"scene": null
+				},
+				{
+					"id": 14,
+					"name": "pay",
+					"pathName": "pages/shop/pay/main",
+					"query": "order_id=201906271045354403382526",
+					"scene": null
+				},
+				{
+					"id": 15,
+					"name": "confirm",
+					"pathName": "pages/orders/confirm/main",
+					"query": "shop_id=6&title=vouchers&item_id=5",
+					"scene": null
+				},
+				{
+					"id": 16,
+					"name": "item",
+					"pathName": "pages/shop/item/main",
+					"query": "shop_id=3&title=vouchers&item_id=1",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "money/index",
+					"pathName": "pages/money/index/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "money/withdraw",
+					"pathName": "pages/money/withdraw/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 18,
+					"name": "orders/evaluate",
+					"pathName": "pages/orders/evaluate/main",
+					"query": "order_id=201907091551492975736008",
+					"scene": null
+				},
+				{
+					"id": 19,
+					"name": "mine/evaluate",
+					"pathName": "pages/mine/evaluate/main",
+					"query": "",
+					"scene": null
+				}
+			]
+		}
+	}
+}

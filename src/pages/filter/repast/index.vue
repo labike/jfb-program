@@ -1,0 +1,228 @@
+<template>
+<section class="jfb-flexview">
+    <div class="jfb-header">
+        <lay-header></lay-header>
+    </div>
+    <scroll-view class="jfb-content" scroll-y @scroll="getScroll">
+        <header class="header-warp">
+            <menus v-if="menuObj" :params='menuObj'></menus>
+        </header>
+        <div class="container">
+            <div class="nav-bar">
+                <ul class="nav">
+                    <li class="item">全部</li>
+                    <li class="item">附近</li>
+                    <li class="item">智能排序</li>
+                </ul>
+            </div>
+            <div class="shop-list-warp" v-if="shopList && shopList.length">
+                <shop-card :shopInfo='shop' v-for="(shop, index) of shopList" :key="index"></shop-card>
+            </div>
+        </div>
+    </scroll-view>
+</section>
+</template>
+
+<script>
+import LayHeader from "@c/header/Header.vue";
+import Menus from "./../views/Menus.vue";
+import ShopCard from "@c/shop/ShopCard.vue";
+import { apiBusinessSort, apiSearch } from "@/api/api";
+export default {
+    name: "shop",
+    data() {
+        return {
+            menuObj: {
+                banners: [
+                    {
+                        "id": "1",
+                        "img_url": "http://clients.qmwjj.cc/images/indexTop.png",
+                        "jump": "1",
+                        "type": "s"
+                    }
+                ],
+                menu: [
+                    {
+                        id: 0,
+                        name: '团购',
+                        icon: '/static/tabs/food_icon_four.png',
+                        target: '/pages/filter/category/main?sort_two=49'
+                    }, {
+                        id: 1,
+                        name: '人气店家',
+                        icon: '/static/tabs/food_icon_six.png',
+                        target: '/pages/filter/category/main?sort_id=49'
+                    }, {
+                        id: 2,
+                        name: '饮品',
+                        icon: '/static/tabs/food_icon_ten.png',
+                        target: '/pages/filter/category/main?sort_id=49'
+                    }, {
+                        id: 3,
+                        name: '水果生鲜',
+                        icon: '/static/tabs/food_icon_nine.png',
+                        target: '/pages/filter/category/main?sort_id=49'
+                    }, {
+                        id: 4,
+                        name: '高端商务',
+                        icon: '/static/tabs/food_icon_seven.png',
+                        target: '/pages/filter/category/main?sort_id=49'
+                    }
+                ],
+                menu2: [
+                    {
+                        id: 5,
+                        name: '火锅',
+                        icon: '/static/tabs/food_icon_one.png',
+                        target: '/pages/filter/category/main?sort_id=49'
+                    }, {
+                        id: 6,
+                        name: '自助餐',
+                        icon: '/static/tabs/food_icon_two.png',
+                        target: '/pages/filter/category/main?sort_id=49'
+                    }, {
+                        id: 7,
+                        name: '烧烤',
+                        icon: '/static/tabs/food_icon_three.png',
+                        target: '/pages/filter/category/main?sort_id=49'
+                    }, {
+                        id: 8,
+                        name: '西餐',
+                        icon: '/static/tabs/food_icon_eight.png',
+                        target: '/pages/filter/category/main?sort_id=49'
+                    }, {
+                        id: 9,
+                        name: '面包甜点',
+                        icon: '/static/tabs/food_icon_five.png',
+                        target: '/pages/filter/category/main?sort_id=49'
+                    }
+                ],
+            },
+            scrollTop: 0,
+            sort_one: 0,
+            shopList: []
+        };
+    },
+    components: {
+        LayHeader,
+        Menus,
+        ShopCard
+    },
+    onLoad (options) {
+        console.log(options.sort_one);
+        
+        apiBusinessSort({
+            adCode: '2809',
+            top_sort: 1
+        }).then(res => {
+            console.log(res);
+            
+            // this.navList = this.normalFrom(res)
+        })
+        this.getSortShop(options.sort_one)
+    },
+    watch: {
+        scrollTop (newY) {
+            if (this.bannerShow && this.minTranslateY && this.minTranslateY < newY) {
+                this.bannerShow = false
+            }
+        }
+    },
+    methods: {
+        getScroll(e) {
+            this.scrollTop = e.target.scrollTop
+        },
+        heightInit(height) {
+            this.minTranslateY = height
+        },
+        normalFrom(list) {
+            let newList = []
+            list.forEach(element => {
+                const type = {
+                    id: element.id,
+                    params: {
+                        page: 1,
+                        sort_one: 0
+                    },
+                    name: element.sort_name,
+                    sortList: element.childData,
+                    shopList: null
+                }
+                newList.push(type)
+            });
+            return newList
+        },
+        getSortShop(sort_one) {
+            this.shopList = []
+            let params = {
+                city_id: 2809,
+                lng: 108.94712,
+                lat: 34.29318,
+                top_sort: 1,
+                page: 1
+            }
+            if (sort_one) {
+                params.sort_one = sort_one
+            }
+            apiSearch(params).then(res => {
+                this.shopList = res.list
+            })
+        },
+    }
+};
+</script>
+
+<style lang="scss" scoped>
+@import "~@/assets/styles/components/layout.scss";
+.jfb-header{
+    background: $base-color;
+    padding: 0 .24rem;
+}
+.jfb-content{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    .header-warp{
+        margin-bottom: 10rpx;
+    }
+}
+
+.nav-bar {
+    flex-shrink: 0;
+    position: relative;
+    background-color: #fff;
+    font-size: 26rpx;
+    color: #000;
+    border-bottom: 1rpx solid #ededed;
+    .nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .item{
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding:  24rpx;
+            &::after {
+                content: '';
+                display: block;
+                width: 25rpx;
+                height: 25rpx;
+                margin-left: 10rpx;
+                background-image: url(~@/assets/img/radio_right.png);
+                transform: rotateZ(90deg);
+                background-repeat: no-repeat;
+                background-size: contain;
+                background-position: center;
+            }
+        }
+    }
+}
+.container{
+    height: 100%;
+    flex: 1;
+    
+}    
+</style>
+
