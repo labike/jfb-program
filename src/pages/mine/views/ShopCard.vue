@@ -5,7 +5,7 @@
         <div class="img-warp">
             <img :src="shop.store_img" alt="">
         </div>
-        <div class="cancel"></div>
+        <div class="cancel" v-if="handle && shop.user_is_attend == 1" @click.stop="cancelShare(shop.id)"></div>
         <div class="title">{{shop.store_name}}</div>
         <ul class="score" :class="scoreName">
             <li class="star"></li>
@@ -16,9 +16,9 @@
             <li class="text">{{shop.score}}分</li>
         </ul>
         <div class="type">{{shop.type_name}}</div>
-        <div class="handle" v-if="shop.user_is_attend">
+        <div class="handle" v-if="handle">
             <div class="btn" v-if="shop.user_is_attend == 1"  @click.stop="goShare(shop)">去分享</div>
-            <div class="btn join" v-else @click.stop="joinShare(shop.id)">加入分享</div>
+            <div class="btn join" v-if="shop.user_is_attend == 0" @click.stop="joinShare(shop.id)">加入分享</div>
         </div>
     </div>
     
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { likeShare, apiShareStore } from "@/api/api";
+import { likeShare, apiShareStore, unLikeShare } from "@/api/api";
 export default {
     name: 'ShopCard',
     data() {
@@ -41,7 +41,11 @@ export default {
         }
     },
     props: {
-        shopInfo: Object
+        shopInfo: Object,
+        handle: {
+            type: Boolean,
+            default: false
+        }
     },
     onLoad() {
         this.shop = this.shopInfo
@@ -84,23 +88,66 @@ export default {
                 url: '/pages/shop/index/main?shop_id=' + id
             }) 
         },
-        tapLike(s_id) {
+        joinShare(s_id) {
+            const that = this
             likeShare({
                 s_id,
-                type: 'like'
+                type: 'attend'
             }).then(res => {
-                // store_num: 114
-                console.log(res);
-                this.shop.like_num = res.store_num
                 wx.showToast({
                     title: res.message,
                     icon: 'success',
                     duration: 1000
                 })
+                that.$emit('refresh')
             })
         },
+        cancelShare(s_id) {
+            const that = this
+            wx.showModal({
+                title: '是否取消分享店铺',
+                content: '取消了就不能获得这家店铺的返佣了，您确定要取消吗？',
+                success: function (result) {
+                    if (result.confirm) {
+                        unLikeShare({
+                            s_ids: s_id,
+                            type: 'attend'
+                        }).then(res => {
+                            wx.showToast({
+                                title: '已取消该分享店铺',
+                                icon: 'success',
+                                duration: 1000
+                            })
+                            that.$emit('refresh')
+                        })
+                    }
+                }
+            })
+            
+        },
         goShare(shop) {
-            this.$emit('share', shop)
+            const that = this
+            apiShareStore(shop.id).then(result => {
+                if (result.shareInfo.sharePermit) {
+                    if (result.userShareStoreNum < 50) {
+                        const cardInfo = {
+                            title: result.storeInfo.store_name,
+                            qrCode: result.shareQrImg,
+                            imageUrl: result.storeInfo.header_img,
+                            address: result.storeInfo.address,
+                            mobile: result.storeInfo.store_mobile,
+                        }
+                        this.$emit('share', cardInfo)
+                    } else {
+                    // Alert({
+                    //     mes: "您分享的店铺已到达上限，更多功能请前往app",
+                    //     icon: "fail",
+                    //     timeout: 3500
+                    // })
+                    }
+                }
+            })
+            
         },
     },
 };
@@ -130,12 +177,12 @@ export default {
     }
     .cancel{
         position: absolute;
-        right: 24rpx;
-        top: 24rpx;
-        width: 24rpx;
-        height: 24rpx;
-        background-size: contain;
-        background-position: 0 0;
+        right: 0;
+        top: 0;
+        width: 80rpx;
+        height: 80rpx;
+        background-size: 24rpx 24rpx;
+        background-position: center;
         background-repeat: no-repeat;
         background-image: url('~@/assets/img/ic_dialog_close.png');
     }
@@ -158,7 +205,7 @@ export default {
             &.join{
                 border: 1px solid #ff2900;
                 background: #fff;
-                color: #fff;
+                color: #ff2900;
             }
         }
     }

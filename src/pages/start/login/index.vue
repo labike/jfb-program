@@ -24,30 +24,83 @@
             </div>
         </div>
     </div>
+
+    <lay-model :show='modelBind' :btnhide='true' height='280px' @close='closeMobile'>
+        <div class="bind-warp">
+            <div class="bind-title">填写验证码</div>
+            <div class="bind-desc">验证码已发送至{{hiddleMobile}}请查收</div>
+            <div class="bind-code" @click="set_focus">
+                <ul class="field-wrap">
+                    <li class="code-item" v-for="(item, index) in codeLength" :key="index">{{codeItem[index]}}</li>
+                </ul>
+                <input class="code" type='number' :focus='sendCodeFocus' :cursor='codeLength' :maxlength='codeLength' @keyup="handleInput($event)" v-model="sendCode"/>
+            </div>
+            <div class="bind-submit" @click="submitMobile">确认</div>
+        </div>
+    </lay-model>
 </section>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
-import { apiGetOpenId } from '@/api/api'
+import LayModel from "@c/layouts/Model.vue";
+import { apiGetOpenId, apiGetMobileByWx, apiGetCodeByLogin, apiBindMobile } from '@/api/api'
+import { tabbar } from "@/config/base";
+
 export default {
     data() {
         return {
             remind: '加载中',
             buttonLogin: false,
+            codeLength: 6,
             buttonBind: false,
-            avatarUrl: ''
+            modelBind: false,
+            avatarUrl: '',
+            mobile: '',
+            sendCode: '',
+            sendCodeFocus: false,
         };
+    },
+    components: {
+        LayModel
     },
     onLoad() {
         const self = this;
         self.again_getLocation()
     },
+    computed: {
+        codeItem() {
+            const sendCode = this.sendCode.split('')
+            if (this.codeLength >= sendCode.length) {
+                for (let i = sendCode.length; i < this.codeLength; i++) {
+                    sendCode.push('')
+                }
+            } else {
+                this.sendCode = this.sendCode.slice(0, this.codeLength)
+            }
+            return sendCode
+        },
+        hiddleMobile() {
+            if (this.mobile) {
+                var reg = /^(\d{3})\d{4}(\d{4})$/;  
+                return this.mobile.replace(reg, "$1****$2");
+            }
+            return ''
+        }
+    },
     methods: {
         ...mapActions('user', [
             'Login',
+            'bingMobile',
             'setLocation'
         ]),
+        closeMobile() {
+            this.modelBind = false;
+            this.sendCode = "";
+        },
+        set_focus() {
+            this.sendCodeFocus = true
+        },
         getLocation: function () {
             var self = this;
             wx.getLocation({
@@ -56,15 +109,15 @@ export default {
                     self.setLocation(res)
                     mpvue.login({
                         success(res) {
+                            setTimeout(function() {
+                                self.remind = ''
+                            }, 1000);
                             if (res.code) {
-                                console.log('登录成功！' + JSON.stringify(res))
-                                setTimeout(function() {
-                                    self.remind = ''
-                                }, 1000);
+                                console.log('授权登录成功！' + JSON.stringify(res))
                                 self.code = res.code
                                 self.wxGetUserInfo(res.code);
                             } else {
-                                console.log('登录失败！' + res.errMsg)
+                                console.log('授权登录失败！' + res.errMsg)
                             }
                         }
                     })
@@ -126,14 +179,27 @@ export default {
 
         },
         wxGetUserInfo(code) {
-            const self = this;
+            const self = this;            
             wx.getUserInfo({
                 withCredentials: true,
                 success(info) {
+                    let { encryptedData, iv, userInfo } = info;
                     apiGetOpenId(code).then(confing => {
                         confing = JSON.parse(confing)
-                        self.avatarUrl = info.userInfo.avatarUrl
-                        self.doLogin(confing, info.userInfo)
+                        self.session_key = confing.session_key
+                        if (confing.unionid) {
+                            userInfo.unionId = confing.unionid
+                            userInfo.openId = confing.openid
+                            self.doLogin(userInfo)
+                        } else {
+                            apiGetMobileByWx({
+                                session_key: confing.session_key,
+                                iv,
+                                data: encryptedData
+                            }).then(userInfo => {
+                                self.doLogin(userInfo)
+                            })
+                        }
                     })
                 },
                 fail(err) {
@@ -155,14 +221,23 @@ export default {
             const self = this;
             if (e.mp.detail.userInfo) {
                 console.log('用户按了允许授权按钮')
-                let {
-                    userInfo
-                } = e.mp.detail;
-                console.log(e.mp.detail);
+                let { encryptedData, iv, userInfo } = e.mp.detail;
                 apiGetOpenId(self.code).then(confing => {
                     confing = JSON.parse(confing)
-                    self.avatarUrl = userInfo.avatarUrl
-                    self.doLogin(confing, userInfo)
+                    self.session_key = confing.session_key
+                    if (confing.unionid) {
+                        userInfo.unionId = confing.unionid
+                        userInfo.openId = confing.openid
+                        self.doLogin(userInfo)
+                    } else {
+                        apiGetMobileByWx({
+                            session_key: confing.session_key,
+                            iv,
+                            data: encryptedData
+                        }).then(userInfo => {
+                            self.doLogin(userInfo)
+                        })
+                    }
                 })
             } else {
                 wx.hideLoading()
@@ -174,14 +249,14 @@ export default {
                 })
             }
         },
-        async doLogin(confing, info) {
+        async doLogin(info) {
             const that = this
             wx.showLoading({
                 title: '登录中...',
                 mask: true,
             });
             const other_info = {
-                openid: confing.openid,
+                openid: info.openId,
                 nickname: info.nickName,
                 sex: info.gender,
                 language: info.language,
@@ -190,14 +265,11 @@ export default {
                 country: info.country,
                 headimgurl: info.avatarUrl,
                 privilege: [],
-                unionid: confing.unionid
+                unionid: info.unionId
             }
             that.Login(other_info).then(res => {
-                 
                 if (res.mobile_isbind !== 0) {
-                    mpvue.switchTab({
-                        url: '/pages/index/main',
-                    });
+                    that.jumpHistory() 
                 } else {
                     that.buttonLogin = false;
                     that.buttonBind = true
@@ -205,10 +277,8 @@ export default {
             })
             
         },
-        getPhoneNumber: function(e) {   
-            console.log(e)
-            // console.log(e.mp.detail.iv)   
-            // console.log(e.mp.detail.encryptedData)   
+        getPhoneNumber: function(e) {
+            const self = this  
             if (e.mp.detail.errMsg === 'getPhoneNumber:user deny') {  
                 wx.showModal({  
                     title: '提示',  
@@ -216,18 +286,58 @@ export default {
                     content: '未授权',  
                     success: function (res) { }  
                 })  
-            } else {  
-                wx.showModal({  
-                    title: '提示',  
-                    showCancel: false,  
-                    content: '同意授权',  
-                    success: function (res) { }  
+            } else {
+                apiGetMobileByWx({
+                    session_key: self.session_key,
+                    iv: e.mp.detail.iv,
+                    data: e.mp.detail.encryptedData
+                }).then(res => {
+                    self.mobile = res.phoneNumber
+                    apiGetCodeByLogin(res.phoneNumber).then(result => {
+                        if (result.code === 200) {
+                            self.modelBind = true
+                            self.set_focus()
+                        }
+                    });
                 })
+            }  
+        },
+        submitMobile() {
+            const that = this
+            that.bingMobile({
+                mobile: that.mobile,
+                sms_code: that.sendCode
+            }).then(() => {
+                that.jumpHistory() 
+            }).catch(err => {
+                wx.showToast({
+                    title: err.msg,
+                    icon: 'none',
+                    duration: 1000
+                })
+            })
+        },
+        jumpHistory() {
+            let beforeUrl = mpvue.getStorageSync('loginBefore')
+            if (beforeUrl) {
                 mpvue.switchTab({
                     url: '/pages/index/main',
                 });
-            }  
-        }  
+            }
+            let current = tabbar.find(item => {
+                return item === beforeUrl
+            })
+            if (current) {
+                mpvue.switchTab({
+                    url: "/" + beforeUrl,
+                });
+            } else {
+                wx.redirectTo({
+                    url: "/" + beforeUrl,
+                }); 
+            } 
+        }
+        
     }
 }
 </script>
@@ -354,7 +464,63 @@ export default {
         }
     }
 }
+.bind-warp{
+    padding: 24rpx;
+    .bind-title {
+        text-align: center;
+        font-size: 40rpx;
+        color: #000;
+        line-height: 100rpx;
+    }
+    .bind-desc{
+        text-align: center;
+        font-size: 30rpx;
+        color: #818181;
+        line-height: 1;
+        margin-top: 18rpx;
 
+    }
+    .bind-code{
+        position: relative;
+        padding: 24rpx;
+        overflow: hidden;
+        .code{
+            height: 107rpx;
+            position: absolute;
+            left: -100%;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            display: block;
+            color: #fff;
+        }
+    }
+    .bind-submit{
+        margin: 58rpx auto 40rpx;
+        width: 411rpx;
+        height: 74rpx;
+        background: linear-gradient(to right, #2EB90D , #67E24A);
+        border-radius: 50rpx;
+        text-align: center;
+        line-height: 74rpx;
+        font-size: 27rpx;
+        color: #fff;
+    }
+    .field-wrap{
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        .code-item{
+            height: 107rpx;
+            width:56rpx;
+            border-bottom: 5rpx solid rgba(59,147,58,.55);
+            line-height: 107rpx;
+            text-align: center;
+            font-size: 73rpx;
+            color: #000;
+        }
+    }
+}
 @keyframes rise {
     0% {
         opacity: 0;

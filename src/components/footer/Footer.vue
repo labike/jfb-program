@@ -1,6 +1,6 @@
 <template>
     <ul class="footer border-top" >
-        <li v-if="cart==='open'">
+        <li v-if="cart==='open'"  @click="jumpGoods">
             <div class="cart"
                 v-if="infoData.store_type == shopType.repast">立即点餐</div>
             <div class="cart"
@@ -8,7 +8,7 @@
             <div class="cart"
                 v-if="infoData.store_type == shopType.icar">立即选购</div>
         </li>
-        <li v-else>
+        <li v-else @click="jumpGoods">
             <div class="cart"
                 v-if="infoData.store_type == shopType.repast">到店点餐</div>
             <div class="cart"
@@ -26,11 +26,25 @@ export default {
     name: 'footer',
     data() {
         return {
-            shopType
+            shopType,
+            shop_id: ''
         };
     },
     props: {
         infoData: Object
+    },
+    onLoad (options) {
+        this.shop_id = options.shop_id;
+        console.log(options);
+    },
+    methods: {
+        
+        jumpGoods() {
+            const page = "http://wap2.qmwjj.cc/goods?shop_id=" + this.shop_id + "&token=" + wx.getStorageSync('token')
+            mpvue.navigateTo({
+                url: `/pages/web/main?url=${encodeURIComponent(page)}`
+            })
+        },
     },
 };
 </script>

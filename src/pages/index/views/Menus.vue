@@ -9,15 +9,18 @@
                 @click="jumpPages(item.tager)"
             >
                 <div class="img-warp">
-                    <img :src="item.icon" alt="">
+                    <img :src="item.icon" class='icon' mode="aspectFill">
+                    <img v-if="item.minIcon" :src="item.minIcon" class='min-icon' mode="aspectFit">
                 </div>
                 <div class="text">{{item.name}}</div>
             </li>
         </ul>
         <ul class="menu2">
-            <li class="nav-item" v-for="item of menu2" :key="item.id">
+            <li class="nav-item" v-for="item of menu2" :key="item.id"
+                @click="jumpPages(item.tager)"
+            >
                 <div class="img-warp">
-                    <img :src="item.icon" alt="">
+                    <img :src="item.icon" class='icon' mode="aspectFill">
                 </div>
                 <div class="text">{{item.name}}</div>
             </li>
@@ -27,7 +30,7 @@
 </template>
 
 <script>
-import LaySwiper from "@c/swiper/Swiper.vue";
+import LaySwiper from "@c/swiper/Advertise.vue";
 export default {
     name: "Menus",
     data() {
@@ -41,6 +44,7 @@ export default {
                 id: 1,
                 name: '酒店',
                 icon: '/static/tabs/icon_grid_hotel.png',
+                minIcon: '/static/tabs/full_bage.png',
                 tager: '/pages/filter/hotel/main'
             }, {
                 id: 2,
@@ -62,23 +66,27 @@ export default {
                 id: 5,
                 name: '火锅',
                 icon: '/static/tabs/icon_home_big_classify_huog.png',
-                tager: '/pages/filter/repast/main?'
+                tager: '/pages/filter/category/main?top_sort=1&sort_one=23'
             }, {
                 id: 6,
                 name: 'KTV',
-                icon: '/static/tabs/icon_home_big_classify_ktv.png'
+                icon: '/static/tabs/icon_home_big_classify_ktv.png',
+                tager: '/pages/filter/category/main?top_sort=3&sort_one=710'
             }, {
                 id: 7,
                 name: '洗车',
-                icon: '/static/tabs/icon_home_big_classify_xic.png'
+                icon: '/static/tabs/icon_home_big_classify_xic.png',
+                tager: '/pages/filter/category/main?top_sort=4&sort_one=217'
             }, {
                 id: 8,
                 name: '运动健身',
-                icon: '/static/tabs/icon_home_big_classify_sport.png'
+                icon: '/static/tabs/icon_home_big_classify_sport.png',
+                tager: '/pages/filter/category/main?top_sort=3&sort_one=712'
             }, {
                 id: 9,
                 name: '足疗按摩',
-                icon: '/static/tabs/icon_home_big_classify_zul.png'
+                icon: '/static/tabs/icon_home_big_classify_zul.png',
+                tager: '/pages/filter/category/main?top_sort=3&sort_one=702'
             }, ]
         }
     },
@@ -116,9 +124,17 @@ export default {
         }
         .img-warp{
             text-align: center;
-            img{
+            position: relative;
+            .icon{
                 width: 100rpx;
                 height: 100rpx;
+            }
+            .min-icon{
+                position: absolute;
+                top: 0;
+                left: 50%;
+                width: 80rpx;
+                height: 30rpx;
             }
         }
         .menu2{

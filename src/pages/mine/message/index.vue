@@ -19,40 +19,79 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
-import { apiGetUsers } from '@/api/api'
+import CommonGallary from "@c/gallary/Gallary.vue";
+import { rateType, orderType } from '@/config/base';
+import { Toast, formatTime, findKey } from '@/utils/index';
+import { apiGetMyRate } from "@/api/api.js";
 export default {
-    name: 'msg',
     data() {
         return {
-            msgList: []
+            page: 1,
+            scrollTop: 0,
+            scrollStatus: true,
+            showGallaryState: false,
+            remainListsLength: 15,
+            msgList: [],
         }
     },
-    onLoad() {
-        const self = this;
-        console.log(self.userInfo);
-        if (!self.userInfo.nickname || !self.userInfo.mobile) {
-            apiGetUsers().then(res => {
-                console.log(res);
-                self.updataUsers({
-                    headimgurl: res.header_img,
-                    nickname: res.nickname,
-                    mobile: res.mobile,
-                }) 
-            })
-        }
-        
+    components: {
+        CommonGallary
+    },
+    onLoad (options) {
+        this.getMyRate()
     },
     methods: {
-        ...mapActions('user', [
-            'updataUsers',
-        ]),
-        jumpOrderPages(page) {
+        jumpShop(id) {
             mpvue.navigateTo({
-                url: `/pages/mine/${page}/main`
+                url: '/pages/shop/index/main?shop_id=' + id
             }) 
         },
-    }
+        getMyRate() {
+            const page = this.page
+            apiGetMyRate({
+                limit: 15,
+                page
+            }).then(res => {
+                if (page === 1) {
+                    this.msgList = []
+                }
+                res.list.forEach(item => {
+                    this.msgList.push(item)
+                });
+                this.remainListsLength = res.list.length
+            })
+        },
+        showGallary(imgs, index) {
+            let imglist = [];
+            imgs.forEach(element => {
+                imglist.push(element.img_url);
+            });
+            this.photoList = imglist;
+            this.showGallaryIndex = index;
+            this.showGallaryState = true;
+        },
+        closeGallary() {
+            this.photoList = [];
+            this.showGallaryState = false;
+        }
+    },
+    
+    onPullDownRefresh () {
+        this.page = 1
+        this.getMyRate()
+        this.remainListsLength = 15
+        mpvue.stopPullDownRefresh()
+    },
+    onReachBottom () {
+        if (this.remainListsLength === 15) {
+            this.page++
+            this.getMyRate()
+            this.scrollStatus = true
+        } else {
+            Toast("没有更多数据了！");
+            this.scrollStatus = false
+        }
+    },
 }
 </script>
 

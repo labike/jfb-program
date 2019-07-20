@@ -21,6 +21,7 @@
 <script>
 import { apiOrderPay, apiPayStatus } from "@/api/api";
 import { mapState, mapActions } from 'vuex';
+import { payIsSuccess } from "@/config/base";
 import LastTime from "./../views/Countdown.vue";
 export default {
     name: "Pay",
@@ -67,15 +68,13 @@ export default {
                     'complete': function (res) {
                         console.log(res);
                         if (res.errMsg === 'requestPayment:ok') {
-                            wx.showModal({
-                                title: '提示',
-                                content: '充值成功'
-                            });
-                            setTimeout(function () {
-                                mpvue.navigateTo({
-                                    url: `/pages/shop/payok/main?order_id=${that.order_id}`
-                                }) 
-                            }, 1000)
+                            apiPayStatus(this.order_id).then(res => {
+                                if (res.is_pay_success === payIsSuccess.OK) {
+                                    mpvue.navigateTo({
+                                        url: `/pages/shop/payok/main?order_id=${that.order_id}`
+                                    }) 
+                                }
+                            })
                         }
             
                     }

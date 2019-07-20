@@ -51,7 +51,6 @@
 
 <script>
 import LayHeader from "@c/header/Header.vue";
-import Menus from "./../views/Menus.vue";
 import ShopCard from "@c/shop/ShopCard.vue";
 import { apiGetAllSort, apiSearch } from "@/api/api";
 export default {
@@ -69,7 +68,6 @@ export default {
     },
     components: {
         LayHeader,
-        Menus,
         ShopCard
     },
     onLoad (options) {

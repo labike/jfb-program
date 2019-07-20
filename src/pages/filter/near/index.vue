@@ -4,8 +4,8 @@
         <lay-header></lay-header>
     </div>
     <scroll-view class="jfb-content" scroll-y @scroll="getScroll">
-        <div class="banner-warp" v-show="bannerShow">
-            <lay-banner @heightInit="heightInit"></lay-banner>
+        <div class="banner-warp">
+            <lay-banner className='column' :list='advertList' v-if="advertList.length" sHeight="280rpx"></lay-banner>
         </div>
         <div class="container" :class="bannerShow? '': 'stick'">
             <ul class="nav-bar">
@@ -57,14 +57,17 @@
 
 <script>
 import LayHeader from "@c/header/Header.vue";
-import LayBanner from "./../views/Banner.vue";
+import LayBanner from "@c/swiper/Advertise.vue";
 import ShopCard from "@c/shop/ShopCard.vue";
-import { apiGetSort, apiGetNearbys } from "@/api/api";
+import { apiGetAdvert, apiGetSort, apiGetNearbys } from "@/api/api";
+import { mapState } from 'vuex';
+
 export default {
     name: "shop",
     data() {
         return {
             navList: ["美食", "酒店", "休闲娱乐", "爱车保养", "全部"],
+            advertList: [],
             activeTab: 0,
             scrollTop: 0,
             bannerShow: true,
@@ -80,10 +83,22 @@ export default {
         LayBanner,
         ShopCard
     },
+    computed: {
+        appData() {
+            return wx.getStorageSync('appData');
+        }
+    },
     onLoad (options) {
         apiGetSort().then(res => {
             this.navList = this.normalFrom(res)
             this.getNearbys("1")
+        })
+        apiGetAdvert({
+            city_id: this.appData.currentCity.code,
+            position: 4,
+            industry: 0
+        }).then(advers => {
+            this.advertList = advers.advert
         })
     },
     watch: {
@@ -96,6 +111,7 @@ export default {
         }
     },
     methods: {
+        
         getScroll(e) {
             this.scrollTop = e.target.scrollTop
             //this.scrollTop = e.mp.detail.scrollTop
@@ -166,10 +182,6 @@ export default {
     display: flex;
     flex-direction: column;
     .banner-warp{
-        position: fixed;
-        left: 0;
-        top: 80rpx;
-        right: 0;
         height: 280rpx;
     }
     .nav-bar {
@@ -190,7 +202,6 @@ export default {
 }
 
 .container{
-    padding-top: 280rpx;
     height: 100%;
     flex: 1;
     &.stick{

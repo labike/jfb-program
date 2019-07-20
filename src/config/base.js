@@ -68,3 +68,13 @@ export const activityTag = {
     new: '首单',
     full: '满减',
 };
+
+/**
+ *  tabbar
+ */
+export const tabbar = [
+    "pages/index/main", 
+    "pages/filter/near/main",
+    "pages/orders/list/main",
+    "pages/mine/index/main"
+];

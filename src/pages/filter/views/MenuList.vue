@@ -43,30 +43,30 @@ export default {
     data() {
         return {
             menuId: '',
+            active: '',
             showBottom: false
         }
     },
     props: {
         params: Array,
-        active: Number,
     },
     onLoad (options) {
-        if (!this.active) {
+        this.active = options.sort_two
+        if (!options.sort_two) {
             this.menuId = 'menu_0'
         } else {
-            this.menuId = 'menu_' + this.active
+            this.menuId = 'menu_' + options.sort_two
         }
         console.log(this.menuId);
-        
     },
     components: {
         LaySwiper,
     },
     methods: {
         jumpPages(pageUrl) {
-            mpvue.navigateTo({
+            mpvue.redirectTo({
                 url: pageUrl
-            }) 
+            })
         },
         toggleShow() {
             this.showBottom = !this.showBottom
@@ -87,9 +87,7 @@ export default {
         }
         .menu{
             height: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            z-index: 1;
+            white-space: nowrap;
             display: flex;
             color: #323232;
             .nav-item{

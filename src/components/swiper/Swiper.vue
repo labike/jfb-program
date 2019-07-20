@@ -1,11 +1,11 @@
 <template>
 <div class='swiper'>
   <swiper :indicator-dots='true' indicator-color='rgba(0, 0, 0, .3)' indicator-active-color="#fff" :style="{height: sHeight}" :autoplay='false' :interval='6000' :duration='1000' :circular='true'>
-    <div :key='imgindex' v-for='(top,imgindex) in list'>
+    <block :key='imgindex' v-for='(top,imgindex) in list'>
       <swiper-item>
         <img @click='bookDetail(top)' class='slide-image' mode="aspectFill" :src="top.img_url">
       </swiper-item>
-    </div>
+    </block>
   </swiper>
 </div>
 </template>

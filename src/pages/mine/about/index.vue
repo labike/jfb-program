@@ -11,7 +11,7 @@
                 <div class="left">版本</div>
                 <div class="right">当前版本1.0.0</div>
             </li>
-            <li @click="jumpWeb('http://wap2.qmwjj.cc/shop')">
+            <li @click="jumpWeb('http://wap2.qmwjj.cc/protocol.html')">
                 <div class="left">用户协议</div>
             </li>
         </ul>
@@ -35,8 +35,7 @@ export default {
         },
         jumpWeb(page) {
             mpvue.navigateTo({
-                url: `/pages/web/main?url=${page}`
-                // url: `/pages/web/main?url=${encodeURIComponent(page)}`
+                url: `/pages/web/main?url=${encodeURIComponent(page)}`
             })
         },
     }

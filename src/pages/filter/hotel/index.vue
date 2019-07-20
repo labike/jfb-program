@@ -5,7 +5,6 @@
     </div>
     <scroll-view class="jfb-content" scroll-y @scroll="getScroll">
         <header class="header-warp">
-            <menus v-if="menuObj" :params='menuObj'></menus>
         </header>
         <div class="container">
             <div class="nav-bar">
@@ -25,70 +24,12 @@
 
 <script>
 import LayHeader from "@c/header/Header.vue";
-import Menus from "./../views/Menus.vue";
 import ShopCard from "@c/shop/ShopCard.vue";
 import { apiBusinessSort, apiSearch } from "@/api/api";
 export default {
     name: "shop",
     data() {
         return {
-            menuObj: {
-                banners: [
-                    {
-                        "id": "1",
-                        "img_url": "http://clients.qmwjj.cc/images/indexTop.png",
-                        "jump": "1",
-                        "type": "s"
-                    }
-                ],
-                menu: [
-                    {
-                        id: 0,
-                        name: '团购',
-                        icon: '/static/tabs/food_icon_four.png',
-                        target: ''
-                    }, {
-                        id: 1,
-                        name: '人气店家',
-                        icon: '/static/tabs/food_icon_six.png'
-                    }, {
-                        id: 2,
-                        name: '饮品',
-                        icon: '/static/tabs/food_icon_ten.png'
-                    }, {
-                        id: 3,
-                        name: '水果生鲜',
-                        icon: '/static/tabs/food_icon_nine.png'
-                    }, {
-                        id: 4,
-                        name: '高端商务',
-                        icon: '/static/tabs/food_icon_seven.png'
-                    }
-                ],
-                menu2: [
-                    {
-                        id: 5,
-                        name: '火锅',
-                        icon: '/static/tabs/food_icon_one.png'
-                    }, {
-                        id: 6,
-                        name: '自助餐',
-                        icon: '/static/tabs/food_icon_two.png'
-                    }, {
-                        id: 7,
-                        name: '烧烤',
-                        icon: '/static/tabs/food_icon_three.png'
-                    }, {
-                        id: 8,
-                        name: '西餐',
-                        icon: '/static/tabs/food_icon_eight.png'
-                    }, {
-                        id: 9,
-                        name: '面包甜点',
-                        icon: '/static/tabs/food_icon_five.png'
-                    }
-                ],
-            },
             scrollTop: 0,
             top_sort: 1,
             shopList: []
@@ -96,7 +37,6 @@ export default {
     },
     components: {
         LayHeader,
-        Menus,
         ShopCard
     },
     onLoad (options) {

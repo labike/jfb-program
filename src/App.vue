@@ -10,7 +10,7 @@ export default {
          * 支付宝(蚂蚁)：mpvue === my, mpvuePlatform === 'my'
          */
         const self = this;
-        // console.log('created');
+        console.log('created');
         // mpvue.login({
         //     success(res) {
         //         console.log('login',res);

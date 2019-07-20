@@ -57,7 +57,7 @@
                 <div class="right">02988451373</div>
             </div>
         </li>
-        <li class="group-item"  @click="jumpMinePages('patronage')">
+        <li class="group-item"  @click="jumpWeb('http://wap2.qmwjj.cc/teamwork')">
             <img src="/static/tabs/icon_me_service_collaborate.png" class="icon">
             <div class="group-item-text">
                 <div class="left">我要合作</div>
@@ -117,6 +117,11 @@ export default {
                 })
             }
              
+        },
+        jumpWeb(page) {
+            mpvue.navigateTo({
+                url: `/pages/web/main?url=${encodeURIComponent(page)}`
+            })
         },
         jumpMoneyPages(page) {
             mpvue.navigateTo({

@@ -1,7 +1,7 @@
 <template>
 <header class="hd-warp">
     <div class="top">
-        <div class="location">西安市<img src="/static/img/back.png" class="icon"></div>
+        <div class="location">{{ cityName }}</div>
         <div class="search" @click="jumpSearch">
             <img src="/static/img/ic-search.png" class="icon">请输入搜索内容
         </div>
@@ -10,9 +10,26 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
     name: "JFBHeader",
-    components: {},
+    computed: {
+        ...mapState('user', [
+            'city_name'
+        ]),
+        appData() {
+            return wx.getStorageSync('appData');
+        },
+        cityName() {
+            if (this.city_name) {
+                return this.city_name
+            }
+            if (this.appData && this.appData.currentCity) {
+                return this.appData.currentCity.name
+            }
+            return ''
+        }
+    },
     methods: {
         jumpSearch() {
             mpvue.navigateTo({

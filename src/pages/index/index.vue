@@ -35,7 +35,8 @@ import ShopList from "./views/ShopList.vue";
 import { mapActions, mapState } from 'vuex';
 import { shopType } from "@/config/base";
 import { Toast } from '@/utils/index';
-import { apiGetIndex, apiGetRecommends, apiStoreScan } from "@/api/api";
+import { apiGetIndex, apiGetAdvert, apiGetRecommends, apiStoreScan } from "@/api/api";
+
 export default {
     name: "index",
     data() {
@@ -81,15 +82,23 @@ export default {
                         lng: loca.longitude, 
                         lat: loca.latitude
                     }).then(res => {
-                        console.log(res);
+                        // console.log(res);
                         _this.setLocation({
                             latitude: loca.latitude,
                             longitude: loca.longitude,
                             city_id: res.city_id,
+                            city_name: res.city_name,
                         })
-                        _this.banners = res.banners
                         _this.shopList = res.stores.list
+                        apiGetAdvert({
+                            city_id: res.city_id,
+                            position: 1,
+                            industry: 0
+                        }).then(advers => {
+                            _this.banners = advers.advert
+                        })
                     })
+
                 },
                 fail(err) {
                     console.log(err);

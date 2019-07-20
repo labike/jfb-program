@@ -27,7 +27,9 @@
                 <swiper-item style="overflow: visible;border-radius: 50%;" class="one-scene">
                     <scroll-view style="height:100%" scroll-y v-if="item.shopList"> 
                         <div v-if="item.shopList.length" class="shop-list">
-                             <shop-card :shopInfo='shop' @share='shareShop'
+                             <shop-card :shopInfo='shop' :handle='true'
+                                @share='shareShop'
+                                @refresh='refreshShop'
                                 v-for="(shop, sindex) of item.shopList" :key="sindex"
                              ></shop-card>
                         </div>
@@ -40,12 +42,21 @@
             </div>
         </swiper>
     </div>
-    <share v-if="shareShopStatus"></share>
+    
+	<div class="mask-warp" v-if="shareShopStatus">
+		<div class="mask" @click="shareShopStatus=false"></div>
+		<div class="mask-inner" >
+            <div class="canlbtn" @click="shareShopStatus=false"></div>
+            <app-share :cardInfo='cardInfo'></app-share>
+		</div>
+	</div>
+    
 </div>
 </template>
 
 <script>
-import Share from "@c/share/Share.vue";
+import AppShare from "@c/share/AppShare.vue";
+import LayModel from "@c/layouts/Model.vue";
 import ShopCard from "./../views/ShopCard.vue";
 import { visitedShop } from "@/api/api";
 export default {
@@ -78,12 +89,15 @@ export default {
         this.stv.windowWidth = res.windowWidth;
     },
     components: {
-        Share,
+        LayModel,
+        AppShare,
         ShopCard
     },
     computed: {},
     methods: {
         swiperchange(e) {
+            console.log(e);
+            
             if (e.type !== 'change') {
                 return
             }
@@ -95,7 +109,7 @@ export default {
         },
         getVisitedShop(index) {
             const _current = this.tabs[index]
-            let page = _current.page ? _current.page++ : 1
+            let page = _current.page ? _current.page : 1
             visitedShop({
                 limit: 15,
                 type: _current.type,
@@ -116,8 +130,16 @@ export default {
                 
             })
         },
-        shareShop() {
+        shareShop(cardInfo) {
+            this.cardInfo = cardInfo
             this.shareShopStatus = true
+        },
+        refreshShop() {
+            this.tabs.forEach(typeShop => {
+                typeShop.page = 1
+                typeShop.shopList = null
+            })
+            this.getVisitedShop(this.activeTab)
         }
     }
 }
@@ -218,5 +240,47 @@ export default {
     width: 100%;
     padding-bottom: 24rpx;
 }
-
+.mask-warp{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    z-index: 9999;
+    justify-content: flex-start;
+    .mask{
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 10000;
+    }
+    .mask-inner{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 90%;
+        height: auto;
+        z-index: 10001;
+        display: flex;
+        flex-direction: column;
+        margin: 0 auto;
+        transform: translate(-50%, -50%);
+    }
+    .canlbtn{
+        width: 60rpx;
+        height: 60rpx;
+        position: absolute;
+        right: 0;
+        top: -60rpx;
+        background-repeat: no-repeat;
+        background-size: 40rpx;
+        background-position: center;
+        background-image: url(~@/assets/img/close.png);
+    }
+}
 </style>

@@ -64,15 +64,12 @@
         </div>
     </div>
 
-    
     <div class="empty" v-else>
         <div class="loading" v-if="listLoading"></div>
         <img src="/static/img/no_rate.png" mode="aspectFit" >
         <div class="text">暂无评价！</div>
     </div>
-
     
-
     <common-gallary v-if="showGallaryState && photoList.length"
         :imgs="photoList"
         :index="showGallaryIndex"
@@ -174,7 +171,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container{
+.rate-list{
     background: #fff;
 }
 .rate-warp{
@@ -351,5 +348,19 @@ export default {
             color: #818181;
         }
     }
-} 
+}
+.empty{
+    text-align: center;
+    img{
+        width: 300rpx;
+        height: 300rpx;
+        margin-top: 100rpx;
+    }
+    .text{
+        margin-top: 15rpx;
+        font-size: 24rpx;
+        color: #818181;
+        text-shadow: 1px 1px 1px #e8e8e8;
+    }
+}  
 </style>

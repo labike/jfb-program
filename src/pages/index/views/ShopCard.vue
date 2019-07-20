@@ -118,7 +118,6 @@ export default {
         distance() {
             const _this = this
             let num = getDistance(_this.lat, _this.lng, _this.shop.lat, _this.shop.lng)
-            console.log(num);
             if (num > 1000) {
                 return (num / 1000).toFixed(0) + 'Km'
             } else {

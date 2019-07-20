@@ -1,8 +1,8 @@
 {
     "pages": [
-        "pages/start/login/main",
-        "pages/start/mobile/main",
         "pages/index/main",
+        "pages/start/login/main",
+        "pages/start/invitation/main",
         "pages/search/main",
         "pages/web/main",
         "pages/orders/list/main",

@@ -40,7 +40,7 @@
             </div>
         </swiper>
     </div>
-    <share v-if="shareShopStatus"></share>
+    <app-share v-if="shareShopStatus" :cardInfo='cardInfo'></app-share>
 </div>
 </template>
 
@@ -72,7 +72,15 @@ export default {
             },
             activeTab: 0,
             loadingStatus: false,
-            shareShopStatus: false
+            shareShopStatus: false,
+            cardInfo: {
+                title: '减付宝', //姓名
+                imageUrl: "http://t2.hddhhn.com/uploads/tu/201806/9999/91480c0c87.jpg", 
+                qrCode: "http://i4.hexun.com/2018-07-05/193365388.jpg", 
+                address: "程序员鼓励师", //职位
+                mobile: "13888888888", //手机
+                company: "减付宝", //公司
+            },
         }
     },
     onLoad (options) {

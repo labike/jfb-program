@@ -39,14 +39,11 @@ fly.interceptors.response.use(
             switch (response.data.code) {
             case 401:
                 msg = '登录过期或未登录，请重新登录'
-                setTimeout(() => {
-                    wx.redirectTo({
-                        url: '/pages/start/login/main'
-                    });
-                }, 300)
+                jumpLogin()
                 break;
             case 403:
                 msg = response.data.msg
+                jumpLogin()
                 break;
             case 500:
                 msg = '服务器错误，请联系管理员'
@@ -91,4 +88,26 @@ export function get(url, data) {
 export function post(url, data) {
     url = HOST + url
     return fly.post(url, data);
+}
+
+function jumpLogin() {
+    // eslint-disable-next-line no-undef
+    var pages = getCurrentPages() //获取加载的页面
+    var currentPage = pages[pages.length - 1] //获取当前页面的对象
+    var options = currentPage.options   
+    //拼接url的参数
+
+    var urlWithArgs = currentPage.route + '?'
+    for (var key in options) {
+        var value = options[key]
+        urlWithArgs += key + '=' + value + '&'
+    }
+    urlWithArgs = urlWithArgs.substring(0, urlWithArgs.length - 1)
+    console.log(urlWithArgs);
+    mpvue.setStorageSync('loginBefore', urlWithArgs);
+    setTimeout(() => {
+        wx.redirectTo({
+            url: '/pages/start/login/main'
+        });
+    }, 300)
 }

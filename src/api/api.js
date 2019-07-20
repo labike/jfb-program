@@ -42,22 +42,50 @@ export const apiGetRecommends = params => {
         }
     });
 };
-/**
- * 2.1 advert数据附近顶部
- * @method GET http://clients.qmwjj.cc/v1/adverts/nearbyTop
- * @return {}
+
+
+/********************************************** 广告位 ******************************************** */
+
+
+// /**
+//  * 2.1.1 advert数据附近顶部
+//  * @method GET http://clients.qmwjj.cc/v1/adverts/nearbyTop
+//  * @return {}
+//  */
+// export const apiGetAdvert = () => {
+//     return get(`adverts/nearbyTop`).then(res => {        
+//         return Promise.resolve(res.data); 
+//     }).catch(err => {
+//         if (err.code === 0) {
+//             return Promise.reject(err);
+//         } else {
+//             throw err.msg;
+//         }
+//     });
+// };
+
+/** 获取广告
+ *  首页【顶部】（名称暂定活动宝） position 1 industry 0
+ *  附近【顶部】（名称暂定曝光栏） position 4 industry 0
+ *  美食【顶部】（名称暂定活动宝） position 1 industry 1
+ *  酒店【顶部】（名称暂定活动宝） position 1 industry 2
+ *  休闲娱乐【顶部】（名称暂定活动宝）position 1 industry 3
+ *  爱车【顶部】（名称暂定活动宝） position 1 industry 4
+ *   
+ * @method GET  http://clients.qmwjj.cc/v1/advert/index?city_id=2809&position=1&industry=0
+ * @params  city_id
+ * @params  position
+ * @return  industry
  */
-export const apiGetAdvert = () => {
-    return get(`adverts/nearbyTop`).then(res => {        
+export const apiGetAdvert = params => {
+    return get('advert/index', params).then(res => {
         return Promise.resolve(res.data); 
     }).catch(err => {
-        if (err.code === 0) {
-            return Promise.reject(err);
-        } else {
-            throw err.msg;
-        }
+        throw err;
     });
 };
+
+
 /**
  * 2.3 附近商家数据 
  * @method GET http://clients.qmwjj.cc/v1/nearbys 
@@ -339,8 +367,8 @@ export const apiGetOpenId = code => {
 /**
  * 1.4 第三方登录--微信登陆
  * @method POST http://clients.qmwjj.cc/v1/unifylogin
- * @params unifyid : code码
- * @params ltype: 1 web微信 2微信公众号登陆
+ * @params unifyid : unionid
+ * @params ltype: 1 web微信 2微信公众号登陆 3小程序 
  */
 export const apiWxLogin = other_info => {
     const params = {
@@ -356,6 +384,20 @@ export const apiWxLogin = other_info => {
 };
 
 
+
+
+/**
+ * 1.5.1 获取手机号
+ * @method POST http://clients.qmwjj.cc/v1/get-mobile
+ */
+export const apiGetMobileByWx = params => {
+    return post('get-mobile', params).then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        return Promise.reject(err);
+    });
+};
+
 /**
  * 1.5 绑定手机号
  * @method POST http://clients.qmwjj.cc/v1/binds
@@ -363,7 +405,11 @@ export const apiWxLogin = other_info => {
  * @params sms_code:手机验证码
  */
 export const apiBindMobile = params => {
-    return post(`binds`, params);
+    return post('binds', params).then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        return Promise.reject(err);
+    });
 };
 
 
@@ -576,7 +622,10 @@ export const shareSDK = share_url => {
  * @return confing
  */ 
 export const apiShareStore = s_id => {
-    return post(`share-store`, { s_id }).then(res => {
+    return post(`share-store`, {
+        s_id,
+        is_wx_small: 1
+    }).then(res => {
         return Promise.resolve(res.data); 
     }).catch(err => {
         return Promise.reject(err);
@@ -777,5 +826,4 @@ export const apiRewardCashes = params => {
         throw err;
     });
 };
-
 

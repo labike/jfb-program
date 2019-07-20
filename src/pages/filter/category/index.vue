@@ -3,8 +3,8 @@
     <div class="jfb-header">
         <lay-header></lay-header>
     </div>
-    <header class="header-warp" v-if="navList.length">
-        <menus :params='navList' :active='sort_two'></menus>
+    <header class="header-warp">
+        <menus v-if="navList.length" :params='navList' ></menus>
         <div class="nav-bar">
             <ul class="nav">
                 <li class="item">全部</li>
@@ -14,11 +14,15 @@
         </div>
     </header>
     <scroll-view class="jfb-content" scroll-y @scroll="getScroll">
-        
-        <div class="container">
-            <div class="shop-list-warp" v-if="shopList && shopList.length">
+        <div class="container" v-if="shopList && shopList.length">
+            <div class="shop-list-warp" >
                 <shop-card :shopInfo='shop' v-for="(shop, index) of shopList" :key="index"></shop-card>
             </div>
+        </div>
+        <div class="empty" v-else>
+            <div class="loading" v-if="listLoading"></div>
+            <img src="/static/img/null_bg.png" mode="aspectFit" >
+            <div class="text">暂无相关商铺！</div>
         </div>
     </scroll-view>
 </section>
@@ -48,15 +52,17 @@ export default {
         ShopCard
     },
     onLoad (options) {
-        this.top_sort = options.top_sort || ''
+        this.top_sort = options.top_sort
         this.sort_one = options.sort_one || ''
         this.sort_two = options.sort_two || ''
-        // mpvue.setNavigationBarTitle({
-        //     title: 
-        // })
         apiGetThreeSort(this.sort_one).then(res => {
-            // console.log(res);
-            this.navList = res
+            this.navList = res.map(item => {
+                item.target = `/pages/filter/category/main?top_sort=${options.top_sort}&sort_one=${options.sort_one}&sort_two=${item.id}`
+                return item
+            })
+            this.getSortShop()
+        }).catch(() => {
+            this.navList = []
             this.getSortShop()
         })
     },
@@ -157,7 +163,21 @@ export default {
 .container{
     height: 100%;
     flex: 1;
-    
-}    
+}  
+
+.empty{
+    text-align: center;
+    img{
+        width: 300rpx;
+        height: 300rpx;
+        margin-top: 100rpx;
+    }
+    .text{
+        margin-top: 15rpx;
+        font-size: 24rpx;
+        color: #818181;
+        text-shadow: 1px 1px 1px #e8e8e8;
+    }
+}  
 </style>
 

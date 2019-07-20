@@ -1,16 +1,15 @@
 
-import { apiWxLogin } from '@/api/api'
+import { apiWxLogin, apiBindMobile } from '@/api/api'
 
 const state = {
     token: '',
     lat: '',
     lng: '',
     city_id: '',
+    city_name: '',
     openId: '初始openId',
     userInfo: {}
 }
-
-
 const mutations = {
     SET_TOKEN: (state, token) => {
         state.token = token;
@@ -22,17 +21,19 @@ const mutations = {
     },
     SET_LOCA_LAT: (state, lat) => {
         state.lat = lat;
-        mpvue.setStorageSync('lat', lat);
     },
     SET_LOCA_LNG: (state, lng) => {
         state.lng = lng;
-        mpvue.setStorageSync('lng', lng);
     },
     SET_CITY_ID: (state, city_id) => {
         state.city_id = city_id;
     },
+    SET_CITY_NAME: (state, city_name) => {
+        state.city_name = city_name;
+    },
     SET_USER_INFO: (state, userInfo) => {
         state.userInfo = userInfo
+        mpvue.setStorageSync('userData', userInfo);
     }
 }
 
@@ -45,15 +46,9 @@ const actions = {
                 nickname: params.nickname
             }
             apiWxLogin(params).then(res => {
-
-                if (res.mobile_isbind !== 0) {
-                    commit('SET_TOKEN', res.accessToken)
-                    commit('SET_OPEN_ID', params.openid)
-                    commit('SET_USER_INFO', info)
-                    mpvue.switchTab({
-                        url: '/pages/index/main',
-                    });
-                } 
+                commit('SET_TOKEN', res.accessToken)
+                commit('SET_OPEN_ID', params.openid)
+                commit('SET_USER_INFO', info) 
                 resolve(res)
             }).catch(err => {
                 reject(err)
@@ -61,13 +56,39 @@ const actions = {
         })
         
     },
+
+    
+    // 绑定手机号
+    bingMobile({ commit }, params) {
+        return new Promise((resolve,reject) => {
+            apiBindMobile(params).then(result => {
+                commit('SET_TOKEN', result.accessToken)
+                resolve(result)
+            }).catch(err => {
+                reject(err)
+            });
+        })
+        
+    },
+
     // 记录坐标
     setLocation({ commit }, params) {
+        let appData = {}
         commit('SET_LOCA_LAT', params.latitude)
         commit('SET_LOCA_LNG', params.longitude)
+        appData.currentLocation = {
+            lat: params.latitude,
+            lng: params.longitude
+        }
         if (params.city_id) {
             commit('SET_CITY_ID', params.city_id)
+            commit('SET_CITY_NAME', params.city_name)
+            appData.currentCity = {
+                code: params.city_id,
+                name: params.city_name
+            }
         }
+        mpvue.setStorageSync('appData', appData);
     },
     // 更新userinfo数据
     updataUsers({ commit }, params) {

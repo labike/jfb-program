@@ -1,16 +1,23 @@
 <template>
-    <web-view :src="h5Url"></web-view>
+    <web-view v-if="h5Url" :src="h5Url" @message="postMessage"></web-view>
 </template>
 
 <script>
 export default {
     data() {
         return {
-            h5Url: 'http://wap.qmwjj.cc/shop'
+            h5Url: ''
         }
     },
     onLoad (options) {
-        this.h5Url = options.url + '#wechat_redirect'
+        this.h5Url = decodeURIComponent(options.url)
+        console.log(this.h5Url);
+        
+    },
+    methods: {
+        postMessage(e) {
+            console.log(e)
+        },
     },
 }
 </script>
