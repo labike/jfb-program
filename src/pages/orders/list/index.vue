@@ -19,13 +19,13 @@
         <swiper class="orderListSwiper" style="width: 100%; height: 100%; overflow: visible;"
             :current='activeTab'
             @change="swiperchange($event)"
-            @touchstart='handlerStart'
-            @touchmove='handlerMove'
-            @touchend='handlerEnd'
         >
             <div v-for="(item,index) of tabs" :key="item.type" >
                 <swiper-item style="overflow: visible;border-radius: 50%;" class="one-scene">
-                    <scroll-view style="height:100%" scroll-y v-if="item.orderList"> 
+                    <scroll-view style="height:100%" scroll-y v-if="item.orderList"
+                        :data-item='index'
+                        @scrolltolower="LoadMore"
+                    > 
                         <div v-if="item.orderList.length" class="order-list">
                              <order-card :orderInfo='order' 
                                 v-for="(order,oinx) of item.orderList" :key="order.order_id"
@@ -78,6 +78,7 @@ export default {
                 offset: 0,
                 tStart: false
             },
+            orderListLength: 5,
             activeTab: 0,
             loadingStatus: false,
             
@@ -106,19 +107,33 @@ export default {
             this.updataOrderList(oIndex)
         },
         updataOrderList(index, page) {
+            const that = this
             const _current = this.tabs[index]
             if (!page) {
                 _current.orderList = []
                 _current.page = 1
+                _current.loadMore = true
             } else {
                 _current.page = page
             }
+            if (!_current.loadMore) {
+                _current.loadMore = false
+                wx.showToast({
+                    title: "没有更多数据了",
+                    icon: 'none',
+                    duration: 2000
+                })
+                return
+            }
             apiOrderList({
-                limit: 10,
+                limit: that.orderListLength,
                 nav_type: _current.type,
                 page: _current.page,
             }).then(res => {
                 const orderList = res.list
+                if (that.orderListLength > res.list.length) {
+                    _current.loadMore = false
+                }
                 orderList.forEach(element => {
                     if (element.x_id && element.order_id) {
                         _current.orderList.push(element)
@@ -130,121 +145,13 @@ export default {
             let _current = this.tabs[index]
             _current.orderList.splice(oinx, 1);
                
+        },
+        LoadMore(e) {
+            const _item = e.mp.currentTarget.dataset.item
+            let _current = this.tabs[_item]
+            console.log('LoadMore',_current);
+            this.updataOrderList(_item, _current.page + 1)
         }
-        // handlerStart(e) {
-        //     console.log('handlerStart',e)
-        //     let { clientX, clientY } = e.touches[0];
-        // },
-        // handlerMove(e) {
-        //     console.log('handlerMove')
-            
-        // },
-        // handlerEnd(e) {
-        //     console.log('handlerEnd')
-           
-        // },
-        // handlerStart(e) {
-        //     console.log('handlerStart')
-        //     let {
-        //         clientX,
-        //         clientY
-        //     } = e.touches[0];
-        //     this.startX = clientX;
-        //     this.tapStartX = clientX;
-        //     this.tapStartY = clientY;
-        //     this.data.stv.tStart = true;
-        //     this.tapStartTime = e.timeStamp;
-        //     this.setData({
-        //         stv: this.data.stv
-        //     })
-        // },
-        // handlerMove(e) {
-        //     console.log('handlerMove')
-        //     let {
-        //         clientX,
-        //         clientY
-        //     } = e.touches[0];
-        //     let {
-        //         stv
-        //     } = this.data;
-        //     let offsetX = this.startX - clientX;
-        //     this.startX = clientX;
-        //     stv.offset += offsetX;
-        //     if (stv.offset <= 0) {
-        //         stv.offset = 0;
-        //     } else if (stv.offset >= stv.windowWidth * (this.tabsCount - 1)) {
-        //         stv.offset = stv.windowWidth * (this.tabsCount - 1);
-        //     }
-        //     this.setData({
-        //         stv: stv
-        //     });
-        // },
-        // handlerEnd(e) {
-        //     console.log('handlerEnd')
-        //     let {
-        //         clientX,
-        //         clientY
-        //     } = e.changedTouches[0];
-        //     let endTime = e.timeStamp;
-        //     let {
-        //         tabs,
-        //         stv,
-        //         activeTab
-        //     } = this.data;
-        //     let {
-        //         offset,
-        //         windowWidth
-        //     } = stv;
-        //     //快速滑动
-        //     if (endTime - this.tapStartTime <= 300) {
-        //         console.log('快速滑动')
-        //         //判断是否左右滑动(竖直方向滑动小于50)
-        //         if (Math.abs(this.tapStartY - clientY) < 50) {
-        //             //Y距离小于50 所以用户是左右滑动
-        //             console.log('竖直滑动距离小于50')
-        //             if (this.tapStartX - clientX > 5) {
-        //                 //向左滑动超过5个单位，activeTab增加
-        //                 console.log('向左滑动')
-        //                 if (activeTab < this.tabsCount - 1) {
-        //                     this.setData({
-        //                         activeTab: ++activeTab
-        //                     })
-        //                 }
-        //             } else if (clientX - this.tapStartX > 5) {
-        //                 //向右滑动超过5个单位，activeTab减少
-        //                 console.log('向右滑动')
-        //                 if (activeTab > 0) {
-        //                     this.setData({
-        //                         activeTab: --activeTab
-        //                     })
-        //                 }
-        //             }
-        //             stv.offset = stv.windowWidth * activeTab;
-        //         } else {
-        //             //Y距离大于50 所以用户是上下滑动
-        //             console.log('竖直滑动距离大于50')
-        //             let page = Math.round(offset / windowWidth);
-        //             if (activeTab !== page) {
-        //                 this.setData({
-        //                     activeTab: page
-        //                 })
-        //             }
-        //             stv.offset = stv.windowWidth * page;
-        //         }
-        //     } else {
-        //         let page = Math.round(offset / windowWidth);
-        //         if (activeTab !== page) {
-        //             this.setData({
-        //                 activeTab: page
-        //             })
-        //         }
-        //         stv.offset = stv.windowWidth * page;
-        //     }
-        //     stv.tStart = false;
-        //     this.setData({
-        //         stv: this.data.stv
-        //     })
-        // },
     }
 }
 </script>

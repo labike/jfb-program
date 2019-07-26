@@ -71,7 +71,7 @@ export const getCurrentOrder = function ({state, commit}, order_id) {
 export const updateOrderReturn = function ({commit}, order_id) {
     return new Promise((resolve,reject) => {
         apiOrderDetails(order_id).then(res => {
-            const deadlinetime = Number(res.baseInfo.create_time) + 60 * 10
+            const deadlinetime = Number(res.baseInfo.create_time) + 60 * 60 * 24
             commit('SET_ORDER_RETURN', {
                 order_id: res.baseInfo.order_id,
                 order_name: res.baseInfo.title,

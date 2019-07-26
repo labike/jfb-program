@@ -50,11 +50,11 @@
                 <div class="left">帮助中心</div>
             </div>
         </li>
-        <li class="group-item"  @click="getCallPhone('02988451373')">
+        <li class="group-item"  @click="getCallPhone('02986513755')">
             <img src="/static/tabs/icon_me_service_service.png" class="icon">
             <div class="group-item-text">
                 <div class="left">客服中心</div>
-                <div class="right">02988451373</div>
+                <div class="right">029-86513755</div>
             </div>
         </li>
         <li class="group-item"  @click="jumpWeb('http://wap2.qmwjj.cc/teamwork')">

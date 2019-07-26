@@ -823,7 +823,70 @@ export const apiRewardCashes = params => {
     return get('reward/cashes', params).then(res => {
         return Promise.resolve(res.data); 
     }).catch(err => {
-        throw err;
+        if (err.code === 0) {
+            return Promise.reject(err);
+        } else {
+            throw err.msg;
+        }
     });
 };
+
+
+/**
+*  微信提现
+* @method POST  http://clients.qmwjj.cc/v1/wechats
+* @params openid： 提现账户 
+* @params amount （最低金额为1元，最高10万元）
+* @return userid
+*/
+export const apiMoneyByWx = params => {
+    return post('wechats', params).then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        if (err.code === 0) {
+            return Promise.reject(err);
+        } else {
+            throw err.msg;
+        }
+    });
+};
+
+/**
+*  支付宝提现
+* @method POST  http://clients.qmwjj.cc/v1/ailis
+* @params account 提现账户 
+* @params amount 单位：元,只支持2位小数，小数点前最大支持13位，金额必须大于等于0.1元。
+* @return order_id
+*/
+export const apiMoneyByAlipay = params => {
+    return post('ailis', params).then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        if (err.code === 0) {
+            return Promise.reject(err);
+        } else {
+            throw err.msg;
+        }
+    });
+};
+
+/**
+*  支付宝提现验证码
+* @method POST  http://clients.qmwjj.cc/v1/verify
+* @params phone phone
+* @params money 金额
+* @return order_id
+*/
+export const apiVerifyByAlipay = params => {
+    return post('verify', params).then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        if (err.code === 0) {
+            return Promise.reject(err);
+        } else {
+            throw err.msg;
+        }
+    });
+};
+
 

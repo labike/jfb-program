@@ -1,5 +1,5 @@
 
-import { apiWxLogin, apiBindMobile } from '@/api/api'
+import { apiWxLogin, apiBindMobile, apiReward } from '@/api/api'
 
 const state = {
     token: '',
@@ -8,7 +8,9 @@ const state = {
     city_id: '',
     city_name: '',
     openId: '初始openId',
-    userInfo: {}
+    userInfo: {},
+    balance: '',
+    withdraw: null
 }
 const mutations = {
     SET_TOKEN: (state, token) => {
@@ -34,6 +36,12 @@ const mutations = {
     SET_USER_INFO: (state, userInfo) => {
         state.userInfo = userInfo
         mpvue.setStorageSync('userData', userInfo);
+    },
+    SET_BALANCE: (state, balance) => {
+        state.balance = balance
+    },
+    SET_WITHDRAW: (state, withdraw) => {
+        state.withdraw = withdraw
     }
 }
 
@@ -93,7 +101,20 @@ const actions = {
     // 更新userinfo数据
     updataUsers({ commit }, params) {
         commit('SET_USER_INFO', params)
-    }
+    },
+
+    // 获取余额
+    getBalance({ commit }) {
+        return new Promise((resolve,reject) => {
+            apiReward().then(res => {
+                commit('SET_BALANCE', res.balance)
+                // commit('SET_BALANCE', 100)
+                resolve(res)
+            }).catch(err => {
+                reject(err)
+            });
+        })
+    },
 
 
 }

@@ -171,6 +171,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
 export default {
     name: "TabHome",
     data() {
@@ -185,8 +186,12 @@ export default {
         this.s_id = options.shop_id;
     },
     methods: {
+        ...mapMutations('shop', [
+            'SET_CURRENT_ITEM'
+        ]),
         jumpCombo(title, id) {
             const that = this
+            this.SET_CURRENT_ITEM(null)
             mpvue.navigateTo({
                 url: `/pages/shop/item/main?shop_id=${that.s_id}&title=${title}&item_id=${id}`
             })

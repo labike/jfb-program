@@ -19,9 +19,6 @@
         <swiper class="photoListSwiper" style="width: 100%; height: 100%; overflow: visible;"
             :current='activeTab'
             @change="swiperchange($event)"
-            @touchstart='handlerStart'
-            @touchmove='handlerMove'
-            @touchend='handlerEnd'
         >
             <div v-for="(item,index) of tabs" :key="index" >
                 <swiper-item style="overflow: visible;border-radius: 50%;" class="one-scene">

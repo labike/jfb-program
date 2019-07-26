@@ -45,11 +45,6 @@ export default {
             if (res.is_pay_success === payIsSuccess.OK) {
                 wx.hideLoading();
                 this.showPayOk = true
-                if (res.order_name === '购物车订单') {
-                    // 清空购物车信息
-                    this._vm.Lockr.set('cartOrderParam', null);
-                    this._vm.Lockr.set('buyCart', {});
-                }
                 this.shareStoreId = res.store_id 
             }
         }).catch(err => {
@@ -82,13 +77,9 @@ export default {
         }
         console.log(options);
         const share = options.target.dataset.share
-        const paramStart = share.qrCode.indexOf("?")
-        const param = share.qrCode.substr(paramStart)
-        console.log(param);
-        
         return {
             title: share.title,
-            path: "/pages/start/invitation/main" + param,
+            path: "/pages/start/invitation/main?code=" + share.code,
             imageUrl: share.imageUrl,
         }
     },

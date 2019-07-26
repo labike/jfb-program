@@ -2,7 +2,8 @@
 /**
  *  proxy HOST
  */
-export const HOST = 'http://clients.qmwjj.cc/v1/';
+// export const HOST = 'http://clients.qmwjj.cc/v1/';
+export const HOST = 'https://clients.qmw111.com/v1/';
 
 /**
  *  门店类型 （1-餐饮 2-酒店 3-休闲娱乐4-爱车）

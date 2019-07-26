@@ -19,13 +19,12 @@
         <swiper class="shopListSwiper" style="width: 100%; height: 100%; overflow: visible;"
             :current='activeTab'
             @change="swiperchange($event)"
-            @touchstart='handlerStart'
-            @touchmove='handlerMove'
-            @touchend='handlerEnd'
         >
             <div v-for="(item,index) of tabs" :key="index" >
                 <swiper-item style="overflow: visible;border-radius: 50%;" class="one-scene">
-                    <scroll-view style="height:100%" scroll-y v-if="item.shopList"> 
+                    <scroll-view style="height:100%" scroll-y v-if="item.shopList"
+                        @scrolltolower="updataShopList"
+                    > 
                         <div v-if="item.shopList.length" class="shop-list">
                              <shop-card :shopInfo='shop' @share='shareShop'
                                 v-for="(shop, sindex) of item.shopList" :key="sindex"
@@ -109,23 +108,15 @@ export default {
         },
         getVisitedShop(index) {
             const _current = this.tabs[index]
-            let page = _current.page ? _current.page++ : 1
+            _current.page = 1
             if (index === 0) {
                 visitedShop({
                     limit: 15,
                     type: _current.type,
-                    page,
+                    page: _current.page,
                 }).then(res => {
-                    if (page === 1) {
-                        _current.shopList = []
-                    }
-                    const shopList = res.list
-                    shopList.forEach(element => {
-                        if (element.id) {
-                            _current.shopList.push(element)
-                        }
-                    }); 
-                    this.tabs[index].shopList = _current.shopList
+                    _current.shopList = res.list 
+                    _current.nextPage = res.list.length >= 15
                 }).catch(err => {
                     console.log(err);
                 
@@ -133,18 +124,10 @@ export default {
             } else if (index === 1) {
                 collectsShop({
                     limit: 15,
-                    page,
+                    page: _current.page,
                 }).then(res => {
-                    if (page === 1) {
-                        _current.shopList = []
-                    }
-                    const shopList = res.list
-                    shopList.forEach(element => {
-                        if (element.id) {
-                            _current.shopList.push(element)
-                        }
-                    }); 
-                    this.tabs[index].shopList = _current.shopList
+                    _current.shopList = res.list 
+                    _current.nextPage = res.list.length >= 15
                 }).catch(err => {
                     console.log(err);
                 
@@ -152,24 +135,76 @@ export default {
             } else if (index === 2) {
                 browsersShop({
                     limit: 15,
-                    page,
+                    page: _current.page,
                 }).then(res => {
-                    if (page === 1) {
-                        _current.shopList = []
-                    }
+                    _current.shopList = res.list 
+                    _current.nextPage = res.list.length >= 15
+                }).catch(err => {
+                    console.log(err);
+                })
+            }
+            
+        },
+        updataShopList() {
+            const _current = this.tabs[this.activeTab]
+            if (!_current.nextPage) {
+                mpvue.showToast({
+                    title: '没有更多数据了！',
+                    icon: 'none',
+                    duration: 1000
+                })
+                return
+            }
+            _current.page = _current.page + 1
+            if (this.activeTab === 0) {
+                visitedShop({
+                    limit: 15,
+                    type: _current.type,
+                    page: _current.page,
+                }).then(res => {
+                    _current.nextPage = res.list.length >= 15
                     const shopList = res.list
                     shopList.forEach(element => {
                         if (element.id) {
                             _current.shopList.push(element)
                         }
-                    }); 
-                    this.tabs[index].shopList = _current.shopList
+                    });
                 }).catch(err => {
                     console.log(err);
                 
                 })
+            } else if (this.activeTab === 1) {
+                collectsShop({
+                    limit: 15,
+                    page: _current.page,
+                }).then(res => { 
+                    _current.nextPage = res.list.length >= 15
+                    const shopList = res.list
+                    shopList.forEach(element => {
+                        if (element.id) {
+                            _current.shopList.push(element)
+                        }
+                    });
+                }).catch(err => {
+                    console.log(err);
+                
+                })
+            } else if (this.activeTab === 2) {
+                browsersShop({
+                    limit: 15,
+                    page: _current.page,
+                }).then(res => { 
+                    _current.nextPage = res.list.length >= 15
+                    const shopList = res.list
+                    shopList.forEach(element => {
+                        if (element.id) {
+                            _current.shopList.push(element)
+                        }
+                    });
+                }).catch(err => {
+                    console.log(err);
+                })
             }
-            
         },
         shareShop() {
             this.shareShopStatus = true

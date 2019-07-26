@@ -41,6 +41,10 @@
                     <span class="left">实&nbsp;&nbsp;付&nbsp;&nbsp;款&nbsp;&nbsp;:</span>
                     <span class="right">￥{{detailed.baseInfo.pay_amount}}</span>
                 </li>
+                <li v-if="currentOrder">
+                    <span class="left">可退金额&nbsp;&nbsp;:</span>
+                    <span class="right">￥{{currentOrder.permit_refund_amount}}</span>
+                </li>
             </ul>
         </div>
     </div>
@@ -95,6 +99,7 @@
 import { formatTime, Toast, showSuccess } from '@/utils/index'
 import { orderType } from "@/config/base";
 import { apiOrderDetails, apiOrderRefund } from "@/api/api.js";
+import { mapState } from 'vuex';
 export default {
     data() {
         return {
@@ -138,6 +143,7 @@ export default {
         this.getOrderDetails()
     },
     computed: {
+        ...mapState(['currentOrder']),
         scoreName() {
             let scoreName = ''
             if (this.detailed && this.detailed.baseInfo.score) {
@@ -172,7 +178,6 @@ export default {
         },
     },
     methods: {
-        
         jumpShop(id) {
             mpvue.navigateTo({
                 url: '/pages/shop/index/main?shop_id=' + id
@@ -186,10 +191,11 @@ export default {
         },
         submitFrom() {
             const _this = this
-            let reasonArr = _this.reason.filter(item => {
-                return item.value
+            let reasonArr = _this.reason.filter(reason => {
+                return reason.value
+            }).map(item => {
+                return item.key
             })
-            console.log(reasonArr);
             if (!reasonArr.length) {
                 Toast("退款原因至少选择其中一项！");
                 return
@@ -198,18 +204,22 @@ export default {
                 reasonArr.push(_this.rests)
             }
             const refund_reason = reasonArr.join(';')
+            
             apiOrderRefund({
                 order_id: _this.order_id,
                 refund_reason
             }).then(res => {
                 showSuccess("退款申请成功！")
-                wx.navigateBack({
-                    delta: 1
-                })
+                setTimeout(() => {
+                    wx.navigateBack({
+                        delta: 1
+                    })
+                }, 1000)
             })
         }
     }
 }
+
 </script>
 
 <style lang="scss" scoped>

@@ -30,30 +30,7 @@
 </template>
 
 <script>
-// address: "陕西省西安市阎良区"
-// average_fee: "0"
-// collect_num: "0"
-// comment_num: "0"
-// do_business: "1"
-// id: "13"
-// lat: "34.662141"
-// license_img: "http://store.qmwjj.cc/storeImg/License/20190704092410_823.jpg"
-// like_num: "0"
-// lng: "109.228020"
-// one_sort: "718"
-// open_end: "1562252400"
-// open_start: "1562198400"
-// reward_ammount: "0.03"
-// reward_time: "1562221270"
-// score: "0"
-// share_num: "5"
-// shopping_open: "1"
-// store_img: "http://store.qmwjj.cc/storeImg/Atlas/20190704092241_350.jpg"
-// store_name: "程小龙会所"
-// top_sort: "3"
-// two_sort: "0"
-// type_name: "休闲娱乐"
-// user_is_like: 0
+
 import { likeShare, apiShareStore } from "@/api/api";
 import { formatTime } from '@/utils/index'
 export default {

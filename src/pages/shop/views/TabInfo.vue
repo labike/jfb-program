@@ -309,6 +309,7 @@ export default {
             li{
                 float: left;
                 width: 33.333%;
+                height: 20px;
                 margin-bottom: .3rem;
                 font-size: 0;
             }

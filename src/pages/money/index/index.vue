@@ -2,8 +2,8 @@
 <scroll-view class="container" scroll-y>
     <header class="top-info">
         <div class="price-warp">
-            <div class="price">{{price}}</div>
-            <div class="handle" @click="jumpMoneyPages('withdraw', `amount=${price}`)">去提现</div>
+            <div class="price">{{balance}}</div>
+            <div class="handle" @click="goWithdraw">去提现</div>
         </div>
         <div class="title">可提现金额</div>
         <div class="price-bar">
@@ -61,25 +61,24 @@ import ShopCard from "./../views/ShopCard.vue";
 export default {
     name: 'moneyindex',
     components: {
-        // Share,
         ShopCard
     },
     data() {
         return {
             topData: [{
                 name: '总收益',
-                value: '11.1'
+                value: '0'
             },{
                 name: '已提现',
-                value: '10'
+                value: '0'
             },{
                 name: '返佣店铺',
-                value: '2'
+                value: '0'
             }],
             shopList: [],
             recordList: [],
             currentView: 0,
-            price: 0,
+            balance: 0,
         }
     },
     computed: {
@@ -87,12 +86,11 @@ export default {
             "userInfo": state => state.user.userInfo 
         }),
     },
-    onLoad() {
+    onShow() {  
         const self = this;
-        apiReward().then(res => {
-            console.log(res)
-            this.price = res.total
-            this.topData[0].value = res.balance
+        self.getBalance().then(res => {
+            this.balance = res.balance
+            this.topData[0].value = res.total
             this.topData[1].value = res.arrival_account
         })
         self.getRewardList(1)
@@ -100,6 +98,7 @@ export default {
     methods: {
         ...mapActions('user', [
             'updataUsers',
+            'getBalance'
         ]),
         getRewardList(page) {
             apiRewardList({
@@ -127,17 +126,10 @@ export default {
                 });
             }
         },
-        jumpMoneyPages(page, params) {
-            if (params) {
-                mpvue.navigateTo({
-                    url: `/pages/money/${page}/main?${params}`
-                })
-            } else {
-                mpvue.navigateTo({
-                    url: `/pages/money/${page}/main`
-                })
-            }
-             
+        goWithdraw() {
+            mpvue.navigateTo({
+                url: `/pages/money/withdraw/main`
+            })
         },
         swiperchange(e) {
             if (e.type !== 'change') {

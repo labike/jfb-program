@@ -24,14 +24,25 @@
         </scroll-view>
         <div class="toggle-show" @click="toggleShow"></div>
     </div>
-    <div class="content" v-show="showBottom">
-        <ul class="menu" v-if="params.length">
-            <li class="nav-item" v-for="item of params" :key="item.id"
-                @click="jumpPages(item.target)"
-            >
-                <div class="text">{{item.sort_name}}</div>
-            </li>
-        </ul>
+    <div class="mask-warp" v-if="showBottom">
+        <div class="mask" @click="closeMask"></div>
+        <div class="mask-inner content">
+            <ul class="menu" v-if="params.length">
+                <li class="nav-item"
+                    :class="{active: !active}"
+                    @click="jumpPages(item.target)"
+                    id="menu_0"
+                >
+                    <div class="text">全部</div>
+                </li>
+                <li class="nav-item" v-for="item of params" :key="item.id"
+                    :class="{active: active === item.id}"
+                    @click="jumpPages(item.target)"
+                >
+                    <div class="text">{{item.sort_name}}</div>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 </template>
@@ -51,6 +62,7 @@ export default {
         params: Array,
     },
     onLoad (options) {
+        this.showBottom = false
         this.active = options.sort_two
         if (!options.sort_two) {
             this.menuId = 'menu_0'
@@ -68,8 +80,11 @@ export default {
                 url: pageUrl
             })
         },
+        closeMask() {
+            this.showBottom = false
+        },
         toggleShow() {
-            this.showBottom = !this.showBottom
+            this.showBottom = true
         }
     }
 };
@@ -121,13 +136,41 @@ export default {
             background-position: center;
         }
     }
-    .content{
-        ul{
-            display: flex;
-            li{
-                flex: 1;
-            }
+    .mask-warp{
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        z-index: 9999;
+        justify-content: flex-start;
+        .mask{
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 10000;
         }
+        .mask-inner{
+            background: #fff;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: auto;
+            min-height: 10%;
+            max-height: 80%;
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+        }
+    }
+    .content{
         .img-warp{
             text-align: center;
             img{
@@ -135,7 +178,24 @@ export default {
                 height: 100rpx;
             }
         }
-        .menu2{
+        .menu{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            justify-items:  flex-start;
+            .nav-item{
+                margin-top: 20rpx;
+                width: 25%;
+                min-height: 60rpx;
+            }
+            .active{
+                position: relative;
+                .text{
+                    font-size: 12px;
+                    color: #2a8cfa;
+                    text-align: center;
+                }
+            }
             .img-warp{
                 padding: 20rpx 0 10rpx;
                 img{
@@ -145,7 +205,7 @@ export default {
             }
         }
         .text{
-            font-size: 10pt;
+            font-size: 12px;
             color: #323232;
             text-align: center;
         }

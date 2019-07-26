@@ -258,11 +258,12 @@ export default {
 .other{
     background: #fff;
     position: relative;
-    display: flex;
     .lt-img{
+        position: absolute;
+        left: 24rpx;
+        top: 30rpx;
         width: 150rpx;
         height: 150rpx;
-        margin-right: 20rpx;
         flex-shrink: 0;
         img{
             width: 150rpx;
@@ -270,7 +271,7 @@ export default {
         }
     }
     .rt-content{
-        flex: 1;
+        margin-left: 174rpx;
     }
     .title{
         display: flex;
@@ -335,8 +336,6 @@ export default {
         font-size: 22rpx;
     }
     .vouchers{
-        display: flex;
-        align-items: center;
         font-size: 24rpx;
         margin-top: 14rpx;
         @include textOverflow;
@@ -355,8 +354,6 @@ export default {
         }
     }
     .groupon{
-        display: flex;
-        align-items: center;
         font-size: 24rpx;
         margin-top: 14rpx;
         @include textOverflow;

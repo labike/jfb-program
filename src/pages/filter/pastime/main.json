@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "休闲娱乐"
+  "navigationBarTitleText": "休闲娱乐",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle":"dark",
+  "onReachBottomDistance":50
 }

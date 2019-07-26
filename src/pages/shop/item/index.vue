@@ -66,7 +66,6 @@ export default {
     onLoad (options) {
         this.title = options.title
         this.shop_id = options.shop_id
-        this.SET_CURRENT_ITEM(null)
         apiGetProList({
             s_id: options.shop_id,
             pro_type: orderType[options.title]
@@ -75,9 +74,6 @@ export default {
         })
     },
     methods: {
-        ...mapMutations('shop', [
-            'SET_CURRENT_ITEM'
-        ]),
         _normalizeListData(list, params) {
             let newList = []
             list.forEach((item, index) => {

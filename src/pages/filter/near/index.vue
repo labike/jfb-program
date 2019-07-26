@@ -3,11 +3,11 @@
     <div class="jfb-header">
         <lay-header></lay-header>
     </div>
-    <scroll-view class="jfb-content" scroll-y @scroll="getScroll">
+    <scroll-view class="jfb-content" scroll-y @scrolltolower="toggleInner" >
         <div class="banner-warp">
             <lay-banner className='column' :list='advertList' v-if="advertList.length" sHeight="280rpx"></lay-banner>
         </div>
-        <div class="container" :class="bannerShow? '': 'stick'">
+        <div class="container">
             <ul class="nav-bar">
                 <li v-for="(nav,index) of navList" :key="index"
                     :data-current="index" class="nav"
@@ -24,7 +24,10 @@
                 <div class="swiper-inner">
                     <div v-for="(item, navIndex) of navList" :key="navIndex" >
                         <swiper-item class="swiper-item">
-                            <scroll-view :style="{ height: bannerShow ? 'auto':'100%'}" scroll-y>
+                            <scroll-view :style="{height: listScroll}" scroll-y 
+                                @scrolltoupper="toggleWarp"
+                                @scrolltolower="updataShopList"
+                            >
                                 <scroll-view scroll-x="true" class="tabs-bar">
                                     <ul class="tabs">
                                         <li class="tab" :class="item.params&&item.params.sort_one? '': 'active'"
@@ -69,13 +72,9 @@ export default {
             navList: ["美食", "酒店", "休闲娱乐", "爱车保养", "全部"],
             advertList: [],
             activeTab: 0,
-            scrollTop: 0,
-            bannerShow: true,
-            bannerOffsetHeight: 0,
-            handler: {
-                startX: 0,
-                startY: 0
-            }
+            listScroll: "auto",
+            scrollTopWarp: 0,
+            scrollTopInnerY: 0
         };
     },
     components: {
@@ -102,23 +101,24 @@ export default {
         })
     },
     watch: {
-        scrollTop (newY) {
+        scrollTopWarp (newY) {
             console.log(newY);
-            
-            if (this.bannerShow && this.minTranslateY && this.minTranslateY < newY) {
-                this.bannerShow = false
-            }
+        
         }
     },
     methods: {
-        
         getScroll(e) {
-            this.scrollTop = e.target.scrollTop
-            //this.scrollTop = e.mp.detail.scrollTop
+            this.scrollTopWarp = e.target.scrollTop
         },
-        heightInit(height) {
-            this.minTranslateY = height
+        toggleInner(e) {
+            console.log(e);
+            this.listScroll = '100%'
         },
+        toggleWarp(e) {
+            console.log(e);
+            this.listScroll = 'auto'
+        },
+        
         navChange(e) {
             if (e.type !== 'change') {
                 return
@@ -148,9 +148,11 @@ export default {
             return newList
         },
         getNearbys(top_sort,sort_one) {
+            const _this = this
+            
             let params = {
-                lng: 108.94712,
-                lat: 34.29318,
+                lng: _this.appData.currentLocation.lng,
+                lat: _this.appData.currentLocation.lat,
                 top_sort,
                 page: 1
             }
@@ -161,12 +163,32 @@ export default {
                 const current = this.navList.find(item => {
                     return item.id === top_sort
                 })
-                // if (!sort_one) {
-                //     params.sort_one = 0
-                // }
+                params.nextPage = res.list.length >= 5
                 current && (current.shopList = res.list) && (current.params = params)
             })
         },
+        updataShopList() {
+            let current = this.navList[this.activeTab];
+            if (!current.params.nextPage) {
+                mpvue.showToast({
+                    title: '没有更多数据了！',
+                    icon: 'none',
+                    duration: 1000
+                })
+                return
+            }
+            let params = {
+                lng: current.params.lng,
+                lat: current.params.lat,
+                top_sort: current.params.top_sort,
+                page: current.params.page + 1
+            }
+            apiGetNearbys(params).then(res => {
+                params.nextPage = res.list.length > 5
+                current.params = params
+                current.shopList.concat(res.list)
+            })
+        }
     }
 };
 </script>
@@ -178,9 +200,10 @@ export default {
     padding: 0 .24rem;
 }
 .jfb-content{
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
     .banner-warp{
         height: 280rpx;
     }
@@ -203,22 +226,13 @@ export default {
 
 .container{
     height: 100%;
-    flex: 1;
-    &.stick{
-        padding-top: 0;
-        display: flex;
-        flex-direction: column;
-        .nav-bar{
-            padding-top: 0;
-        }
-        .listSwiper{
-            height: auto;
-            flex: 1;
-        }
-    }
+    display: flex;
+    flex-direction: column;
+
     .listSwiper{
         width: 100%;
-        height: 100%;
+        height: auto;
+        flex: 1;
         overflow: visible;
     }
     .tabs-bar{

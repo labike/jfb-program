@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "减付宝"
+  "navigationBarTitleText": "减付宝",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle":"dark",
+  "onReachBottomDistance":50
 }

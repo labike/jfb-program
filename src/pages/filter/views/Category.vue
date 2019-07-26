@@ -68,6 +68,7 @@ export default {
     },
     props: {
         top_sort: String,
+        list: Array,
         page: Number
     },
     onLoad (options) {
@@ -75,6 +76,7 @@ export default {
         this.sort_one = options.sort_one || ''
         if (this.sort_one) {
             this.barParams.sort_one = this.sort_one
+            this.barParams.list = this.list
         }
         this.barParams.top_sort = this.top_sort
         this.getSortShop()

@@ -56,7 +56,7 @@ fly.interceptors.response.use(
                 icon: 'none',
                 duration: 2000
             });
-            return Promise.reject(response);
+            return Promise.reject(response.data);
         }
     },
     (err, promise) => {
@@ -73,7 +73,6 @@ fly.interceptors.response.use(
             icon: 'none',
             duration: 2000
         });
-        
         return promise.reject(err)
     }
 );

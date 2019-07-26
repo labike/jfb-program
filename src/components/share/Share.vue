@@ -77,8 +77,9 @@ export default {
             storeInfo: null,
             shareInfo: null,
             showShowShare: false,
-            showWxShare: true,
+            showWxShare: false,
             cardInfo: {
+                code: '',
                 title: '减付宝', //姓名
                 imageUrl: "http://wap2.qmwjj.cc/logo.png", 
                 qrCode: "http://wap2.qmwjj.cc/qrCode.jpg", 
@@ -98,23 +99,27 @@ export default {
             storeInfo.className = 'score' + parseInt(storeInfo.score) 
             that.storeInfo = storeInfo
             that.shareInfo = result.shareInfo
-            
-            console.log(storeInfo);
+            let shareQrImg = result.shareQrImg.replace("http://", "https://")
+            console.log(result);
             if (result.shareInfo.sharePermit) {
                 if (result.userShareStoreNum < 50) {
                     that.cardInfo.title = result.storeInfo.store_name
                     that.cardInfo.desc = result.storeInfo.address + '\n我在减付宝发现一家好店，快来看看吧'
-                    that.cardInfo.qrCode = result.shareQrImg
+                    that.cardInfo.qrCode = shareQrImg
                     that.cardInfo.imageUrl = result.storeInfo.header_img
                     that.cardInfo.address = storeInfo.address
                     that.cardInfo.mobile = storeInfo.store_mobile
+                    that.cardInfo.code = result.shareUrl
+                    console.log(that.cardInfo);
+                    
                     that.showShowShare = true
                 } else {
-                    // Alert({
-                    //     mes: "您分享的店铺已到达上限，更多功能请前往app",
-                    //     icon: "fail",
-                    //     timeout: 3500
-                    // })
+                    wx.showModal({
+                        content: '您分享的店铺已到达上限',
+                        showCancel: false,
+                        // confirmText: '好的',
+                        confirmColor: '#333',
+                    })
                 }
             }
         })

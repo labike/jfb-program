@@ -17,6 +17,8 @@ export default {
         endTime: Number
     },
     onLoad () {
+        this.PayStatus = true
+        
         this.countTime()
     },
     methods: {

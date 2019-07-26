@@ -78,6 +78,7 @@ export default {
         }
     },
     onLoad (options) {
+        this.orderNum = 1
         if (this.currentItem && this.currentItem.id === options.item_id) {
             
         } else {

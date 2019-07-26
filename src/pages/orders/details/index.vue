@@ -48,8 +48,8 @@
         </div>
 
         
-        <div class="model-content" v-if="detailed.type==orderType.vouchers || detailed.type==orderType.combo">
-            <ul class="cell">
+        <div class="model-content" v-if="detailed.baseInfo.is_pay_success==1">
+            <ul class="cell" v-if="detailed.type==orderType.vouchers || detailed.type==orderType.combo">
                 <li v-for="(codes,index) in detailed.projects[0].consume_codes" :key="index"
                     :class="{del: codes.is_use == 1}"
                 >
@@ -93,7 +93,7 @@
                 <li>
                     <div class="left">使 用 时 间 : </div>
                     <div class="right">
-                        {{rules.pd_info.rulesData.availableTime}}
+                        {{rules.pd_info.rulesData.availableTime || "24小时可用"}}
                     </div>
                 </li>
             </ul>
@@ -116,7 +116,7 @@
                     <span class="left">订&nbsp;&nbsp;单&nbsp;&nbsp;号&nbsp;&nbsp;:</span>
                     <span class="right">{{detailed.baseInfo.order_id}}</span>
                 </li>
-                <li v-if="payTime">
+                <li  v-if="detailed.baseInfo.is_pay_success==1">
                     <span class="left">付款时间&nbsp;&nbsp;:</span>
                     <span class="right">{{payTime}}</span>
                 </li>
@@ -353,6 +353,9 @@ export default {
             font-size: 13px;
             line-height: 1;
             padding: .15rem .15rem .15rem .45rem;
+            &::before {
+                display: none;
+            }
             &.del{
                 color: #c0c0c0;
                 .left{

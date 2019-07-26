@@ -131,6 +131,7 @@ export default {
                 if (result.shareInfo.sharePermit) {
                     if (result.userShareStoreNum < 50) {
                         const cardInfo = {
+                            code: result.shareUrl,
                             title: result.storeInfo.store_name,
                             qrCode: result.shareQrImg,
                             imageUrl: result.storeInfo.header_img,
@@ -139,11 +140,12 @@ export default {
                         }
                         this.$emit('share', cardInfo)
                     } else {
-                    // Alert({
-                    //     mes: "您分享的店铺已到达上限，更多功能请前往app",
-                    //     icon: "fail",
-                    //     timeout: 3500
-                    // })
+                        wx.showModal({
+                            content: '您分享的店铺已到达上限',
+                            showCancel: false,
+                            // confirmText: '好的',
+                            confirmColor: '#333',
+                        })
                     }
                 }
             })

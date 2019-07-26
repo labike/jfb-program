@@ -106,18 +106,19 @@ export default {
     font-size: 14px;
     line-height: 1rem;
 }
-.cell li ~ li:before {
+.cell li:not(:last-child)::before {
     content: '';
     position: absolute;
-    z-index: 0;
-    top: 0;
+    z-index: 2;
+    bottom: 0;
     left: 0;
     width: 100%;
-    height: 1px;
-    border-top: 1px solid #e8e8e8;
+    height: 2rpx;
+    border-bottom: 2rpx solid #e8e8e8;
     -webkit-transform: scaleY(0.5);
     transform: scaleY(0.5);
-    -webkit-transform-origin: 0 0;
-    transform-origin: 0 0;
+    -webkit-transform-origin: 0 100%;
+    transform-origin: 0 100%;
 }
+
 </style>

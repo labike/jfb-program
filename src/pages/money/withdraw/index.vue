@@ -6,7 +6,7 @@
                 <span>可提现金额</span>
                 <span class="all" @click="withdrawPrice('all')">全部提现</span>
             </div>
-            <div class="price">{{price}}</div>
+            <div class="price">{{balance}}</div>
             <div class="handle" @click="withdrawPrice()">提现</div>
         </div>
     </header>
@@ -37,7 +37,8 @@
 </template>
 
 <script>
-import { apiGetUsers } from '@/api/api';
+import { apiMoneyByWx } from '@/api/api';
+import { mapState, mapMutations } from 'vuex';
 export default {
     name: 'withdraw',
     data() {
@@ -61,15 +62,30 @@ export default {
                 name: '250元',
                 value: 250
             }],
-            price: 0,
             payPrice: 30,
-            payType: 'wxpay'
+            payType: 'wxpay',
+            nickName: ''
         }
     },
+    computed: {
+        ...mapState({
+            "balance": state => state.user.balance 
+        }),
+    },
     onLoad(options) {
-        this.price = options.amount
+        const _this = this
+        wx.getUserInfo({
+            withCredentials: true,
+            success(info) {
+                let { userInfo } = info;
+                _this.nickName = userInfo.nickName 
+            }
+        })
     },
     methods: {
+        ...mapMutations("user", [
+            'SET_WITHDRAW',
+        ]),
         withdrawPrice(all) {
             const _this = this
             const payType = _this.payType === 'wxpay' ? '微信' : _this.payType === 'alipay' ? '支付宝' : '银联'
@@ -80,31 +96,69 @@ export default {
                     success: function (res) {
                         console.log(res)
                         if (res.confirm) {
-                            if (_this.price < 1) {
+                            if (_this.balance < 1) {
                                 wx.showToast({
                                     title: `${payType}提现金额必须大于1`,
                                     icon: 'none',
                                     duration: 2000
                                 })
                             } else {
-                                
+                                _this.toEarnMoney()
                             }
                         }
                     }
                 })
             } else {
-                if (_this.payPrice >= _this.price) {
+                if (_this.payPrice >= _this.balance) {
                     wx.showToast({
                         title: '您的余额不足，请继续努力哦！',
                         icon: 'none',
                         duration: 2000
                     })
                 } else {
-                    
+                    _this.toEarnMoney()
                 }
             }
              
         },
+        toEarnMoney() {
+            const _this = this
+            const payType = _this.payType
+            _this.SET_WITHDRAW({
+                type: payType,
+                amount: _this.payPrice,
+                account: _this.nickName
+            })
+            if (payType === 'wxpay') {
+                apiMoneyByWx({
+                    openid: wx.getStorageSync('token'),
+                    amount: _this.payPrice
+                }).then(res => {
+                    wx.showToast({
+                        title: '申请提交成功!',
+                        duration: 2000
+                    })
+                    setTimeout(function() {
+                        mpvue.redirectTo({
+                            url: `/pages/money/ok/main`
+                        })
+                    }, 1000)
+                }).catch(() => {
+                    wx.showToast({
+                        title: '提现人数过多，请稍后再试！',
+                        icon: 'none',
+                        duration: 2000
+                    })
+                })
+                return
+            }
+            if (payType === 'alipay') {
+                mpvue.navigateTo({
+                    url: `/pages/money/alipay/main`
+                })
+            }
+            
+        }
     }
 }
 </script>

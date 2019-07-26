@@ -113,7 +113,10 @@ export default {
         }
     },
     methods: {
-        ...mapMutations(['SET_CURRENT_ORDER']),
+        ...mapMutations([
+            'SET_CURRENT_ORDER',
+            "SET_ORDER_RETURN"
+        ]),
         jumpOrderPages(page, order) {
             this.SET_CURRENT_ORDER(order)
             mpvue.navigateTo({
@@ -146,7 +149,15 @@ export default {
             })
         },
         payOrder(order) {
-            this.SET_CURRENT_ORDER(order);
+            console.log(order);
+            
+            const deadlinetime = Number(order.create_time) + 60 * 60 * 24
+            this.SET_ORDER_RETURN({
+                order_id: order.order_id,
+                order_name: order.title,
+                actual: order.actual_price,
+                deadlinetime
+            });
             mpvue.navigateTo({
                 url: `/pages/shop/pay/main?order_id=${order.order_id}`
             }) 

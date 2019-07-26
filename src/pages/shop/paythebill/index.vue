@@ -1,40 +1,36 @@
 <template>
-<lay-main v-if="paying">
-    <!-- <div slot="custom" class="navbar-explain" @click.stop="explain = true">优惠说明</div> -->
-    <div class="pay-the-bill">
-        <p class="address">{{paying.storeInfo.address}}</p>
-        <ul class="cell consume">
-            <li class="odrer-price">
-                <p class="lable">订单金额</p>
-                <div class="input">
-                    <input type="digit" v-model="orderPrice" placeholder="请询问服务员后输入"
-                        :confirm-hold='true' :focus='true'
-                        @input='replaceInput'
-                    />
-                </div>
-            </li>
-            <li class="odrer-ticket" v-if="paying.isUse">
-                <p class="lable">商家优惠<span class="tenth">({{paying.discount/10}}折)</span></p>
-                <div class="input">{{discountPrice}}</div>
-            </li>
-            <li class="odrer-ticket" v-else>
-                <p class="lable">商家优惠</p>
-                <div class="input">该时间段无优惠</div>
-            </li>
-            <li class="odrer-other">
-                <p class="lable">实际支付</p>
-                <div class="input">
-                    <div class="input">{{payPrice}}</div>
-                </div>
-            </li>
-        </ul>
-        <div id="payBtn" @click="jumpPay">和店员确认，立即支付</div>
-    </div>
-</lay-main>
+<section class="pay-the-bill" v-if="paying">
+    <p class="address">{{paying.storeInfo.address}}</p>
+    <ul class="cell consume">
+        <li class="odrer-price">
+            <p class="lable">订单金额</p>
+            <div class="input">
+                <input type="digit" v-model="orderPrice" placeholder="请询问服务员后输入"
+                    :confirm-hold='true' :focus='true'
+                    @input='replaceInput'
+                />
+            </div>
+        </li>
+        <li class="odrer-ticket" v-if="paying.isUse">
+            <p class="lable">商家优惠<span class="tenth">({{paying.discount/10}}折)</span></p>
+            <div class="input">{{discountPrice}}</div>
+        </li>
+        <li class="odrer-ticket" v-else>
+            <p class="lable">商家优惠</p>
+            <div class="input">该时间段无优惠</div>
+        </li>
+        <li class="odrer-other">
+            <p class="lable">实际支付</p>
+            <div class="input">
+                <div class="input">{{payPrice}}</div>
+            </div>
+        </li>
+    </ul>
+    <div id="payBtn" @click="jumpPay">和店员确认，立即支付</div>
+</section>
 </template>
 
 <script>
-import LayMain from "@/components/layouts/Main.vue";
 import PayTheBill from '@/config/class/pay_the_bill';
 import { mapActions, mapState } from "vuex";
 import { orderType } from '@/config/base';
@@ -48,9 +44,6 @@ export default {
             orderPrice: '',
             paying: null
         };
-    },
-    components: {
-        LayMain
     },
     computed: {
         discountPrice: function() {

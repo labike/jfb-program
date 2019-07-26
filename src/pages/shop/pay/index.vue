@@ -1,7 +1,7 @@
 <template>
-	<div class="pay-wrapper"  v-if="createOrderReturn">
+	<div class="pay-wrapper"  v-if="showPay">
 		<div class="order-details">
-			<last-time :endTime="createOrderReturn.deadlinetime" @callback='closePay'></last-time >
+			<last-time  :endTime="createOrderReturn.deadlinetime" @callback='closePay'></last-time >
 			<div class="price">{{createOrderReturn.actual}}</div>
 			<div class="details"
 			 v-if="createOrderReturn.order_name">
@@ -28,16 +28,25 @@ export default {
     data() {
         return {
             order_id: '',
-            paying: true
+            paying: true,
+            showPay: false,
         }
     },
     components: {
         LastTime
     },
     onLoad (options) {
+        console.log(this.createOrderReturn);
+        
+        this.showPay = false;
+        this.paying = true;
         this.order_id = options.order_id;
-        if (!this.createOrderReturn) {
-            this.updateOrderReturn(this.order_id)
+        if (this.createOrderReturn && this.createOrderReturn.order_id === this.order_id) {
+            this.showPay = true;
+        } else {
+            this.updateOrderReturn(this.order_id).then(res => {
+                this.showPay = true;
+            })
         }
     },
     computed: {
@@ -99,7 +108,7 @@ export default {
                     wx.hideLoading();
                     wx.showToast({
                         title: err,
-                        icon: 'fail',
+                        icon: 'none',
                         duration: 2000
                     })
                 })

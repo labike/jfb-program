@@ -45,32 +45,10 @@ export default {
         this.item_id = options.item_id;
         if (this.title === 'vouchers' || this.title === 'combo') {
             this.showOrderVouchers = true
-        } else if (this.title === 'goods') {
-            if (!this.cartOrderParam) {
-                let cartOrderParam = this.Lockr.get('cartOrderParam');
-                if (!cartOrderParam) {
-                    this.$router.go(-1)
-                }
-                this.$store.commit('SET_CART_ORDER_PARAM', cartOrderParam)  
-            }
-            this.showOrderGoods = true
-            this.orderDiscount()
         }
     },
     computed: {
-    //     ...mapState(['isWebViews','shopInfo','cartOrderParam']),
-        // cartData: function () {
-        //     const carts = []
-        //     this.cartOrderParam.cartList.forEach(item => {
-        //         let food = {
-        //             pid: item.id,
-        //             sku: item.sku_id === '0_0' ? '' : item.sku_id,
-        //             num: item.num
-        //         }
-        //         carts.push(food)
-        //     })
-        //     return JSON.stringify(carts)
-        // },
+
         orderData: function () {
             /**
             * * 代金券
@@ -89,10 +67,7 @@ export default {
                 baseData.number = that.orderNum
                 baseData.p_id = that.item_id
             }
-            if (that.title === 'goods') {
-                baseData.activity_id = that.activity_id
-                baseData.carts = that.cartData
-            }
+
             return baseData
         }
         

@@ -22,7 +22,10 @@
                     :data-id='sort1.id'
                     class="mask-list-item"
                     @click="selectItem(sort1)"
-                >{{sort1.sort_name}}({{sort1.count}})</li>
+                >
+                    <span>{{sort1.sort_name}}</span>
+                    <span v-if="sort1.count">({{sort1.count}})</span>
+                </li>
             </ul>
             <ul v-if="selectNav == 1&&nearList.length"
                 class="mask-list" 
@@ -103,8 +106,10 @@ export default {
         }).then(res => {
             console.log(res);
             this.nearList = res.addrData
-            this.typeList = res.sortData
-            if (this.params.sort_one && this.typeList.length) {
+            if (this.params.list && this.params.list.length) {
+                this.typeList = this.params.list
+            } else {
+                this.typeList = res.sortData
                 let current = this.typeList.find(item => {
                     return this.params.sort_one === item.id
                 })

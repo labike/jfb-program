@@ -21,6 +21,8 @@
         "pages/money/index/main",
         "pages/money/withdraw/main",
         "pages/money/list/main",
+        "pages/money/alipay/main",
+        "pages/money/ok/main",
         "pages/filter/near/main",
         "pages/filter/repast/main",
         "pages/filter/hotel/main",
