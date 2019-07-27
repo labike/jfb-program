@@ -52,7 +52,6 @@
                 <div class="food">
                     <div class="food-img">
                         <img :src="combo.imgUrl" :alt="combo.name">
-                        <!-- <img src="http://shop.qmwjj.cc/storeImg/Atlas/20190322084831_955.jpg" alt=""> -->
                     </div>
                     <div class="food-info">
                         <div class="name">{{ combo.name }}</div>

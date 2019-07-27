@@ -1,6 +1,6 @@
 import QS from 'qs';
 import Fly from 'flyio/dist/npm/wx';
-import { HOST } from '@/config/base';
+import { APIHOST } from '@/config/base';
 
 
 const fly = new Fly();
@@ -80,12 +80,12 @@ fly.interceptors.response.use(
 export default fly
 
 export function get(url, data) {
-    url = HOST + url
+    url = APIHOST + url
     return fly.get(url,data);
 }
 
 export function post(url, data) {
-    url = HOST + url
+    url = APIHOST + url
     return fly.post(url, data);
 }
 

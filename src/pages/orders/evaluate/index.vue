@@ -47,7 +47,7 @@
 
 <script>
 import { formatTime } from '@/utils/index'
-import { HOST, orderType } from "@/config/base";
+import { APIHOST, orderType } from "@/config/base";
 import { apiGetRateLables, apiRateData } from "@/api/api.js";
 import { mapActions } from 'vuex';
 export default {
@@ -173,7 +173,7 @@ export default {
             const pics = this.pics;
             const formData = this.formData;
             wx.uploadFile({
-                url: HOST + 'comment/order',
+                url: APIHOST + 'comment/order',
                 filePath: pics[0],
                 name: 'img[]',
                 header: {

@@ -57,7 +57,7 @@
                 <div class="right">029-86513755</div>
             </div>
         </li>
-        <li class="group-item"  @click="jumpWeb('http://wap2.qmwjj.cc/teamwork')">
+        <li class="group-item"  @click="jumpWeb(WAPHOST +'teamwork')">
             <img src="/static/tabs/icon_me_service_collaborate.png" class="icon">
             <div class="group-item-text">
                 <div class="left">我要合作</div>
@@ -76,12 +76,18 @@
 </template>
 
 <script>
+import { WAPHOST } from '@/config/base'
 import { mapState, mapActions } from 'vuex';
 import { apiGetUsers } from '@/api/api';
 import { callPhone } from '@/utils/index';
 
 export default {
     name: 'mine',
+    data() {
+        return {
+            WAPHOST
+        }
+    },
     computed: {
         ...mapState({
             "userInfo": state => state.user.userInfo 

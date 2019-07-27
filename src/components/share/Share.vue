@@ -80,12 +80,12 @@ export default {
             showWxShare: false,
             cardInfo: {
                 code: '',
-                title: '减付宝', //姓名
-                imageUrl: "http://wap2.qmwjj.cc/logo.png", 
-                qrCode: "http://wap2.qmwjj.cc/qrCode.jpg", 
-                address: "凤城八路长和国际F座26楼",
-                mobile: "029-8845-1373",
-                company: "西安减付宝网络科技有限公司", 
+                title: '',
+                imageUrl: "", 
+                qrCode: "", 
+                address: "",
+                mobile: "",
+                company: "", 
             },
         }
     },

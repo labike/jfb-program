@@ -38,13 +38,13 @@ export default {
     data() {
         return {
             cardInfo: {
-                avater: "http://t2.hddhhn.com/uploads/tu/201806/9999/91480c0c87.jpg", //需要https图片路径
-                qrCode: "http://i4.hexun.com/2018-07-05/193365388.jpg", //需要https图片路径
-                TagText: "小姐姐", //标签
-                Name: '小姐姐', //姓名
-                Position: "程序员鼓励师", //职位
-                Mobile: "13888888888", //手机
-                Company: "才华无限有限公司", //公司
+                avater: "", //需要https图片路径
+                qrCode: "", //需要https图片路径
+                TagText: "", //标签
+                Name: '', //姓名
+                Position: "", //职位
+                Mobile: "", //手机
+                Company: "", //公司
             },
             showModalStatus: true,
             imageHeight: 0,

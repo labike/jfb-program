@@ -195,7 +195,7 @@ export default {
                 this.shop.collect_num = Number(this.shop.collect_num) - 1
                 this.shop.user_is_collect = false
                 wx.showToast({
-                    title: res.message,
+                    title: "取消成功",
                     icon: 'success',
                     duration: 1000
                 })
@@ -203,7 +203,7 @@ export default {
         },
         
         tapShare(e) {
-
+            console.log(e);
         },
     },
 };

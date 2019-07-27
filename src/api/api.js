@@ -4,7 +4,7 @@ import { get, post } from "../utils/http";
 
 /**
  * 2.1.1 banner广告默认和5条推荐数据
- * @method GET http://clients.qmwjj.bxl/v1/index
+ * @method GET https://clients.qmw111.com/v1/index
  * @params city_id:城市id (非必填，如果没有填写 ，根据ip获取当前城市) 
  * @params lng: 经度 
  * @params lat: 纬度
@@ -24,7 +24,7 @@ export const apiGetIndex = params => {
 
 /**
  * 2.1.2 首页推荐店铺或产品上拉请求
- * @method GET http://clients.qmwjj.cc/v1/index/recommends 
+ * @method GET https://clients.qmw111.com/v1/index/recommends 
  * @params city_id:城市id (非必填，如果没有填写 ，根据ip获取当前城市) 
  * @params lng: 经度 
  * @params lat: 纬度
@@ -49,7 +49,7 @@ export const apiGetRecommends = params => {
 
 // /**
 //  * 2.1.1 advert数据附近顶部
-//  * @method GET http://clients.qmwjj.cc/v1/adverts/nearbyTop
+//  * @method GET https://clients.qmw111.com/v1/adverts/nearbyTop
 //  * @return {}
 //  */
 // export const apiGetAdvert = () => {
@@ -72,7 +72,7 @@ export const apiGetRecommends = params => {
  *  休闲娱乐【顶部】（名称暂定活动宝）position 1 industry 3
  *  爱车【顶部】（名称暂定活动宝） position 1 industry 4
  *   
- * @method GET  http://clients.qmwjj.cc/v1/advert/index?city_id=2809&position=1&industry=0
+ * @method GET  https://clients.qmw111.com/v1/advert/index?city_id=2809&position=1&industry=0
  * @params  city_id
  * @params  position
  * @return  industry
@@ -88,7 +88,7 @@ export const apiGetAdvert = params => {
 
 /**
  * 2.3 附近商家数据 
- * @method GET http://clients.qmwjj.cc/v1/nearbys 
+ * @method GET https://clients.qmw111.com/v1/nearbys 
  * @params lng:经度
  * @params lat：纬度
  * @params page:页码
@@ -110,7 +110,7 @@ export const apiGetNearbys = params => {
 };
 /**
  * 2.6 首页分类 
- * @method POST http://clients.qmwjj.cc/v1/index-sort
+ * @method POST https://clients.qmw111.com/v1/index-sort
  */
 export const apiGetSort = () => {
     return post(`index-sort`).then(res => {        
@@ -126,7 +126,7 @@ export const apiGetSort = () => {
 
 /**
  * 3.1.1.1 分类搜索店铺列表
- * @method POST http://clients.qmwjj.cc/v1/stores
+ * @method POST https://clients.qmw111.com/v1/stores
  * @params city_id:必须填写当前城市所在id
  * @params top_sort:(非必填项)顶级分类id
  * @params sort_one:(非必填项)一级分类id
@@ -147,7 +147,7 @@ export const apiSearch = params => {
 
 /**
  * 3.1.1.2 热门词
- * @method GET http://clients.qmwjj.bxl/v1/city/hotwords
+ * @method GET https://clients.qmw111.com/v1/city/hotwords
  * @params city_id:城市id
  * @return {}
  */
@@ -166,7 +166,7 @@ export const apiGetHotWords = city_id => {
 /***************************************** 店铺详情接口 *****************************************/
 /**
  * 3.2 门店详情
- * @method GET http://clients.qmwjj.cc/v1/store-details?s_id=31
+ * @method GET https://clients.qmw111.com/v1/store-details?s_id=31
  * @params s_id:门店id
  * @return {}
  */
@@ -185,7 +185,7 @@ export const apiGetShop = params => {
 
 /**
  * 4.7.1 评价标签 
- * @method GET http://clients.qmwjj.cc/v1/comment/lables
+ * @method GET https://clients.qmw111.com/v1/comment/lables
  * @params s_id 
  * @return []
  */
@@ -204,7 +204,7 @@ export const apiGetRateLables = s_id => {
 
 /**
  * 4.7.2 订单评价
- * @method GET http://clients.qmwjj.cc/v1/comment/order
+ * @method GET https://clients.qmw111.com/v1/comment/order
  * @params order_id:订单号码 
  * @params start_num:选择星数字(1-5)
  * @params tags_ids:选择标签id(多个用,隔开)
@@ -243,7 +243,7 @@ export const apiGetShopRate = params => {
 
 /**
  * 4.7.4 我的评价(获取我的评论)
- * @method GET http://clients.qmwjj.cc/v1/comment/my
+ * @method GET https://clients.qmw111.com/v1/comment/my
  * @params page 页码
  * @params limit 
  * @return list：[]
@@ -283,7 +283,7 @@ export const apiGetShopImg = params => {
 
 /**
  * 3.4 获取门店商品数据
- * @method GET http://clients.qmwjj.cc/v1/pro-list/2/31 【参数顺序：pro_type / s_id】
+ * @method GET https://clients.qmw111.com/v1/pro-list/2/31 【参数顺序：pro_type / s_id】
  * @params pro_type：商品类型【1：代金券2：团购4：购物车】
  * @params s_id
  * @return []
@@ -302,7 +302,7 @@ export const apiGetProList = params => {
 
 /**
  *3.5 商品详情数据(获取门店商品详情)
- * @method GET http://clients.qmwjj.cc/v1/pro-details?s_id=31&id=10&pro_type=1
+ * @method GET https://clients.qmw111.com/v1/pro-details?s_id=31&id=10&pro_type=1
  * @params pro_type:商品类型【1：代金券2：团购3：买单】
  * @params s_id:门店id
  * @params id:商品id
@@ -326,7 +326,7 @@ export const apiGetCodeByLogin = mobile => get(`sends/${mobile}`);
 
 /**
  * 1.2 手机登录&注册
- * @method POST http://clients.qmwjj.cc/v1/logins
+ * @method POST https://clients.qmw111.com/v1/logins
  * @params mobile:手机号
  * @params sms_code:手机验证码
  */
@@ -337,7 +337,7 @@ export const apiUserLogin = params => {
 
 /**
  * 3.1.2 减付宝扫描二维码,分享用户绑定关系
- * @method POST http://clients.qmwjj.cc/v1/store-scan
+ * @method POST https://clients.qmw111.com/v1/store-scan
  * @params content: 扫描获取到的内容（type=3tjinfo 给content）
  * @params type: 1-买单 2-门店 3-客户邀请
  */
@@ -352,7 +352,7 @@ export const apiStoreScan = params => {
 
 /**
  * 1.4 第三方登录--获取微信用户信息unionid
- * @method GET http://clients.qmwjj.cc/v1/user-info?code=001fJpOk0ul7vr1n5UQk0qHkOk0fJpOk
+ * @method GET https://clients.qmw111.com/v1/user-info?code=001fJpOk0ul7vr1n5UQk0qHkOk0fJpOk
  * @params code : code码 
  * @params type : 2 小程序登陆 
  */
@@ -366,7 +366,7 @@ export const apiGetOpenId = code => {
 
 /**
  * 1.4 第三方登录--微信登陆
- * @method POST http://clients.qmwjj.cc/v1/unifylogin
+ * @method POST https://clients.qmw111.com/v1/unifylogin
  * @params unifyid : unionid
  * @params ltype: 1 web微信 2微信公众号登陆 3小程序 
  */
@@ -388,7 +388,7 @@ export const apiWxLogin = other_info => {
 
 /**
  * 1.5.1 获取手机号
- * @method POST http://clients.qmwjj.cc/v1/get-mobile
+ * @method POST https://clients.qmw111.com/v1/get-mobile
  */
 export const apiGetMobileByWx = params => {
     return post('get-mobile', params).then(res => {
@@ -400,7 +400,7 @@ export const apiGetMobileByWx = params => {
 
 /**
  * 1.5 绑定手机号
- * @method POST http://clients.qmwjj.cc/v1/binds
+ * @method POST https://clients.qmw111.com/v1/binds
  * @params mobile:手机号
  * @params sms_code:手机验证码
  */
@@ -415,7 +415,7 @@ export const apiBindMobile = params => {
 
 /**
  * 1.6 个人中心
- * @method GET http://clients.qmwjj.cc/v1/users
+ * @method GET https://clients.qmw111.com/v1/users
  * @params mobile:手机号
  * @params sms_code:手机验证码
  */
@@ -430,7 +430,7 @@ export const apiGetUsers = () => {
 /***************************************** 订单 *****************************************/
 /**
  *4.1 创建订单
- * @method POST http://clients.qmwjj.cc/v1/order-create
+ * @method POST https://clients.qmw111.com/v1/order-create
  * 公共必填
  * @params s_id: 门店id
  * @params type:订单类型（1：代金券 2：团购 3：买单 4：购物车）
@@ -462,7 +462,7 @@ export const apiCreateOrder = params => {
 
 /**
  *4.2 订单支付
- * @method POST http://clients.qmwjj.cc/v1/order-pay
+ * @method POST https://clients.qmw111.com/v1/order-pay
  * @params order_id:订单号
  * @params actual: 实际支付金额
  * @params pay_method:支付方式 [3-支付宝支付  4-jsapi微信支付]
@@ -478,7 +478,7 @@ export const apiOrderPay = params => {
 
 /**
  * 2.4 门店点赞 & 分享 &收藏 &浏览 &加入分享 
- * @method POST http://clients.qmwjj.cc/v1/like-share
+ * @method POST https://clients.qmw111.com/v1/like-share
  * @params s_id: 门店ID
  * @params type: 操作类型 【like-点赞 collect-收藏 share-分享  browser-浏览 attend-加入分享 】
  */ 
@@ -492,7 +492,7 @@ export const likeShare = params => {
 
 /**
  * 2.5 商圈以及分类 
- * @method GET http://clients.qmwjj.cc/v1/business-sort/
+ * @method GET https://clients.qmw111.com/v1/business-sort/
  * @params adCode:城市编码
  * @params top_sort：分类
  */ 
@@ -507,7 +507,7 @@ export const apiBusinessSort = params => {
 
 /**
  * 2.6 首页分类 
- * @method POST http://clients.qmwjj.cc/v1/index-sort
+ * @method POST https://clients.qmw111.com/v1/index-sort
  * @return {}
  */
 export const apiGetAllSort = () => {
@@ -524,7 +524,7 @@ export const apiGetAllSort = () => {
 
 /**
  * 2.7 三级分类数据 
- * @method POST http://clients.qmwjj.cc/v1/three-sort
+ * @method POST https://clients.qmw111.com/v1/three-sort
  * @return {}
  */
 export const apiGetThreeSort = sort_id => {
@@ -542,7 +542,7 @@ export const apiGetThreeSort = sort_id => {
 
 /**
  * 1.10.1 光顾店铺列表 
- * @method GET http://clients.qmwjj.cc/v1/contact/comes
+ * @method GET https://clients.qmw111.com/v1/contact/comes
  * @params limit: 每页显示条数
  * @params page: 页码 
  * @params type: all-全部  1-已加入（返佣好店） 2-未加入
@@ -558,7 +558,7 @@ export const visitedShop = params => {
 
 /**
  * 1.10.2 用户收藏店铺 
- * @method GET http://clients.qmwjj.cc/v1/contact/collects
+ * @method GET https://clients.qmw111.com/v1/contact/collects
  * @params limit: 每页显示条数
  * @params page: 页码
  */ 
@@ -572,7 +572,7 @@ export const collectsShop = params => {
 
 /**
  * 1.10.3 批量取消店铺操作 
- * @method POST http://clients.qmwjj.cc/v1/contact/cancels
+ * @method POST https://clients.qmw111.com/v1/contact/cancels
  * @params s_ids:店铺ids(多个店铺用,隔开) 
  * @params type:操作类型【collect-收藏 browser-浏览 attend-加入分享 】
  */ 
@@ -588,7 +588,7 @@ export const unLikeShare = params => {
 
 /**
  * 1.10.4 用户浏览过店铺列表 
- * @method GET http://clients.qmwjj.cc/v1/contact/browsers 
+ * @method GET https://clients.qmw111.com/v1/contact/browsers 
  * @params limit: 每页显示条数
  * @params page: 页码 
  */ 
@@ -602,7 +602,7 @@ export const browsersShop = params => {
 
 /**
  *微信分享sdk
- * @method POST http://clients.qmwjj.cc/v1/user/wxsignature
+ * @method POST https://clients.qmw111.com/v1/user/wxsignature
  * @params s_id: 门店ID
  * @return confing
  */ 
@@ -617,7 +617,7 @@ export const shareSDK = share_url => {
 
 /**
  *4.2.2 订单支付成功后分享店铺
- * @method POST http://clients.qmwjj.cc/v1/share-store
+ * @method POST https://clients.qmw111.com/v1/share-store
  * @params s_id: 门店ID
  * @return confing
  */ 
@@ -635,7 +635,7 @@ export const apiShareStore = s_id => {
 
 /**
  *4.2.3 取消未付款订单
- * @method POST http://clients.qmwjj.cc/v1/order-cancel
+ * @method POST https://clients.qmw111.com/v1/order-cancel
  * @params order_id:订单号码
  * @return confing
  */ 
@@ -649,7 +649,7 @@ export const apiOrderCancel = order_id => {
 
 /**
  *4.3.1 订单退款 
- * @method POST http://clients.qmwjj.cc/v1/order-return
+ * @method POST https://clients.qmw111.com/v1/order-return
  * @params order_id:订单号码
  * @params refund_reason：退款原因
  * @return confing
@@ -665,7 +665,7 @@ export const apiOrderRefund = params => {
 
 /**
  *4.4.1  订单分类列表
- * @method GET http://clients.qmwjj.cc/v1/orders
+ * @method GET https://clients.qmw111.com/v1/orders
  * @params nav_type:订单类型【全部：all,0:待付款1:待使用2：待评价3：退款/售后】
  * @return s_id:店铺id(不是必填参数，不带入表示所有店铺订单)
  * @return  limit: 每页显示条数
@@ -686,7 +686,7 @@ export const apiOrderList = params => {
 
 /**
  *4.4.2 订单列表可用消费码
- * @method GET http://clients.qmwjj.cc/v1/order/coupons
+ * @method GET https://clients.qmw111.com/v1/order/coupons
  * @return s_id:店铺id(不是必填参数，不带入表示所有店铺订单)
  */
 export const apiOrderCoupons = s_id => {
@@ -705,7 +705,7 @@ export const apiOrderCoupons = s_id => {
 /**
  * 
  *4.4.3 用户店铺订单列表-已支付订单
- * @method GET http://clients.qmwjj.cc/v1/order/payall
+ * @method GET https://clients.qmw111.com/v1/order/payall
  * @return s_id:店铺id(不是必填参数，不带入表示所有店铺订单)
  */
 export const apiOrderPayList = s_id => {
@@ -724,7 +724,7 @@ export const apiOrderPayList = s_id => {
 
 /**
  *4.5订单详情
- * @method GET http://clients.qmwjj.cc/v1/order-details/201901181703544213826428
+ * @method GET https://clients.qmw111.com/v1/order-details/201901181703544213826428
  * @params order_id:订单号
  */
 export const apiOrderDetails = orderId => {
@@ -739,7 +739,7 @@ export const apiOrderDetails = orderId => {
 
 /**
  *4.5.2 订单状态
- * @method GET http://clients.qmwjj.cc/v1/order-status/201902162143321426866724
+ * @method GET https://clients.qmw111.com/v1/order-status/201902162143321426866724
  * @params order_id:订单号
  * @return  is_pay_success  0-未支付 1-支付成功
  * @return  store_id //商家id
@@ -758,7 +758,7 @@ export const apiPayStatus = orderId => {
 
 /**
  *4.1.3.1 获取订单-购物车-优惠列表
- * @method POST  http://clients.qmwjj.cc/v1/order-discount
+ * @method POST  https://clients.qmw111.com/v1/order-discount
  * @params s_id:门店id  
  * @params type:订单类型（1：代金券2：团购3：买单4：购物车下单） 
  * @params carts:购物车内容 [{
@@ -786,7 +786,7 @@ export const apiOrderDiscount = params => {
 
 /**
 * reward 我的钱包
-* @method GET  http://clients.qmwjj.cc/v1/reward/statistics
+* @method GET  https://clients.qmw111.com/v1/reward/statistics
 * @return  total：总收益 balance：余额 arrival_account：已提现
 */
 export const apiReward = params => {
@@ -798,7 +798,7 @@ export const apiReward = params => {
 };
 /**
 * reward 返佣店铺详情
-* @method GET  http://clients.qmwjj.cc/v1/reward/list
+* @method GET  https://clients.qmw111.com/v1/reward/list
 * @params  limit: 每页显示条数
 * @params  page: 页码
 * @return  total：总收益 balance：余额 arrival_account：已提现
@@ -814,7 +814,7 @@ export const apiRewardList = params => {
 
 /**
 *  提现记录列表
-* @method GET  http://clients.qmwjj.cc/v1/reward/cashes
+* @method GET  https://clients.qmw111.com/v1/reward/cashes
 * @params  limit: 每页显示条数
 * @params  page: 页码
 * @return  total：总数量 list：
@@ -834,7 +834,7 @@ export const apiRewardCashes = params => {
 
 /**
 *  微信提现
-* @method POST  http://clients.qmwjj.cc/v1/wechats
+* @method POST  https://clients.qmw111.com/v1/wechats
 * @params openid： 提现账户 
 * @params amount （最低金额为1元，最高10万元）
 * @return userid
@@ -853,7 +853,7 @@ export const apiMoneyByWx = params => {
 
 /**
 *  支付宝提现
-* @method POST  http://clients.qmwjj.cc/v1/ailis
+* @method POST  https://clients.qmw111.com/v1/ailis
 * @params account 提现账户 
 * @params amount 单位：元,只支持2位小数，小数点前最大支持13位，金额必须大于等于0.1元。
 * @return order_id
@@ -872,7 +872,7 @@ export const apiMoneyByAlipay = params => {
 
 /**
 *  支付宝提现验证码
-* @method POST  http://clients.qmwjj.cc/v1/verify
+* @method POST  https://clients.qmw111.com/v1/verify
 * @params phone phone
 * @params money 金额
 * @return order_id

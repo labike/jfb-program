@@ -1,32 +1,37 @@
 <template>
-<scroll-view class="container" scroll-y>
+<scroll-view class="container" scroll-y @scrolltolower="toggleInner" >
     <header class="top-info">
-        <div class="price-warp">
-            <div class="price">{{balance}}</div>
-            <div class="handle" @click="goWithdraw">去提现</div>
-        </div>
-        <div class="title">可提现金额</div>
-        <div class="price-bar">
-            <ul class="bar">
-                <li v-for="(top, index) of topData" :key="index">
-                    <div class="name">{{top.name}}</div>
-                    <div class="value">{{top.value}}</div>
-                </li>
-            </ul>
+        <div class="info-warp">
+            <div class="price-warp">
+                <div class="price">{{balance}}</div>
+                <div class="handle" @click="goWithdraw">去提现</div>
+            </div>
+            <div class="title">可提现金额</div>
+            <div class="price-bar">
+                <ul class="bar">
+                    <li v-for="(top, index) of topData" :key="index">
+                        <div class="name">{{top.name}}</div>
+                        <div class="value">{{top.value}}</div>
+                    </li>
+                </ul>
+            </div>
         </div>
     </header>
     <div class="foot-list">
         <div class="nav">
-            <div class="item" :class="{active: currentView === 0}">收益情况</div>
-            <div class="item" :class="{active: currentView === 1}">提现记录</div>
+            <div class="item" :class="{active: currentView === 0}" @click="currentView=0">收益情况</div>
+            <div class="item" :class="{active: currentView === 1}" @click="currentView=1">提现记录</div>
         </div>
-        <swiper class="shopListSwiper" style="width: 100%; height: 100%; overflow: visible;"
+        <swiper class="shopListSwiper"
             :current='currentView'
             @change="swiperchange($event)"
         >
             <swiper-item style="overflow: visible;border-radius: 50%;" class="one-scene">
-                <scroll-view style="height:100%" scroll-y> 
-                    <div  class="shop-list" v-if="shopList.length">
+                <scroll-view :style="{height: listScroll}" scroll-y 
+                    @scrolltoupper="toggleWarp"
+                    @scrolltolower="loadMore"
+                > 
+                    <div  class="shop-list" v-if="shopParams.list.length">
                         <shop-card v-for="(shop, sindex) of shopList" :key="sindex"
                             :shopInfo='shop' @share='shareShop'
                         ></shop-card>
@@ -38,11 +43,14 @@
                 </scroll-view>
             </swiper-item>
             <swiper-item style="overflow: visible;border-radius: 50%;" class="one-scene">
-                <scroll-view style="height:100%" scroll-y> 
-                    <div  class="price-list">
+                <scroll-view :style="{height: listScroll}" scroll-y 
+                    @scrolltoupper="toggleWarp"
+                    @scrolltolower="loadMore"
+                > 
+                    <div  class="price-list" v-if="casheParams.list.length">
                         
                     </div>
-                    <div class="empty">
+                    <div class="empty" v-else>
                         <img class="icon" src="/static/img/empty.png" mode="widthFix">
                         <div class="text">您还没有相关数据~</div>
                     </div>
@@ -75,9 +83,19 @@ export default {
                 name: '返佣店铺',
                 value: '0'
             }],
-            shopList: [],
-            recordList: [],
             currentView: 0,
+            shopParams: {
+                page: 1,
+                nextPage: true,
+                list: [],
+            },
+            casheParams: {
+                page: 1,
+                nextPage: true,
+                list: [],
+            },
+            limitLength: 15,
+            listScroll: "auto",
             balance: 0,
         }
     },
@@ -100,31 +118,67 @@ export default {
             'updataUsers',
             'getBalance'
         ]),
+        
+        toggleInner(e) {
+            console.log(e);
+            this.listScroll = '100%'
+        },
+        toggleWarp(e) {
+            console.log(e);
+            this.listScroll = 'auto'
+        },
         getRewardList(page) {
+            const that = this
             apiRewardList({
-                limit: 15,
+                limit: that.limitLength,
                 page
             }).then(res => {
-                this.topData[2].value = res.total
-                this.updatedList(page, 'shop', res.list)
+                that.topData[2].value = res.total
+                that.updatedList(page, 'shop', res.list)
             })
         },
         getRewardCashes(page) {
+            const that = this
             apiRewardCashes({
-                limit: 15,
+                limit: that.limitLength,
                 page
             }).then(res => {
-                this.updatedList(page, 'record', res.list)
+                that.updatedList(page, 'cashe', res.list)
             })
         },
         updatedList(page, name, list) {
+            let current = this[name + "Params"]
+            if (!current.nextPage) {
+                mpvue.showToast({
+                    title: '没有更多数据了！',
+                    icon: 'none',
+                    duration: 1000
+                })
+                return
+            }
             if (page === 1) {
-                this[name + 'List'] = list
+                current.list = list
             } else {
                 list.forEach(item => {
-                    this[name + 'List'].push(item)
+                    current.list.push(item)
                 });
             }
+            current.nextPage = list.length >= this.limitLength
+        },
+        loadMore() {
+            const that = this
+            let name = ""
+            switch (that.currentView) {
+            case 0:
+                that.shopParams.page++ 
+                that.getRewardList(that.shopParams.page)
+                break;
+            case 1:
+                that.shopParams.page++ 
+                that.casheParams(that.shopParams.page)
+                break;
+            }
+
         },
         goWithdraw() {
             mpvue.navigateTo({
@@ -137,6 +191,14 @@ export default {
             }
             let oIndex = e.mp.detail.current;
             this.currentView = oIndex;
+            if (oIndex === 0) {
+                this.shopParams.page = 1
+                this.getRewardList(1)
+            }
+            if (oIndex === 1) {
+                this.shopParams.page = 1
+                this.getRewardCashes(1)
+            }
         },
     }
 }
@@ -150,11 +212,18 @@ export default {
     height: 100%;
 }
 .top-info {
-    background-color: $base-color;
-    padding : 24rpx 50rpx;
-    height: 220rpx;
-    margin-bottom: 70rpx;
-    text-align: center;
+    padding-bottom: 50px;
+    .info-warp{
+        text-align: center;
+        background-color: $base-color;
+        padding : 24rpx 50rpx;
+        height: 220rpx;
+        .title{
+            color: #fff;
+            text-align: center;
+            font-size: 24rpx;
+        }
+    }
     .price-warp{
         color: #fff;
         line-height: 1;
@@ -194,11 +263,6 @@ export default {
             }
         }
     }
-    >.title{
-        color: #fff;
-        text-align: center;
-        font-size: 24rpx;
-    }
     .price-bar{
         margin-top: 50rpx;
         border-radius: 10rpx;
@@ -231,16 +295,23 @@ export default {
     }
 }
 
-.shopListSwiper{
-    background: #f5f5f5;
-}
+
 .foot-list{
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    .shopListSwiper {
+        background: #f5f5f5;
+        width: 100%;
+        height: auto;
+        flex: 1;
+        overflow: visible;
+    }
     .nav{
         display: flex;
         font-size: 28rpx;
         color: #818181;
-        padding: 50rpx 50rpx 20rpx;
+        padding: 20rpx 50rpx;
         justify-content: space-between;
         .active{
             color: #2a8cfa;

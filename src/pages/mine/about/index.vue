@@ -11,7 +11,7 @@
                 <div class="left">版本</div>
                 <div class="right">当前版本1.0.0</div>
             </li>
-            <li @click="jumpWeb('http://wap2.qmwjj.cc/protocol.html')">
+            <li @click="jumpWeb(WAPHOST +'protocol.html')">
                 <div class="left">用户协议</div>
             </li>
         </ul>
@@ -21,7 +21,13 @@
 </template>
 
 <script>
+import { WAPHOST } from '@/config/base'
 export default {
+    data() {
+        return {
+            WAPHOST
+        }
+    },
     methods: {
         swiperchange(e) {
             if (e.type !== 'change') {

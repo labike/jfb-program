@@ -44,10 +44,15 @@ export default {
         Menus,
         Category
     },
+    onShow() {
+        this.categoryStatus = false
+        this.navList = []
+    },
     onLoad (options) {
         this.top_sort = options.top_sort
         this.sort_one = options.sort_one || ''
         this.sort_two = options.sort_two || ''
+        
         apiGetThreeSort(this.sort_one).then(res => {
             this.navList = res.map(item => {
                 item.target = `/pages/filter/category/main?top_sort=${options.top_sort}&sort_one=${options.sort_one}&sort_two=${item.id}`
@@ -56,8 +61,8 @@ export default {
             this.categoryStatus = true
         }).catch(err => {
             console.log(err);
+            this.categoryStatus = true
         })
-        this.categoryStatus = false
     },
     watch: {
         scrollTop (newY) {

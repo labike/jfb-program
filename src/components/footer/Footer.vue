@@ -21,7 +21,7 @@
 
 <script type="text/babel">
 import { mapState } from 'vuex';
-import { shopType } from "@/config/base";
+import { WAPHOST, shopType } from "@/config/base";
 export default {
     name: 'footer',
     data() {
@@ -40,7 +40,7 @@ export default {
     methods: {
         
         jumpGoods() {
-            const page = "http://wap2.qmwjj.cc/goods?shop_id=" + this.shop_id + "&token=" + wx.getStorageSync('token')
+            const page = WAPHOST + "goods?shop_id=" + this.shop_id + "&token=" + wx.getStorageSync('token')
             mpvue.navigateTo({
                 url: `/pages/web/main?url=${encodeURIComponent(page)}`
             })
