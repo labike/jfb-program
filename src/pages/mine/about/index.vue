@@ -17,6 +17,10 @@
         </ul>
     </section>
 
+    <div class="copyright">
+        <div class="hd">CopyRight © 2010-2019</div>
+        <div class="ft">版权所有 减付宝公司</div>
+    </div>
 </div>
 </template>
 
@@ -88,5 +92,11 @@ export default {
             background-position: center;
         }
     }
+}
+.copyright{
+    text-align: center;
+    margin-top: 200rpx;
+    color: #8d8d8d;
+    text-shadow: 1px 1px #ededed;
 }
 </style>

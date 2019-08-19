@@ -5,6 +5,8 @@
 // export const HOST = 'http://clients.qmwjj.cc/v1/';
 export const APIHOST = 'https://clients.qmw111.com/v1/';
 export const WAPHOST = 'https://wap2.qmw111.com/';
+
+
 /**
  *  门店类型 （1-餐饮 2-酒店 3-休闲娱乐4-爱车）
  */
@@ -79,3 +81,13 @@ export const tabbar = [
     "pages/orders/list/main",
     "pages/mine/index/main"
 ];
+
+/**
+ *  广告功能页面
+ */
+export const adFeature = {
+    reshop: '/pages/mine/reshop/main',
+    money: '/pages/money/index/main'
+};
+
+

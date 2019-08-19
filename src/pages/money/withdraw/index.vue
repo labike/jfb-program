@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-07-03 10:24:48
+ * @Description: file content
+ -->
 <template>
 <div class="container">
     <header class="top-info">
@@ -45,7 +50,7 @@ export default {
         return {
             priceData: [{
                 name: '30元',
-                value: 30
+                value: 0.1
             },{
                 name: '50元',
                 value: 50
@@ -96,7 +101,7 @@ export default {
                     success: function (res) {
                         console.log(res)
                         if (res.confirm) {
-                            if (_this.balance < 1) {
+                            if (_this.balance < 0.01) {
                                 wx.showToast({
                                     title: `${payType}提现金额必须大于1`,
                                     icon: 'none',
@@ -131,7 +136,7 @@ export default {
             })
             if (payType === 'wxpay') {
                 apiMoneyByWx({
-                    openid: wx.getStorageSync('token'),
+                    openid: wx.getStorageSync('openId'),
                     amount: _this.payPrice
                 }).then(res => {
                     wx.showToast({

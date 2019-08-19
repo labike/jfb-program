@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-22 11:47:56
+ * @Description: file content
+ -->
 <template>
 <section class="jfb-flexview">
     <div class="jfb-header">
@@ -74,7 +79,8 @@ export default {
             activeTab: 0,
             listScroll: "auto",
             scrollTopWarp: 0,
-            scrollTopInnerY: 0
+            scrollTopInnerY: 0,
+            remainListsLength: 10
         };
     },
     components: {
@@ -87,7 +93,7 @@ export default {
             return wx.getStorageSync('appData');
         }
     },
-    onLoad (options) {
+    onShow () {
         apiGetSort().then(res => {
             this.navList = this.normalFrom(res)
             this.getNearbys("1")
@@ -163,12 +169,12 @@ export default {
                 const current = this.navList.find(item => {
                     return item.id === top_sort
                 })
-                params.nextPage = res.list.length >= 5
+                params.nextPage = res.list.length >= _this.remainListsLength
                 current && (current.shopList = res.list) && (current.params = params)
             })
         },
         updataShopList() {
-            let current = this.navList[this.activeTab];
+            let current = this.navList[this.activeTab];            
             if (!current.params.nextPage) {
                 mpvue.showToast({
                     title: '没有更多数据了！',
@@ -184,9 +190,13 @@ export default {
                 page: current.params.page + 1
             }
             apiGetNearbys(params).then(res => {
-                params.nextPage = res.list.length > 5
+                console.log(res);
+                
+                res.list.forEach(item => {
+                    current.shopList.push(item)
+                });
+                params.nextPage = res.list.length > this.remainListsLength
                 current.params = params
-                current.shopList.concat(res.list)
             })
         }
     }

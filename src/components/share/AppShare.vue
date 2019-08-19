@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-07-20 09:53:30
+ * @Description: file content
+ -->
 <template>
 <div class="wxshare">
     <!-- <div @close='closeWxShare' class="close"></div> -->

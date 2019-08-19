@@ -1,10 +1,15 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-26 15:05:14
+ * @Description: file content
+ -->
 <template>
 <div class="payok-wrap" v-if="showPayOk">
     <div class="payok" v-if="createOrderReturn">
         <div class="successful">
             <div class="icon-success"></div>
             <div class="text-success">付款成功</div>
-            <div class="store" v-if="createOrderReturn.order_name">
+            <div class="details" v-if="createOrderReturn.order_name">
                 {{createOrderReturn.order_name}}
             </div>
             <div class="price">{{createOrderReturn.actual}}</div>
@@ -21,7 +26,7 @@
 
 <script>
 import { apiPayStatus } from "@/api/api";
-import { payIsSuccess } from "@/config/base";
+import { payIsSuccess, WAPHOST } from "@/config/base";
 import { mapState, mapActions } from "vuex";
 import LayShare from "@c/share/Share.vue";
 export default {
@@ -70,9 +75,9 @@ export default {
     onShareAppMessage (options) {
         if (options.from === "menu") {
             return {
-                title: '减付宝',
-                path: '/pages/start/login/main',
-                imageUrl: '',
+                title: '我发现了一款省钱的小程序',
+                path: '/pages/index/main',
+                imageUrl: WAPHOST + 'logo.png',
             }
         }
         console.log(options);
@@ -107,14 +112,15 @@ export default {
             background-size: 100% auto;
         }
         .text-success {
-            color: #06be03;
-            font-size: 15px;
-            margin: 20rpx 0;
+            color: #58d15c;
+            font-size: 20px;
+            margin: 40rpx 0;
+            font-weight: 700;
         }
     }
     .details {
-        color: #323232;
-        font-size: 15px;
+        color: #818181;
+        font-size: 14px;
         margin-top: 10rpx;
     }
     .price {

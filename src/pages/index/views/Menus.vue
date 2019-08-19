@@ -111,7 +111,7 @@ export default {
 .container{
     background: #fff;
     padding: 24rpx;
-    margin-bottom: 24rpx;
+    // margin-bottom: 24rpx;
     .banner{
         margin-bottom: 24rpx;
     }

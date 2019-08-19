@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-24 16:37:25
+ * @Description: file content
+ -->
 <template>
 <div class="container">
     <div class="tabs-bar">
@@ -8,7 +13,7 @@
             <ul class="menu" v-if="params.length">
                 <li class="nav-item"
                     :class="{active: !active}"
-                    @click="jumpPages(item.target)"
+                    @click="jumpPages()"
                     id="menu_0"
                 >
                     <div class="text">全部</div>
@@ -49,6 +54,7 @@
 
 <script>
 import LaySwiper from "@c/swiper/Swiper.vue";
+import { getCurrentPageUrlWithArgs } from '@/utils/index'
 export default {
     name: "Menus",
     data() {
@@ -76,6 +82,13 @@ export default {
     },
     methods: {
         jumpPages(pageUrl) {
+            if (!pageUrl) {
+                pageUrl = getCurrentPageUrlWithArgs()
+                const last = pageUrl.indexOf("&sort_two")
+                if (last > -1) {
+                    pageUrl = pageUrl.substring(0,last)
+                }
+            }
             mpvue.redirectTo({
                 url: pageUrl
             })

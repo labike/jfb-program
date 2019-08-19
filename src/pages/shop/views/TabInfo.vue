@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-22 09:23:41
+ * @Description: file content
+ -->
 <template>
 <div class="barcon">
     
@@ -102,7 +107,12 @@ export default {
         otherInfo() {
             return this.params.otherInfo;
         }
-    }
+    },
+    
+    onUnload() {        
+        const self = this;
+        self.showLicense = false
+    },
 };
 </script>
 

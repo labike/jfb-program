@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-22 09:23:41
+ * @Description: file content
+ -->
 <template>
 <div class="barcon home border-top">
     <!-- 美食 -->

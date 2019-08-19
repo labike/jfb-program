@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-14 11:58:39
+ * @Description: file content
+ -->
 <template>
 	<div class="container" v-if="navList.length">
 		<scroll-view scroll-x class="nav-bar" :scroll-into-view="currentTabId" >
@@ -73,6 +78,11 @@ export default {
             this.navList = this._normalizeListData(res, options)
         })
     },
+    
+    onUnload() {        
+        const self = this;
+        self.navlist = []
+    },
     methods: {
         _normalizeListData(list, params) {
             let newList = []
@@ -91,7 +101,8 @@ export default {
                 if (params.title === 'combo') {
                     const combo = {
                         id: item.id,
-                        name: `${Number(item.price)}元${Number(item.use_person_num)}人餐`
+                        // name: `${Number(item.price)}元${Number(item.use_person_num)}人餐`
+                        name: item.name
                     }
                     newList.push(combo)
                 }

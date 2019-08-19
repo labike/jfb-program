@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-20 09:09:46
+ * @Description: 我的返佣好店
+ -->
 <template>
 <div class="container">
     <div class="shop-nav">
@@ -58,6 +63,7 @@ import AppShare from "@c/share/AppShare.vue";
 import LayModel from "@c/layouts/Model.vue";
 import ShopCard from "./../views/ShopCard.vue";
 import { visitedShop } from "@/api/api";
+import { WAPHOST } from "@/config/base";
 export default {
     data() {
         return {
@@ -86,6 +92,10 @@ export default {
         var res = wx.getSystemInfoSync()
         this.stv.lineWidth = res.windowWidth / this.tabs.length;
         this.stv.windowWidth = res.windowWidth;
+    },
+    onUnload() {        
+        const self = this;
+        self.shareShopStatus = false
     },
     components: {
         LayModel,
@@ -165,9 +175,9 @@ export default {
     onShareAppMessage (options) {
         if (options.from === "menu") {
             return {
-                title: '减付宝',
-                path: '/pages/start/login/main',
-                imageUrl: '',
+                title: '我发现了一款省钱的小程序',
+                path: '/pages/index/main',
+                imageUrl: WAPHOST + 'logo.png',
             }
         }
         console.log(options);

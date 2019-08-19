@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-24 12:04:48
+ * @Description: file content
+ -->
 <template>
 <div class="container">
     <div class="shop-nav">
@@ -89,6 +94,11 @@ export default {
         this.stv.lineWidth = res.windowWidth / this.tabs.length;
         this.stv.windowWidth = res.windowWidth;
         this.stv.offset = this.stv.lineWidth * this.activeTab
+    },
+    
+    onUnload() {        
+        const self = this;
+        self.shareShopStatus = false
     },
     components: {
         Share,

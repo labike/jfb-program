@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-24 14:39:02
+ * @Description: file content
+ -->
 <template>
 <section class="jfb-flexview">
     <div class="jfb-header">
@@ -72,7 +77,6 @@ export default {
     methods: {
         setShopPageLength(e) {
             console.log(e);
-            
         }
     },
     
@@ -81,9 +85,7 @@ export default {
         this.remainListsLength = 5
         mpvue.stopPullDownRefresh()
     },
-    onReachBottom () {
-        console.log(12);
-        
+    onReachBottom () {        
         if (this.remainListsLength === 5) {
             this.page++
             this.scrollStatus = true

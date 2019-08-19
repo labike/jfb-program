@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-18 08:48:51
+ * @Description: file content
+ -->
 <template>
 <div class="container" v-if="detailed">
     <div class="title">{{detailed.store_name}}</div>
@@ -139,8 +144,8 @@ export default {
                 this.errTxt = '请选择标签！'
                 return
             } 
-            if (this.rateContent.length < 10) {
-                this.errTxt = '评论内容在10字以上'
+            if (this.rateContent.length < 1) {
+                this.errTxt = '评论内容不能为空'
                 return
             }
             this.errTxt = false

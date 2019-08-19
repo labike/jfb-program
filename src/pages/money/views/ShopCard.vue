@@ -1,37 +1,44 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-07-04 16:34:54
+ * @Description: 我的钱包 -> 收益情况
+ -->
 <template>
-<div class="shop-card" v-if="shop && shop.id" @click="jumpShop(shop.id)">
+<div class="shop-card" v-if="shop && shop.id" >
 
-    <header class="hd">
-        <div class="record" v-if="record">{{record}}</div>
-        <div class="scale">返佣
-            <span class="red" >{{shop.reward_ammount}}</span>
-        </div>
-    </header>
     <div class="bd">
         <div class="img-warp">
             <img :src="shop.store_img" alt="">
         </div>
-        <div class="title">{{shop.store_name}}</div>
-        <ul class="score" :class="scoreName">
-            <li class="star"></li>
-            <li class="star"></li>
-            <li class="star"></li>
-            <li class="star"></li>
-            <li class="star"></li>
-            <li class="text">{{shop.score}}分</li>
-        </ul>
-        <div class="type">{{shop.type_name}}</div>
-        <div class="handle" v-if="shop.user_is_attend">
-            <div class="btn" v-if="shop.user_is_attend == 1"  @click.stop="goShare(shop)">去分享</div>
-            <div class="btn join" v-else @click.stop="joinShare(shop.id)">加入分享</div>
+        <div class="info-warp">
+            <div class="title">{{shop.store_name}}</div>
+            <ul class="score" :class="scoreName">
+                <li class="star"></li>
+                <li class="star"></li>
+                <li class="star"></li>
+                <li class="star"></li>
+                <li class="star"></li>
+                <li class="text">{{shop.score}}分</li>
+            </ul>
+            <div class="type">{{shop.type_name}}</div>
+            <div class="handle">
+                <div class="btn"  @click.stop="goShare(shop)">再次分享</div>
+            </div>
         </div>
     </div>
+    
+    <footer class="ft">
+        <div class="record" v-if="record">{{record}}</div>
+        <div class="scale">返佣: 
+            <span class="red" >￥{{shop.reward_ammount}}</span>
+        </div>
+    </footer>
 </div>
 </template>
 
 <script>
 
-import { likeShare, apiShareStore } from "@/api/api";
+import { apiShareStore } from "@/api/api";
 import { formatTime } from '@/utils/index'
 export default {
     name: 'ShopCard',
@@ -70,28 +77,32 @@ export default {
         },
     },
     methods: {
-        jumpShop(id) {
-            mpvue.navigateTo({
-                url: '/pages/shop/index/main?shop_id=' + id
-            }) 
-        },
-        tapLike(s_id) {
-            likeShare({
-                s_id,
-                type: 'like'
-            }).then(res => {
-                // store_num: 114
-                console.log(res);
-                this.shop.like_num = res.store_num
-                wx.showToast({
-                    title: res.message,
-                    icon: 'success',
-                    duration: 1000
-                })
-            })
-        },
+        
         goShare(shop) {
-            this.$emit('share', shop)
+            const that = this
+            apiShareStore(shop.id).then(result => {
+                if (result.shareInfo.sharePermit) {
+                    if (result.userShareStoreNum < 50) {
+                        const cardInfo = {
+                            code: result.shareUrl,
+                            title: result.storeInfo.store_name,
+                            qrCode: result.shareQrImg,
+                            imageUrl: result.storeInfo.header_img,
+                            address: result.storeInfo.address,
+                            mobile: result.storeInfo.store_mobile,
+                        }
+                        this.$emit('share', cardInfo)
+                    } else {
+                        wx.showModal({
+                            content: '您分享的店铺已到达上限',
+                            showCancel: false,
+                            // confirmText: '好的',
+                            confirmColor: '#333',
+                        })
+                    }
+                }
+            })
+            
         },
     },
 };
@@ -101,57 +112,33 @@ export default {
 <style lang="scss" scoped>
 .shop-card{
     background: #fff;
-    margin: 24rpx 30rpx;
-    padding: 24rpx;
-    border-radius: 10rpx;
+    padding: 24rpx 24rpx 0 24rpx;
     position: relative;
-    .img-warp{
-        position: absolute;
-        left: -200rpx;
-        top: 0;
-        width: 160rpx;
-        height: 160rpx;
-        margin-right: 20rpx;
-        flex-shrink: 0;
-        img{
-            display: block;
-            width: 160rpx;
-            height: 160rpx;
-        }
-    }
-    
+    border-bottom: 1rpx solid #f2f2f2;
     .handle{
         position: absolute;
         right: 24rpx;
-        top: 134rpx;
+        bottom: 24rpx;
         .btn{
             min-width: 100rpx;
             text-align: center;
-            color: #fff;
-            border: 1px solid #fff;
-            background: #ff2900;
-            height: 50rpx;
-            line-height: 50rpx;
-            border-radius: 50rpx;
-            padding: 0 20rpx;
+            height: 40rpx;
+            line-height: 40rpx;
+            border-radius: 40rpx;
+            padding: 0 15rpx;
             font-size: 11px;
-            &.join{
-                border: 1px solid #ff2900;
-                background: #fff;
-                color: #fff;
-            }
+            border: 1px solid #ff2900;
+            color: #ff2900;
         }
     }
 }
-.hd{
-    border-bottom:  1rpx solid #dededd;
-    color: #818181;
-    font-size: 12px;
+.ft{
+    color: #000;
+    font-size: 14px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24rpx;
-    padding-bottom: 15rpx;
+    padding: 10rpx 24rpx;
     .record {
         word-wrap: normal;
         text-overflow: ellipsis;
@@ -166,11 +153,29 @@ export default {
     }
 }
 .bd{
-    margin-left: 200rpx;
-    min-height: 160rpx;
+    background: #f2f2f2;
+    padding: 24rpx;
+    min-height: 120rpxs;
     position: relative;
+    .img-warp{
+        position: absolute;
+        left: 24rpx;
+        top: 24rpx;
+        width: 120rpx;
+        height: 120rpx;
+        margin-right: 20rpx;
+        flex-shrink: 0;
+        img{
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    }
+    .info-warp{
+        margin-left: 144rpx;
+    }
     .title{
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 700;
         margin-right: 70rpx;
         margin-bottom: 15rpx;
@@ -229,7 +234,7 @@ export default {
     }
     .type{
         color: #818181;
-        font-size: 12px;
+        font-size: 11px;
     }
 }
 

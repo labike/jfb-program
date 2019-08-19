@@ -1,3 +1,8 @@
+/*
+ * @Author: zhangHang
+ * @Date: 2019-05-14 11:58:39
+ * @Description: file content
+ */
 // 工具函数库
 
 
@@ -198,4 +203,20 @@ export function getDistance(lat1, lng1, lat2, lng2) {
     var b = lng1 * Math.PI / 180.0 - lng2 * Math.PI / 180.0; 
     var r = 6378137;
     return (r * 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(rad1) * Math.cos(rad2) * Math.pow(Math.sin(b / 2), 2)))).toFixed(0)
+}
+
+
+export function getCurrentPageUrlWithArgs() {
+    // eslint-disable-next-line no-undef
+    const pages = getCurrentPages()
+    const currentPage = pages[pages.length - 1]
+    const url = currentPage.route
+    const options = currentPage.options
+    let urlWithArgs = `/${url}?`
+    for (let key in options) {
+        const value = options[key]
+        urlWithArgs += `${key}=${value}&`
+    }
+    urlWithArgs = urlWithArgs.substring(0, urlWithArgs.length - 1)
+    return urlWithArgs
 }

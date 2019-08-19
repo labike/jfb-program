@@ -53,9 +53,16 @@
                 <li v-for="(codes,index) in detailed.projects[0].consume_codes" :key="index"
                     :class="{del: codes.is_use == 1}"
                 >
-                    <span class="left">券码：{{codes.consum_code}}</span>
-                    <span class="right" v-if="codes.is_use == 1" >已消费</span>
-                    <span class="right" v-if="codes.is_use == 2" @click="jumpQrcode(order_id)">可使用</span>
+                     <div class="consum" v-if="codes.status == 1" :class="{del: codes.is_use == 1}">
+                        <span class="left">券码：{{codes.consum_code}}</span>
+                        <span class="right" v-if="codes.is_use == 1" >已消费</span>
+                        <span class="right" v-if="codes.is_use == 2" @click="jumpQrcode(order_id)">可使用</span>
+                    </div>
+                    <div class="consum refund del"  v-if="codes.status == -1">
+                        <span class="left">券码：{{codes.consum_code}}</span>
+                        <span class="right" v-if="codes.is_use == 1" >已消费</span>
+                        <span class="right " v-if="codes.is_use == 2" >已退款</span>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -347,15 +354,18 @@ export default {
     .cell{
         padding-top: 20rpx;
         li{
+            line-height: 1;
+            padding: 15rpx 15rpx 15rpx 30rpx;
+            &::before{
+                display: none;
+            }
+        }
+        .consum{
+            width: 100%;
             position: relative;
             display: flex;
             overflow: hidden;
             font-size: 13px;
-            line-height: 1;
-            padding: .15rem .15rem .15rem .45rem;
-            &::before {
-                display: none;
-            }
             &.del{
                 color: #c0c0c0;
                 .left{

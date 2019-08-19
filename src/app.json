@@ -12,6 +12,7 @@
         "pages/orders/refund/main",
         "pages/orders/confirm/main",
         "pages/mine/index/main",
+        "pages/mine/info/main",
         "pages/mine/help/main",
         "pages/mine/reshop/main",
         "pages/mine/patronage/main",

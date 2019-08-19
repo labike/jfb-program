@@ -77,7 +77,7 @@ export default {
                     'complete': function (res) {
                         console.log(res);
                         if (res.errMsg === 'requestPayment:ok') {
-                            apiPayStatus(this.order_id).then(res => {
+                            apiPayStatus(that.order_id).then(res => {
                                 if (res.is_pay_success === payIsSuccess.OK) {
                                     mpvue.navigateTo({
                                         url: `/pages/shop/payok/main?order_id=${that.order_id}`
@@ -100,7 +100,8 @@ export default {
                 apiOrderPay({
                     order_id: that.order_id,
                     actual: that.createOrderReturn.actual,
-                    pay_method: 6
+                    pay_method: 6,
+                    openid: wx.getStorageSync('openId')
                 }).then(res => {
                     wx.hideLoading()
                     resolve(res)

@@ -1,3 +1,8 @@
+/*
+ * @Author: zhangHang
+ * @Date: 2019-06-05 09:33:51
+ * @Description: file content
+ */
 import { createShop } from '@/config/class/shop';
 import { apiGetShop } from "@/api/api.js";
 import { saveShop, clearShop } from '@/config/cache';
@@ -34,12 +39,17 @@ const actions = {
      * @param {*} params 
      */
     saveShopInfo ({ commit }, params) {
-        apiGetShop(params).then(res => {
-            const shopInfo = createShop(res);
-            commit('SET_SHOP_INFO', saveShop(shopInfo));
-        }).catch(() => {
-            commit('SET_SHOP_INFO', clearShop());
-        });
+        return new Promise((resolve,reject) => {
+            apiGetShop(params).then(res => {
+                const shopInfo = createShop(res);
+                commit('SET_SHOP_INFO', saveShop(shopInfo));
+                resolve(shopInfo)
+            }).catch(err => {
+                commit('SET_SHOP_INFO', clearShop());
+                reject(err)
+            });
+        })
+        
     }
 
 

@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-20 10:28:46
+ * @Description: 返佣店铺
+ -->
 <template>
 <div class="shop-card" v-if="shop && shop.id" @click="jumpShop(shop.id)">
 

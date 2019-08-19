@@ -25,7 +25,7 @@
 	"projectname": "mpvue-jfb",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
-	"libVersion": "2.7.7",
+	"libVersion": "2.8.0",
 	"condition": {
 		"search": {
 			"current": -1,
@@ -43,8 +43,12 @@
 			"currentL": -1,
 			"list": []
 		},
+		"gamePlugin": {
+			"current": -1,
+			"list": []
+		},
 		"miniprogram": {
-			"current": 21,
+			"current": 11,
 			"list": [
 				{
 					"id": -1,
@@ -110,10 +114,10 @@
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 9,
 					"name": "filter/category",
 					"pathName": "pages/filter/category/main",
-					"query": "sort_id=49",
+					"query": "",
 					"scene": null
 				},
 				{
@@ -127,7 +131,7 @@
 					"id": 11,
 					"name": "shop",
 					"pathName": "pages/shop/index/main",
-					"query": "shop_id=2",
+					"query": "shop_id=88",
 					"scene": null
 				},
 				{
@@ -197,7 +201,7 @@
 					"id": 21,
 					"name": "payok",
 					"pathName": "pages/shop/payok/main",
-					"query": "order_id=201907170906481061126821",
+					"query": "order_id=201908011619263210104340",
 					"scene": null
 				},
 				{
@@ -212,6 +216,20 @@
 					"name": "pages/money/ok/main",
 					"pathName": "pages/money/ok/main",
 					"query": "amount=0.1",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/mine/info/main",
+					"pathName": "pages/mine/info/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/mine/message/main",
+					"pathName": "pages/mine/message/main",
+					"query": "",
 					"scene": null
 				}
 			]

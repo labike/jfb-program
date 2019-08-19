@@ -2,7 +2,7 @@
 <div class="mine_container">
     <header class="base-info">
         <div class="lt-warp">
-            <img :src="userInfo.headimgurl" class="avater bor" v-if="userInfo.headimgurl">
+            <img :src="userInfo.headimgurl" class="avater bor" v-if="userInfo.headimgurl&&userInfo.headimgurl!=0">
             <img src="/static/tabs/icon_user_head.png" class="avater" v-else>
         </div>
         <div class="rt-warp">
@@ -10,6 +10,7 @@
             <div class="name" v-else>未登录</div>
             <div class="phone">{{userInfo.mobile}}</div>
         </div>
+        <div class="location"  @click="jumpMinePages('info')"></div>
     </header>
     <div class="big-icon">
         <ul class="nav-bar">
@@ -93,9 +94,8 @@ export default {
             "userInfo": state => state.user.userInfo 
         }),
     },
-    onLoad() {
+    onShow() {
         const self = this;
-        console.log(self.userInfo);
         if (!self.userInfo.nickname || !self.userInfo.mobile) {
             apiGetUsers().then(res => {
                 console.log(res);
@@ -149,8 +149,7 @@ export default {
     display: flex;
     align-items: center;
     padding : 30rpx 24rpx;
-    &::after{
-        content: '';
+    .location{
         width: 30rpx;
         height: 60rpx;
         background-image: url(~@/assets/img/icon_go.png);

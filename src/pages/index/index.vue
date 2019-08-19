@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-14 11:58:39
+ * @Description: file content
+ -->
 <template>
 <section class="jfb-flexview">
     <div class="jfb-header">
@@ -33,7 +38,7 @@ import Menus from "./views/Menus.vue";
 import Advertise from "./views/Advertise.vue";
 import ShopList from "./views/ShopList.vue";
 import { mapActions, mapState } from 'vuex';
-import { shopType } from "@/config/base";
+import { shopType, WAPHOST } from "@/config/base";
 import { Toast } from '@/utils/index';
 import { apiGetIndex, apiGetAdvert, apiGetRecommends, apiStoreScan } from "@/api/api";
 
@@ -61,10 +66,8 @@ export default {
             "user": state => state.user 
         }),
     },
-    onLoad (options) {
-        // console.log(this.user);
-        const _this = this
-        _this.getIndex()
+    onLoad() {
+        this.getIndex()
     },
     onPageScroll (e) {
         this.scrollTop = e.scrollTop
@@ -182,9 +185,9 @@ export default {
     onShareAppMessage (options) {
         if (options.from === "menu") {
             return {
-                title: '减付宝',
-                path: '/pages/start/login/main',
-                imageUrl: '',
+                title: '我发现了一款省钱的小程序',
+                path: '/pages/index/main',
+                imageUrl: WAPHOST + 'logo.png',
             }
         }
         console.log(options);

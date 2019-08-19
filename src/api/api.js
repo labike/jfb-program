@@ -427,6 +427,20 @@ export const apiGetUsers = () => {
     });
 };
 
+
+/**
+ * 1.5 修改昵称
+ * @method POST https://clients.qmw111.com/v1/users-nickname
+ * @params nickname:昵称
+ */
+export const apiEditNickname = nickname => {
+    return post('users-nickname', { nickname }).then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        return Promise.reject(err);
+    });
+};
+
 /***************************************** 订单 *****************************************/
 /**
  *4.1 创建订单

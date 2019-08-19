@@ -1,9 +1,21 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-24 12:01:43
+ * @Description: file content
+ -->
 <template>
 <div class="container">
     <scroll-view style="height:100%" scroll-y> 
         <div  class="msg-list" v-if="msgList.length">
             <div class="msg-wrap">
-                <div class="msg-icon">系</div>
+                <div class="msg-icon col1">系</div>
+                <div class="msg-inner">
+                    <div class="title">获得积分</div>
+                    <div class="msg">恭喜您在山城串串获得10积分</div>
+                </div>
+            </div>
+            <div class="msg-wrap">
+                <div class="msg-icon col2">券</div>
                 <div class="msg-inner">
                     <div class="title">获得积分</div>
                     <div class="msg">恭喜您在山城串串获得10积分</div>
@@ -41,11 +53,6 @@ export default {
         this.getMyRate()
     },
     methods: {
-        jumpShop(id) {
-            mpvue.navigateTo({
-                url: '/pages/shop/index/main?shop_id=' + id
-            }) 
-        },
         getMyRate() {
             const page = this.page
             apiGetMyRate({
@@ -55,9 +62,9 @@ export default {
                 if (page === 1) {
                     this.msgList = []
                 }
-                res.list.forEach(item => {
-                    this.msgList.push(item)
-                });
+                // res.list.forEach(item => {
+                //     this.msgList.push(item)
+                // });
                 this.remainListsLength = res.list.length
             })
         },
@@ -75,7 +82,6 @@ export default {
             this.showGallaryState = false;
         }
     },
-    
     onPullDownRefresh () {
         this.page = 1
         this.getMyRate()
@@ -110,50 +116,52 @@ export default {
         margin-top: 10rpx;
     }
 }
-.group{
+.msg-wrap{
     background: #fff;
-    margin-top: 20rpx;
-    .group-item{
-        position: relative;
-        display: flex;
-        align-items: center;
-        height: 100rpx;
-        padding-right: 24rpx;
-        .icon{
-            width: 40rpx;
-            height: 40rpx;
-            margin: 0 24rpx;
-            flex-grow: 0;
+    position: relative;
+    padding: 24rpx;
+    overflow: hidden;
+    &:not(:last-child)::before {
+        content: '';
+        position: absolute;
+        z-index: 2;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        border-bottom: 1px solid #e8e8e8;
+        -webkit-transform: scaleY(0.5);
+        transform: scaleY(0.5);
+        -webkit-transform-origin: 0 100%;
+        transform-origin: 0 100%;
+    }
+    .msg-icon{
+        width: 80rpx;
+        height: 80rpx;
+        line-height: 80rpx;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 700;
+        color: #fff;
+        border-radius: 50%;
+        float: left;
+        &.col1{
+            background: #3aa4f8;
         }
-        &::after{
-            flex-grow: 0;
-            content: '';
-            width: 15rpx;
-            height: 30rpx;
-            margin-left: 20rpx;
-            background-image: url(~@/assets/img/icon_click_right_list.png);
-            background-repeat: no-repeat;
-            background-size: contain;
-            background-position: center;
+        &.col2{
+            background: #feb729;
         }
-        &:not(:last-child)::before {
-            content: '';
-            position: absolute;
-            z-index: 2;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            border-bottom: 1px solid #e8e8e8;
-            -webkit-transform: scaleY(0.5);
-            transform: scaleY(0.5);
-            -webkit-transform-origin: 0 100%;
-            transform-origin: 0 100%;
+        &.col3{
+            background: #fe5a03;
         }
     }
-    .group-item-text{
-        flex: 1;
-        font-size: 15px;
+    .msg-inner{
+        margin-left: 104rpx;
+        .title{
+            font-size: 14px;
+            font-weight: 400;
+            margin-bottom: 10rpx;
+        }
     }
 }
 </style>

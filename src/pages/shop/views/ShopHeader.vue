@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-22 09:23:41
+ * @Description: file content
+ -->
 <template>
 <div class="shop-title" :class="currentShopType">
     <div class="intro border-bottom">
@@ -39,9 +44,9 @@
             </div>
         </div>
     </div>
-    <div class="ad" v-if="infoData.Notice">
-        <!-- <my-marquee :lists="currentShopAD"></my-marquee> -->
-        <div class="">{{infoData.Notice}}</div>
+    <div class="ad" v-if="currentShopAD">
+        <my-marquee :lists="currentShopAD"></my-marquee>
+        <!-- <div class="">{{infoData.Notice}}</div> -->
     </div>
 </div>
 </template>
@@ -59,13 +64,13 @@ export default {
     computed: {
         currentShopAD: function () {
             let that = this;
-            let shopAD = '';
-            if (!that.infoData.Notice) {
-                return '';
+            let shopAD = that.infoData.Notice;
+            if (that.infoData.Notice) {
+                let lists = [];
+                lists.push(that.infoData.Notice);
+                return lists;
             }
-            let lists = [];
-            lists.push(that.infoData.Notice);
-            return shopAD;
+            return "";
         },
         currentShopType: function() {
             let that = this;

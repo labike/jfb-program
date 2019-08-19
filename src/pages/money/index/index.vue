@@ -1,64 +1,87 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-07-03 08:55:53
+ * @Description: 我的钱包
+ -->
 <template>
-<scroll-view class="container" scroll-y @scrolltolower="toggleInner" >
-    <header class="top-info">
-        <div class="info-warp">
-            <div class="price-warp">
-                <div class="price">{{balance}}</div>
-                <div class="handle" @click="goWithdraw">去提现</div>
+<div class="container">
+    
+    <scroll-view class="scroll-warp" scroll-y @scrolltolower="toggleInner" >
+        <header class="top-info">
+            <div class="info-warp">
+                <div class="price-warp">
+                    <div class="price">{{balance}}</div>
+                    <div class="handle" @click="goWithdraw">去提现</div>
+                </div>
+                <div class="title">可提现金额</div>
+                <div class="price-bar">
+                    <ul class="bar">
+                        <li v-for="(top, index) of topData" :key="index">
+                            <div class="name">{{top.name}}</div>
+                            <div class="value">{{top.value}}</div>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="title">可提现金额</div>
-            <div class="price-bar">
-                <ul class="bar">
-                    <li v-for="(top, index) of topData" :key="index">
-                        <div class="name">{{top.name}}</div>
-                        <div class="value">{{top.value}}</div>
-                    </li>
-                </ul>
+        </header>
+        <div class="foot-list">
+            <div class="nav">
+                <div class="item" :class="{active: currentView === 0}" @click="currentView=0">收益情况</div>
+                <div class="item" :class="{active: currentView === 1}" @click="currentView=1">提现记录</div>
             </div>
+            <swiper class="shopListSwiper"
+                :current='currentView'
+                @change="swiperchange($event)"
+            >
+                <swiper-item style="overflow: visible;border-radius: 50%;" class="one-scene">
+                    <scroll-view :style="{height: listScroll}" scroll-y 
+                        @scrolltoupper="toggleWarp"
+                        @scrolltolower="loadMore"
+                    > 
+                        <div  class="shop-list" v-if="shopParams.list.length">
+                            <shop-card v-for="(shop, sindex) of shopParams.list" :key="sindex"
+                                :shopInfo='shop'
+                                @share='shareShop'
+                            ></shop-card>
+                        </div>
+                        <div class="empty" v-else>
+                            <img class="icon" src="/static/img/empty.png" mode="widthFix">
+                            <div class="text">您还没有相关数据~</div>
+                        </div>
+                    </scroll-view>
+                </swiper-item>
+                <swiper-item style="overflow: visible;border-radius: 50%;" class="one-scene">
+                    <scroll-view :style="{height: listScroll}" scroll-y 
+                        @scrolltoupper="toggleWarp"
+                        @scrolltolower="loadMore"
+                    > 
+                        <div  class="price-list" v-if="casheParams.list.length">
+                            <div class="cashe-warp"  v-for="(cashe, cindex) of casheParams.list" :key="cindex">
+                                <div class="time">{{cashe.cashes_time}}</div>
+                                <div class="type">{{cashe.cash_method}}</div>
+                                <div class="price">￥{{cashe.money}}</div>
+                            </div>
+                        </div>
+                        <div class="empty" v-else>
+                            <img class="icon" src="/static/img/empty.png" mode="widthFix">
+                            <div class="text">您还没有相关数据~</div>
+                        </div>
+                    </scroll-view>
+                </swiper-item>
+            </swiper>
         </div>
-    </header>
-    <div class="foot-list">
-        <div class="nav">
-            <div class="item" :class="{active: currentView === 0}" @click="currentView=0">收益情况</div>
-            <div class="item" :class="{active: currentView === 1}" @click="currentView=1">提现记录</div>
+    </scroll-view>
+
+    <div class="mask-warp" v-if="shareShopStatus">
+        <div class="mask" @click="shareShopStatus=false"></div>
+        <div class="mask-inner" >
+            <div class="canlbtn" @click="shareShopStatus=false"></div>
+            <app-share :cardInfo='cardInfo'></app-share>
         </div>
-        <swiper class="shopListSwiper"
-            :current='currentView'
-            @change="swiperchange($event)"
-        >
-            <swiper-item style="overflow: visible;border-radius: 50%;" class="one-scene">
-                <scroll-view :style="{height: listScroll}" scroll-y 
-                    @scrolltoupper="toggleWarp"
-                    @scrolltolower="loadMore"
-                > 
-                    <div  class="shop-list" v-if="shopParams.list.length">
-                        <shop-card v-for="(shop, sindex) of shopList" :key="sindex"
-                            :shopInfo='shop' @share='shareShop'
-                        ></shop-card>
-                    </div>
-                    <div class="empty" v-else>
-                        <img class="icon" src="/static/img/empty.png" mode="widthFix">
-                        <div class="text">您还没有相关数据~</div>
-                    </div>
-                </scroll-view>
-            </swiper-item>
-            <swiper-item style="overflow: visible;border-radius: 50%;" class="one-scene">
-                <scroll-view :style="{height: listScroll}" scroll-y 
-                    @scrolltoupper="toggleWarp"
-                    @scrolltolower="loadMore"
-                > 
-                    <div  class="price-list" v-if="casheParams.list.length">
-                        
-                    </div>
-                    <div class="empty" v-else>
-                        <img class="icon" src="/static/img/empty.png" mode="widthFix">
-                        <div class="text">您还没有相关数据~</div>
-                    </div>
-                </scroll-view>
-            </swiper-item>
-        </swiper>
     </div>
-</scroll-view>
+</div>
+
+
 </template>
 
 <script>
@@ -66,10 +89,13 @@ import { mapState, mapActions } from 'vuex';
 import { apiReward, apiRewardList, apiRewardCashes } from '@/api/api';
 import { callPhone } from '@/utils/index';
 import ShopCard from "./../views/ShopCard.vue";
+import AppShare from "@c/share/AppShare.vue";
+import { WAPHOST } from "@/config/base";
 export default {
     name: 'moneyindex',
     components: {
-        ShopCard
+        ShopCard,
+        AppShare
     },
     data() {
         return {
@@ -97,6 +123,7 @@ export default {
             limitLength: 15,
             listScroll: "auto",
             balance: 0,
+            shareShopStatus: false
         }
     },
     computed: {
@@ -112,6 +139,10 @@ export default {
             this.topData[1].value = res.arrival_account
         })
         self.getRewardList(1)
+    },
+    onUnload() {        
+        const self = this;
+        self.shareShopStatus = false
     },
     methods: {
         ...mapActions('user', [
@@ -200,14 +231,37 @@ export default {
                 this.getRewardCashes(1)
             }
         },
-    }
+        
+        shareShop(cardInfo) {
+            this.cardInfo = cardInfo
+            this.shareShopStatus = true
+        },
+    },
+    
+    onShareAppMessage (options) {
+        if (options.from === "menu") {
+            return {
+                title: '我发现了一款省钱的小程序',
+                path: '/pages/index/main',
+                imageUrl: WAPHOST + 'logo.png',
+            }
+        }
+        console.log(options);
+        const share = options.target.dataset.share
+        return {
+            title: share.title,
+            path: "/pages/start/invitation/main?code=" + share.code,
+            imageUrl: share.imageUrl,
+        }
+    },
 }
 </script>
 
 
 <style lang="scss" scoped>
 @import "~@/assets/styles/common/variables.scss";
-.container{
+.container,
+.scroll-warp{
     background: #fff;
     height: 100%;
 }
@@ -313,6 +367,7 @@ export default {
         color: #818181;
         padding: 20rpx 50rpx;
         justify-content: space-between;
+        border-bottom: 1rpx solid #f2f2f2;
         .active{
             color: #2a8cfa;
             font-weight: 700;
@@ -330,6 +385,66 @@ export default {
             font-size: 24rpx;
             margin-top: 10rpx;
         }
+    }
+}
+.cashe-warp{
+    color: #000;
+    font-size: 12px;
+    background: #fff;
+    padding: 24rpx;
+    position: relative;
+    border-bottom: 1rpx solid #f2f2f2;
+    .time{
+        margin-bottom: 10rpx;
+    }
+    .price{
+        font-size: 16px;
+        position: absolute;
+        right: 24rpx;
+        bottom: 24rpx;
+    }
+}
+.mask-warp{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    z-index: 9999;
+    justify-content: flex-start;
+    .mask{
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 10000;
+    }
+    .mask-inner{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 90%;
+        height: auto;
+        z-index: 10001;
+        display: flex;
+        flex-direction: column;
+        margin: 0 auto;
+        transform: translate(-50%, -50%);
+    }
+    .canlbtn{
+        width: 60rpx;
+        height: 60rpx;
+        position: absolute;
+        right: 0;
+        top: -60rpx;
+        background-repeat: no-repeat;
+        background-size: 40rpx;
+        background-position: center;
+        background-image: url(~@/assets/img/close.png);
     }
 }
 </style>

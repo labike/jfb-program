@@ -1,3 +1,8 @@
+/*
+ * @Author: zhangHang
+ * @Date: 2019-05-14 14:40:47
+ * @Description: file content
+ */
 import QS from 'qs';
 import Fly from 'flyio/dist/npm/wx';
 import { APIHOST } from '@/config/base';
@@ -90,18 +95,22 @@ export function post(url, data) {
 }
 
 function jumpLogin() {
+    
     // eslint-disable-next-line no-undef
-    var pages = getCurrentPages() //获取加载的页面
-    var currentPage = pages[pages.length - 1] //获取当前页面的对象
-    var options = currentPage.options   
-    //拼接url的参数
-
-    var urlWithArgs = currentPage.route + '?'
-    for (var key in options) {
-        var value = options[key]
-        urlWithArgs += key + '=' + value + '&'
+    const pages = getCurrentPages() //获取加载的页面
+    const currentPage = pages[pages.length - 1] //获取当前页面的对象
+    const options = currentPage.options   
+    let urlWithArgs = ""
+    if (currentPage.route.indexOf("pages/start/login/main") > -1) {
+        urlWithArgs = "pages/index/main"
+    } else {
+        urlWithArgs = currentPage.route + '?'
+        for (let key in options) {
+            let value = options[key]
+            urlWithArgs += key + '=' + value + '&'
+        }
+        urlWithArgs = urlWithArgs.substring(0, urlWithArgs.length - 1)
     }
-    urlWithArgs = urlWithArgs.substring(0, urlWithArgs.length - 1)
     console.log(urlWithArgs);
     mpvue.setStorageSync('loginBefore', urlWithArgs);
     setTimeout(() => {

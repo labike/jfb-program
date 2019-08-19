@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-22 15:25:21
+ * @Description: file content
+ -->
 <template>
 <section class="container">
     <div class="remind-box" v-if="remind">
@@ -319,10 +324,8 @@ export default {
         },
         jumpHistory() {
             let beforeUrl = mpvue.getStorageSync('loginBefore')
-            if (beforeUrl) {
-                mpvue.switchTab({
-                    url: '/pages/index/main',
-                });
+            if (beforeUrl === "") {
+                beforeUrl = 'pages/index/main'
             }
             let current = tabbar.find(item => {
                 return item === beforeUrl

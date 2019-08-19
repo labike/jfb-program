@@ -1,5 +1,10 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-22 09:23:41
+ * @Description: file content
+ -->
 <template>
-<section class="jfb-flexview" v-if="shopInfo && shopInfo.infoData">
+<section class="jfb-flexview" v-if="loading&&shopInfo && shopInfo.infoData">
     <section class="jfb-scrollview" id="scrollView">
         <shop-header :infoData="shopInfo.infoData"></shop-header>
         <div class="shop-navbar">
@@ -37,6 +42,7 @@ export default {
     name: "shop",
     data() {
         return {
+            loading: false,
             storeNav: ['主页优惠', '网友评价', '商家信息'],
             showView: 0,
             shopType
@@ -58,7 +64,14 @@ export default {
         const s_id = options.shop_id;
         this.saveShopInfo({
             s_id
+        }).then(() => {
+            this.loading = true
         });
+    },
+    onUnload() {        
+        const self = this;
+        self.showView = 0
+        self.loading = false
     },
     methods: {
         ...mapActions('shop',['saveShopInfo'])

@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import { adFeature } from "@/config/base";
 export default {
     name: "Advertise",
     data() {
@@ -46,14 +47,26 @@ export default {
         swiperchange(e) {
             this.swiperCurrent = e.mp.detail.current;
         }, 
-        tapBanner(item) {
-            switch (item.type) {
-            case 'shop':
+        tapBanner(adObj) {
+            let URL = ''
+            switch (adObj.type) {
+            case "shop":
+                URL = '/pages/shop/index/main?shop_id=' + adObj.href    
+                break;
+            case "action":
+                URL = adFeature[adObj.href]
+                break;
+            case "link":
+                URL = "/pages/web/main?url=" + encodeURIComponent(adObj.href)
+                break;
+            default:
+                break;
+            }
+            if (URL) {
                 wx.navigateTo({
-                    url: '/pages/shop/index/main?shop_id=' + item.href
+                    url: URL
                 })
-                break;  
-            } 
+            }
         }
     }
 }
