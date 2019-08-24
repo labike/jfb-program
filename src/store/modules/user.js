@@ -1,3 +1,8 @@
+/*
+ * @Author: zhangHang
+ * @Date: 2019-05-23 10:15:00
+ * @Description: file content
+ */
 
 import { apiWxLogin, apiBindMobile, apiReward } from '@/api/api'
 
@@ -81,7 +86,7 @@ const actions = {
 
     // 记录坐标
     setLocation({ commit }, params) {
-        let appData = {}
+        let appData = mpvue.getStorageSync('appData') || {}
         commit('SET_LOCA_LAT', params.latitude)
         commit('SET_LOCA_LNG', params.longitude)
         appData.currentLocation = {

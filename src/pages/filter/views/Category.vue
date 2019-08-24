@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-07-20 09:53:30
+ * @Description: file content
+ -->
 <template>
 <section class="category-warp">
     <div class="category">
@@ -82,8 +87,9 @@ export default {
         this.getSortShop()
     },
     watch: {
-        page() {
-            this.pullDownData()
+        page(val) {
+
+            this.pullDownData(val)
         }
     },
     methods: {
@@ -139,10 +145,14 @@ export default {
                 this.$emit('length', res.list.length)
             })
         },
-        pullDownData () {
+        pullDownData (val) {
             const _this = this
+            _this.params.page = val
             apiSearch(_this.params).then(res => {
-                this.shopList.concat(res.list)
+                res.list.forEach(shop => {
+                    this.shopList.push(shop)
+                });
+                
                 this.$emit('length', res.list.length)
             })
         }

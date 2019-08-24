@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-01 11:25:13
+ * @Description: file content
+ -->
 <template>
 <div class="shop-card" v-if="shop && shop.s_id" @click="jumpShop(shop.s_id)">
     <div class="card other" v-if="shop.type=='other'">
@@ -10,16 +15,20 @@
                 <div class="discount" v-if="discount">
                     <p class="text">{{discount}}<span>折</span>买</p>
                 </div>
-                <div class="dishes" v-if="shop.sort_name==='美食'"></div>
+                <!-- <div class="dishes" v-if="shop.sort_name==='美食'"></div> -->
             </div>
-            <ul class="score" :class="scoreName">
-                <li class="star"></li>
-                <li class="star"></li>
-                <li class="star"></li>
-                <li class="star"></li>
-                <li class="star"></li>
-                <li class="text">{{shop.score}}分</li>
-            </ul>
+            <div class="info">
+                <ul class="score" :class="scoreName">
+                    <li class="star"></li>
+                    <li class="star"></li>
+                    <li class="star"></li>
+                    <li class="star"></li>
+                    <li class="star"></li>
+                    <li class="text">{{shop.score}}分</li>
+                </ul>
+                <div class="distance" v-if="shop.distance">{{shop.distance}}</div>
+            </div>
+            
             <div class="address">{{shop.address}}</div>
             <div class="vouchers" v-if="vouchers">{{vouchers}}</div>
             <div class="groupon" v-if="groupon">{{groupon}}</div>
@@ -272,6 +281,15 @@ export default {
     }
     .rt-content{
         margin-left: 174rpx;
+        .info{
+            display: flex;
+            justify-content: space-between;
+        }
+        .distance{
+            color:#818181;
+            font-size: 22rpx;
+            line-height: 1;
+        }
     }
     .title{
         display: flex;

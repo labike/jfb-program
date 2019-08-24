@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-24 09:25:19
+ * @Description: file content
+ -->
 <template>
 <div class="listview">
     <div  class="container">
@@ -139,16 +144,16 @@ export default {
                 pageUrl = `/pages/filter/repast/main?sort_one=${group.id}`
                 break;
             case "2":
-                    
+                pageUrl = `/pages/filter/hotel/main?sort_one=${group.id}`
                 break;
             case "3":
-                    
+                pageUrl = `/pages/filter/pastime/main?sort_one=${group.id}`
                 break;
             case "4":
-                    
+                pageUrl = `/pages/filter/icar/main?sort_one=${group.id}`
                 break;
-            
             default:
+                pageUrl = `pages/filter/category/main?top_sort=${group.parent_id}&sort_one=${group.id}`
                 break;
             }
             mpvue.navigateTo({

@@ -21,7 +21,7 @@
         </dd>
     </dl>
 
-    <dl class="vouchers" v-if="params.vouchers">
+    <dl class="vouchers" v-if="params.vouchers && params.vouchers.length">
         <dt class="title">
         <i class="icon"></i>代金券
       </dt>
@@ -48,7 +48,7 @@
         </ul>
     </dl>
 
-    <dl class="combo" v-if="params.group">
+    <dl class="combo" v-if="params.group && params.group.length">
         <dt class="title">
             <i class="icon"></i>本店套餐
         </dt>
@@ -70,7 +70,7 @@
                     </div>
                     <div class="food-handle">
                         <div class="btn" @click.stop="jumpConfirm('combo',combo.id)">购 买</div>
-                        <p>已售 {{ combo.sale_num }} 份</p>
+                        <!-- <p>已售 {{ combo.sale_num }} 份</p> -->
                     </div>
                 </div>
             </li>

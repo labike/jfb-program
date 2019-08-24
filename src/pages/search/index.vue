@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-28 11:31:31
+ * @Description: file content
+ -->
 <template>
 <div class="search-warp">
     <div class="search-box">
@@ -86,6 +91,7 @@ export default {
         getSearchList() {
             const _this = this
             _this.saveSearchHistory(_this.keywords)
+            _this.searchList = []
             apiSearch({
                 city_id: 2809,
                 page: _this.page,

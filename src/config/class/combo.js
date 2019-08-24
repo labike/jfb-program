@@ -1,3 +1,8 @@
+/*
+ * @Author: zhangHang
+ * @Date: 2019-05-14 14:40:32
+ * @Description: file content
+ */
 import { apiGetProDetails } from "@/api/api.js";
 import { orderType } from '@/config/base';
 
@@ -40,6 +45,7 @@ export default class Combo {
                 that.sale_num = ticketData.topData.sales_num;
                 that.groupContent = ticketData.topData.groupContent;
                 that.rules = _normalizeRules(ticketData.rulesData);
+                that.description = ticketData.topData.description
                 resolve(that);
             });
         });

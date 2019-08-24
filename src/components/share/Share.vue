@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-29 09:12:42
+ * @Description: file content
+ -->
 <template>
 <div class="share_container">
 
@@ -9,7 +14,7 @@
             <div class="card-share" v-if="showWxShare" >
                 <header class="base-info">
                     <div class="avater">
-                        <img :src="userInfo.headimgurl">
+                        <img :src="userInfo.headimgurl" mode="aspectFit">
                     </div>
                     <div class="nickname">{{userInfo.nickname}}</div>
                     <div class="close" @click="showShowShare=false"></div>

@@ -93,7 +93,7 @@ export default {
             return wx.getStorageSync('appData');
         }
     },
-    onShow () {
+    onLoad () {
         apiGetSort().then(res => {
             this.navList = this.normalFrom(res)
             this.getNearbys("1")

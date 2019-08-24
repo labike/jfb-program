@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-24 09:46:03
+ * @Description: file content
+ -->
 <template>
 <div class="container">
     <div class="banner">
@@ -79,9 +84,9 @@ export default {
                 tager: '/pages/filter/category/main?top_sort=4&sort_one=217'
             }, {
                 id: 8,
-                name: '运动健身',
+                name: '丽人',
                 icon: '/static/tabs/icon_home_big_classify_sport.png',
-                tager: '/pages/filter/category/main?top_sort=3&sort_one=712'
+                tager: '/pages/filter/category/main?top_sort=3&sort_one=735'
             }, {
                 id: 9,
                 name: '足疗按摩',

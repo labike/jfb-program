@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-21 17:28:50
+ * @Description: file content
+ -->
 <template>
 
 <div  class="repast-warp">
@@ -143,13 +148,11 @@ export default {
     },
     onPullDownRefresh () {
         this.page = 1
-        this.remainListsLength = 5
+        this.remainListsLength = 20
         mpvue.stopPullDownRefresh()
     },
     onReachBottom () {
-        console.log(12);
-        
-        if (this.remainListsLength === 5) {
+        if (this.remainListsLength >= 20) {
             this.page++
             this.scrollStatus = true
         } else {

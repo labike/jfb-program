@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-22 09:23:41
+ * @Description: file content
+ -->
 <template>
 <!-- 网友评价 -->
 <div class="comment">
@@ -22,7 +27,7 @@
             <dl class="remark-item" v-for="(rate, inx) in rateList" :key="rate.id"  :data-index="'o_'+inx">
                 <dt class="user">
                     <div class="avatar">
-                        <img :src="rate.header_img" alt="">
+                        <img :src="rate.header_img" mode="aspectFit">
                     </div>
                     <div class="nickname">{{rate.nickname}}</div>
                     <div class="date">{{rate.add_time}}</div>
@@ -261,6 +266,7 @@ export default {
         }
         img{
             width: 100%;
+            height: 100%;
         }
         .date {
             position: absolute;

@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-07-01 15:40:58
+ * @Description: file content
+ -->
 <template>
 <div class="group-wrapper">
     <div class="group-details" v-if="currentItem">
@@ -38,6 +43,13 @@
         </div>
 
         <other-rules :rulesData="currentItem.rules"></other-rules>
+
+        <div class="other-description">
+            <dl v-if="currentItem.description">
+                <dt>团购介绍</dt>
+                <dd>{{ currentItem.description }}</dd>
+            </dl>
+        </div>
     </div>
 
 </div>
@@ -216,6 +228,33 @@ export default {
         border-radius: 3px;
         background: rgba(0, 0, 0, 0.6);
         z-index: 10;
+    }
+}
+
+.other-description{
+    margin-top: .4rem;
+    dl{
+        margin-bottom: .3rem;
+        dt{
+            margin-bottom: .3rem;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        dd{
+            font-size: 13px;
+            margin-bottom: .15rem;
+            &::before {
+                content: '';
+                display: inline-block;
+                width: 0;
+                height: 0;
+                border: 2px solid #000;
+                vertical-align: middle;
+                margin-top: -2px;
+                margin-right: .15rem;
+                border-radius: 50%;
+            }
+        }
     }
 }
 </style>

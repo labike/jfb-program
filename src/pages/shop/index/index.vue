@@ -23,7 +23,7 @@
             <shop-base v-if="showView === 2" :params='shopInfo'></shop-base>
         </div>
     </section>
-    <div class="shop-footer">
+    <div class="shop-footer" v-if="shopInfo.proData.is_shopping == 1">
         <lay-footer :infoData="shopInfo.infoData"></lay-footer>
     </div>
     
