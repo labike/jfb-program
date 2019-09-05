@@ -1,10 +1,19 @@
+/*
+ * @Author: zhangHang
+ * @Date: 2019-05-14 14:40:32
+ * @Description: file content
+ */
 
 /**
  *  proxy HOST
  */
-// export const HOST = 'http://clients.qmwjj.cc/v1/';
-export const APIHOST = 'https://clients.qmw111.com/v1/';
-export const WAPHOST = 'https://wap2.qmw111.com/';
+//  测试
+export const APIHOST = 'http://clients.qmwjj.cc/v1/';
+export const WAPHOST = 'http://wap2.qmwjj.cc/';
+
+//  线上
+// export const APIHOST = 'https://clients.qmw111.com/v1/';
+// export const WAPHOST = 'https://wap2.qmw111.com/';
 
 
 /**
