@@ -1,7 +1,11 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-16 16:04:59
+ * @Description: file content
+ -->
 <template>
-<div class="shop-card" v-if="shop && shop.s_id" @click="jumpShop(shop.s_id)">
-  
-    <div class="card hotel" v-if="shop.type=='2'">
+<div class="shop-card" v-if="shop && shop.x_id" @click="jumpShop(shop)">
+    <div class="card hotel" v-if="shop.industry=='2'">
         <div class="hl-img">
             <img :src="shop.headerImg[0].img_url" alt="">
         </div>
@@ -15,78 +19,125 @@
             <div class="address">{{shop.address}}</div>
         </div>
     </div>
+
     <div class="card other" v-else>
-        <div class="title">
-            <div class="name">{{shop.store_name}}</div>
-            <div class="discount" v-if="discount">
-                <p class="text">{{discount}}<span>折</span>买</p>
+        <div class="activity"   :class="{gray: Activity}"
+             v-if="shop.giveInfo">
+            <div class="top">
+                <div class="img-warp">
+                    <ImageView :src="shop.giveInfo.img" mode='scaleToFill' height="400rpx" width="690rpx"></ImageView>
+                </div>
+                <div class="product">
+                    <div class="icon"></div>
+                    <div class="disc">
+                        <p>价值{{shop.giveInfo.buyer}}元{{shop.giveInfo.pro_name}}
+                            <span>{{shop.giveInfo.number}} {{shop.giveInfo.unit}}</span>
+                        </p>
+                    </div>
+                    <div class="linetime">
+                        <div class="library">
+                            <div class="progress" :style="{width:(shop.giveInfo.sale/shop.giveInfo.library*100)+ '%'}"></div>
+                            <p class="sale">已售 {{shop.giveInfo.sale}} 张</p>
+                        </div>
+                        <div class="time">
+                            <last-time 
+                                :endTime="shop.giveInfo.ruler.effective_time"
+                                @endback="stopActivity"
+                            ></last-time>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom">
+                <div class="info">
+                    <div class="name">{{shop.store_name}}</div>
+                    <ul class="score" :class="scoreName">
+                        <li class="star"></li>
+                        <li class="star"></li>
+                        <li class="star"></li>
+                        <li class="star"></li>
+                        <li class="star"></li>
+                        <li class="text">{{shop.star}}</li>
+                    </ul>
+                    <div class="location">
+                        <span class="address">{{shop.address}}</span>
+                        <span class="number">{{distance}}</span>
+                    </div>
+                </div>
+                <div class="handle">
+                    <div class="price">{{shop.giveInfo.sale_price}}</div>
+                    <div class="go"   @click.stop="jumpItemPage(shop.giveInfo, 'timesale')">马上抢</div>
+                </div>
             </div>
         </div>
-        <div class="distance">
-            <ul class="score" :class="scoreName">
-                <li class="star"></li>
-                <li class="star"></li>
-                <li class="star"></li>
-                <li class="star"></li>
-                <li class="star"></li>
-                <li class="text">{{shop.score}} 分</li>
-            </ul>
-            <div class="location">
-                <span class="number">{{distance}}</span>
-                <span class="remark" v-if="shop.type == 1">自助点餐</span>
-                <span class="remark" v-if="shop.type == 3">到店消费</span>
-                <span class="remark" v-if="shop.type == 4">自助养车</span>
+        
+        <div class="default" v-else>
+            <div class="top">                
+                <div class="logo">
+                    <ImageView :src="shop.img_url" mode='scaleToFill' width='130rpx' height='130rpx'></ImageView>
+                </div>
+                <div class="title">
+                    <div class="name">
+                        <p>{{shop.store_name}}</p>
+                        <div class="discount" v-if="discount">
+                            <p class="text">{{discount}}<span>折</span>买</p>
+                        </div>
+                    </div>
+                    <div class="desc">
+                        <ul class="score score1">
+                            <li class="star"></li>
+                            <li class="text">{{shop.star}}</li>
+                        </ul>
+                        <div class="location">
+                            <span class="address">{{shop.address}}</span>
+                            <span class="number">{{distance}}</span>
+                        </div>
+                    </div>
+                    <ul class="vouchers" v-if="shop.vouchers">
+                        <block v-for="(voucher, v_id) of shop.vouchers" :key="v_id" >
+                            <li class="voucher" >
+                                {{voucher.vouchers_name}}
+                            </li>
+                        </block>
+                    </ul>
+                </div>
+            </div>
+            <div class="bottom">                
+                <ul class="groupon list-img">
+                    <block v-for="group of shop.groupInfo" :key="group.id">
+                        <li class="group-info"  @click.stop="jumpItemPage(group, 'combo')">
+                            <ImageView :src="group.img_url" mode='scaleToFill' height="200rpx" width="200rpx"></ImageView>
+                            <div class="name">{{group.group_name}}</div>
+                            <p class="price">
+                                <span class="new">{{group.group_price}}</span>
+                                <span class="old">{{group.price}}</span>
+                            </p>
+                        </li>
+                    </block>
+                </ul>
             </div>
         </div>
 
-        <div class="record" v-if="shop.msgData">
-            <rollnotice autoplay="2000" :rollData='shop.msgData'>
-            </rollnotice>
-        </div>
-        <ul class="list-img">
-            <li class="img-warp" v-for="(imgItem, index) of shop.headerImg" :key="index">
-                <img :src="imgItem.img_url" />
-            </li>
-        </ul>
-        <div class="promotion vouchers" v-if="vouchers">{{vouchers}}</div>
-        <div class="promotion groupon" v-if="groupon">{{groupon}}</div>
-        <div class="handle">
-            <div class="handle-item" @click.stop="tapLike('like')">
-                <div class="icon like" v-if="!shop.user_is_like"></div>
-                <div class="icon like_1" v-else></div>
-                <div class="num">{{shop.like_num}}</div>
-            </div>
-            <div class="handle-item" v-if="!shop.user_is_collect" @click.stop="tapLike('collect')">
-                <div class="icon collect"></div>
-                <div class="num">{{shop.collect_num}}</div>
-            </div>
-            <div class="handle-item" v-else @click.stop="cancelCollect">
-                <div class="icon collect_1" ></div>
-                <div class="num">{{shop.collect_num}}</div>
-            </div>
-            <div class="handle-item" @click.stop="jumpShop(shop.s_id, 'rate=1')">
-                <div class="icon rate"></div>
-                <div class="num">{{shop.comment_num}}</div>
-            </div>
-            <button class="handle-item"  open-type="share" :data-share="shop" @click.stop="tapShare">
-                <div class="icon share"></div>
-                <div class="num">{{shop.share_num}}</div>
-            </button>
-        </div>
     </div>
 </div>
 </template>
 
 <script>
-import Rollnotice from "@c/rollnotice/Rollnotice.vue";
+import LastTime from "@c/shop/LastTime.vue";
+import ImageView from '@c/layouts/ImageView.vue'
 import { likeShare, unLikeShare, apiShareStore } from "@/api/api";
 import { getDistance } from '@/utils/index';
 import { mapState } from 'vuex';
 
 export default {
     name: 'ShopCard',
+    components: {
+        ImageView,
+        LastTime
+    },
     data() {
         return {
+            Activity: false,
             shop: {}
         }
     },
@@ -102,10 +153,10 @@ export default {
             'lng',
         ]),
         scoreName() {
-            if (!this.shop.score) {
+            if (!this.shop.star) {
                 return ''
             }
-            let scoreName = 'score' + this.shop.score
+            let scoreName = 'score' + this.shop.star
             const scoreDot = scoreName.indexOf('.')
             if (scoreDot > -1) {
                 scoreName = scoreName.slice(0,scoreDot)
@@ -117,257 +168,78 @@ export default {
         },
         distance() {
             const _this = this
-            let num = getDistance(_this.lat, _this.lng, _this.shop.lat, _this.shop.lng)
+            let num = _this.shop.distance
             if (num > 1000) {
-                return (num / 1000).toFixed(0) + 'Km'
+                return (num / 1000).toFixed(1) + 'km'
             } else {
                 return num + 'm'
             }
         },
-        
         discount() {
-            if (!this.shop.proData) {
+            if (!this.shopInfo.check) {
                 return null
             } 
-            let discount = this.shop.proData.find(item => {
-                return item.type === 'check'
-            });
-            const check = discount ? discount.name.match(/^\d*(\.?\d{0,1})/g)[0] : null
+            let discount = this.shopInfo.check;
+            const check = discount ? discount / 10 : null
             return check 
         },
-        vouchers() {
-            if (this.shop.proData) {
-                let vouchers = this.shop.proData.find(item => {
-                    return item.type === 'vouchers'
-                })
-                return vouchers ? vouchers.name : null
-            }
-            return null 
-        },
-        groupon() {
-            if (this.shop.proData) {
-                let groupon = this.shop.proData.find(item => {
-                    return item.type === 'group'
-                })
-                return groupon ? groupon.name : null
-            }
-            return null
-        }
-    },
-    components: {
-        Rollnotice
     },
     methods: {
-        jumpShop(id) {
-            mpvue.navigateTo({
-                url: '/pages/shop/index/main?shop_id=' + id
-            }) 
-        },
-        tapLike(type) {
-            const s_id = this.shop.s_id
-            likeShare({
-                s_id,
-                type,
-            }).then(res => {
-                console.log(res);
-                if (type === 'like') { 
-                    this.shop.like_num = res.store_num
-                    this.shop.user_is_like = !this.shop.user_is_like
-                }
-                if (type === 'collect') { 
-                    this.shop.collect_num = Number(this.shop.collect_num) + 1
-                    this.shop.user_is_collect = true
-                }
-                wx.showToast({
-                    title: res.message,
-                    icon: 'none',
-                    duration: 1000
+        jumpShop(shop) {
+            if (this.Activity) {
+                return
+            } 
+            if (shop.giveInfo) {
+                this.$router.push({
+                    path: '/pages/shop/saletime/main?gid=' + shop.giveInfo.gid
                 })
+            } else {    
+                this.$router.push({
+                    path: '/pages/shop/index/main?shop_id=' + shop.x_id
+                })
+            }
+            
+        },
+        jumpItemPage(item, title) {
+            let pathUrl = ''
+            switch (title) {
+            case 'combo':
+                pathUrl = `/pages/shop/item/main?shop_id=${item.x_id}&title=${title}&item_id=${item.id}`
+                break;
+            case 'timesale':
+                pathUrl = `/pages/orders/confirm/main?shop_id=${item.x_id}&title=${title}&item_id=${item.gid}`
+                break;
+            }
+            this.$router.push({
+                path: pathUrl
             })
         },
-        cancelCollect() {
-            const s_id = this.shop.s_id
-            unLikeShare({
-                s_ids: s_id,
-                type: 'collect',
-            }).then(res => {
-                console.log(res);
-                this.shop.collect_num = Number(this.shop.collect_num) - 1
-                this.shop.user_is_collect = false
-                wx.showToast({
-                    title: "取消成功",
-                    icon: 'success',
-                    duration: 1000
-                })
-            })
-        },
-        
-        tapShare(e) {
-            console.log(e);
-        },
+        stopActivity() {
+            this.Activity = true
+        }
     },
 };
 </script>
 
 
 <style lang="scss" scoped>
-
+.shop-card{
+    padding:20rpx 30rpx;
+    font-family: '.PingFang-SC-Medium';
+}
 .card{
     background: #fff;
-    margin-bottom: 24rpx;
     border-radius: 10rpx;
     padding: 36rpx 24rpx;
     position: relative;
-    .title{
-        font-family: '.PingFang-SC-Medium';
-        line-height: 1;
-        display: flex;
-        margin-bottom: 20rpx;
-        justify-items: center;
-        align-items: center;
-        .name{
-            font-size: 30rpx;
-            font-weight:700;
-            margin-right: 10rpx;
-        }
-        .discount{
-            height: 30rpx;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            letter-spacing: 1px; 
-            border-radius: 2px;
-            padding-left: 15rpx;
-            padding-right: 5rpx;
-            margin-right: 10rpx;
-            background-size: auto 30rpx;
-            background-position: left center;
-            background-repeat: no-repeat;
-            background-image: url('~@/assets/img/discount.png');
-            position: relative;
-            overflow: hidden;
-            &::before{
-                content:  '';
-                position: absolute;
-                left: 50%;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                z-index: 1;
-                background: #ff2900;
-            }
-            .text{
-                position: relative;
-                z-index: 2;
-                color: #fff;
-                font-size:12px;
-                span{
-                    font-size:9px;
-                }
-            }
-        }
-    }
-    .handle{
-        border-top: 1rpx dashed #e8e8e8;
-        display: flex;
-        height: 100rpx;
-        align-items: center;
-        margin-top: 20rpx;
-        .handle-item{
-            display: flex;
-            height: 100%;
-            align-items: center;
-            flex: 1;
-            justify-content: center;
-            &::after{
-                content: '';
-                display: none;
-            }
-        }
-        .num{
-            font-size: 24rpx;
-            color: #818181;
-        }
-        .icon{
-            margin-right: 15rpx;
-            width: 30rpx;
-            height: 30rpx;
-            display: inline-block;
-            vertical-align: bottom;
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            &.like{
-                background-image: url('~@/assets/img/icon_like.png');
-            }
-            &.like_1{
-                background-image: url('~@/assets/img/icon_like_1.png');
-            }
-            &.collect{
-                background-image: url('~@/assets/img/icon_collect.png');
-            }
-            &.collect_1{
-                background-image: url('~@/assets/img/icon_collect_1.png');
-            }
-            &.rate{
-                background-image: url('~@/assets/img/icon_msg.png');
-            }
-            &.share{
-                background-image: url('~@/assets/img/icon_share.png');
-            }
-        }
-    }
-}
-.other{
-    padding: 38rpx 24rpx 0;
-    .title{
-        margin-bottom: 20rpx;
-        .discount{
-            height: 30rpx;
-            border-radius: 2px;
-            padding-left: 15rpx;
-            padding-right: 5rpx;
-            margin-right: 10rpx;
-            background-size: auto 30rpx;
-            background-position: left center;
-            background-repeat: no-repeat;
-            background-image: url('~@/assets/img/discount.png');
-            position: relative;
-            overflow: hidden;
-            &::before{
-                content:  '';
-                position: absolute;
-                left: 50%;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                z-index: 1;
-                background: #ff2900;
-            }
-            .text{
-                position: relative;
-                z-index: 2;
-                color: #fff;
-                font-size:12px;
-                span{
-                    font-size:9px;
-                }
-            }
-        }
-    }
-    .distance{
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 10rpx;
-    }
+    box-shadow: 1px 4px 10px #ddd;
     .score{
         display: flex;
         align-items: center;
         .text{
-            color:#818181;
+            color:#ff5100;
             margin-left: 10rpx;
-            font-size: 24rpx;
+            font-size: 12px;
             line-height: 1;
         }
         .star{
@@ -408,60 +280,321 @@ export default {
             
         }
     }
-    .location{
-        color: #000;
-        font-size: 22rpx;
-        .number{
-            padding-right: 24rpx;
-            border-right: 1rpx solid #e8e8e8;
-        }
-        .remark{
-            padding-left: 24rpx;
-        }
-    }
-    .record{
-        margin-bottom: 14rpx;
-    }
-    .list-img{
-        display: flex;
-        margin-right: -10rpx;
-        .img-warp{
-            width: 33.333%;
-            padding-right: 10rpx;
-            img{
-                width: 100%;
-                height: 180rpx;
-                border-radius: 10rpx;
+}
+.other{
+    padding: 0;
+    overflow: hidden;
+    .title{
+        margin-bottom: 20rpx;
+        .discount{
+            height: 30rpx;
+            line-height: 30rpx;
+            border-radius: 2px;
+            padding-left: 15rpx;
+            padding-right: 5rpx;
+            margin-right: 10rpx;
+            background-size: auto 30rpx;
+            background-position: left center;
+            background-repeat: no-repeat;
+            background-image: url('~@/assets/img/discount.png');
+            position: relative;
+            overflow: hidden;
+            &::before{
+                content:  '';
+                position: absolute;
+                left: 50%;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 1;
+                background: #ff2900;
+            }
+            .text{
+                position: relative;
+                z-index: 2;
+                color: #fff;
+                font-size:12px;
+                span{
+                    font-size:9px;
+                }
             }
         }
     }
-    .promotion{
-        font-size: 24rpx;
-        margin-top: 15rpx;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-         &::before{
-            content:  '';
-            flex-shrink: 0;
-            width: 30rpx;
-            height: 30rpx;
-            margin-right: 20rpx;
-            display: inline-block;
-            vertical-align: bottom;
+    .distance{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10rpx;
+    }
+    
+    .location{
+        font-size: 11px;
+        color: #818181;
+        display: flex;
+        .address{
+            max-width: 200rpx;
+            min-width: 100rpx;
+            width: auto;
+            word-wrap: normal;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            padding-right: 24rpx;
+            border-right: 1rpx solid #e8e8e8;
+        }
+        .number{
+            padding-left: 24rpx;
+        }
+    }
+}
+.activity{
+    &.gray{
+        -webkit-filter: grayscale(100%)
+    }
+    .top{
+        position: relative;
+    }
+    .bottom{
+        padding: 30rpx;
+        display: flex;
+        line-height: 1;
+        .info{
+            flex: 1;
+        }
+        .name{
+            font-size: 16px;
+            color: #000;
+            font-weight: 700;
+            margin-bottom: 20rpx;
+        }
+        .location{
+            margin-top: 30rpx;
+        }
+        .price{
+            &::before{
+                content: "￥";
+                font-size: 16px;
+            }
+            font-size: 27px;
+            color: #323232;
+            font-weight: 700;
+            text-align: center;
+        }
+        .go{
+            background: #ff1800;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            height: 60rpx;
+            min-width: 88rpx;
+            line-height: 60rpx;
+            border-radius: 60rpx;
+            margin-top: 10px;
+            padding: 0 24rpx;
+            text-align: center;
+        }
+    }
+    .product{
+        position: absolute;
+        bottom: 0;
+        height: 100rpx;
+        width: 100%;
+        background: rgba(0, 0, 0, .6);
+        display: flex;
+        color: #fff;
+        .icon{
+            margin-left: 30rpx;
+            width: 108rpx;
+            height: 108rpx;
             background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
+            background-image: url('~@/assets/img/send.png');
+            position: relative;
+            top: -24rpx;
+        }
+        .disc{
+            font-size: 15px;
+            font-weight: 400;
+            margin: 0 10rpx;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            line-height: 1.4;
+        }
+        .linetime{
+            font-size: 12px;
+            background-size: auto 100rpx;
+            background-position: left center;
+            background-repeat: no-repeat;
+            background-image: url('~@/assets/img/linetime.png');
+            padding: 0 24rpx 0 30rpx;
+            position: relative;
+            &::after{
+                content: '';
+                position:absolute;
+                right: 0;
+                top: 0;
+                left: 50rpx;
+                height: 100%;
+                z-index: 1;
+                background: #ff5100;
+            }
+            .library{
+                font-size: 10px;
+                min-width: 130rpx;
+                padding: 0 24rpx;
+                margin: 20rpx auto 10rpx;
+                height: 30rpx;
+                line-height: 30rpx;
+                background: #fde7d8;
+                border-radius: 30rpx;
+                position: relative;
+                z-index: 3;
+                .progress{
+                    position:absolute;
+                    left: 0;
+                    top: 0;
+                    width: 0;
+                    height: 30rpx;
+                    z-index: 8;
+                    background: #ffde00;
+                    border-radius: 30rpx;
+                }
+                .sale{
+                    position: relative;
+                    text-align: center;
+                    z-index: 10;
+                    color: #13100c;
+                }
+            }
+            .time{
+                position: relative;
+                z-index: 4;
+            }
+        }
+    }
+}
+.default{
+    padding: 30rpx;
+    .top{
+        display: flex;
+    }
+    .bottom{
+        margin-top: 30rpx;
+        overflow-x: auto;
+    }
+    .logo{
+        width: 130rpx;
+        height: 130rpx;
+        border-radius: 10rpx;
+        overflow: hidden;
+        margin-right: 24rpx;
+    }
+    .title{
+        flex: 1;
+        margin: 0;
+        .desc{
+            display: flex;
+            margin-top: 10rpx;
+        }
+        .score{
+            margin-right: 10rpx;
+        }
+    }
+    .name{
+        font-weight: 700;
+        color: #000;
+        font-size: 16px;
+    }
+    
+    .discount{
+        height: 30rpx;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        letter-spacing: 1px; 
+        border-radius: 2px;
+        padding-left: 15rpx;
+        padding-right: 5rpx;
+        margin-left: 10rpx;
+        background-size: auto 30rpx;
+        background-position: left center;
+        background-repeat: no-repeat;
+        background-image: url('~@/assets/img/discount.png');
+        position: relative;
+        overflow: hidden;
+        &::before{
+            content:  '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            background: #ff2900;
+        }
+        .text{
+            position: relative;
+            z-index: 2;
+            color: #fff;
+            font-size:12px;
+            span{
+                font-size:9px;
+            }
         }
     }
     .vouchers{
-        &::before{
-            background-image: url('~@/assets/img/first_code.png');
+        margin-top: 15rpx;
+        display: flex;
+        .voucher{
+            border: 1rpx solid #ffd4ce;
+            border-radius: 2px;
+            padding: 7rpx;
+            margin-right: 10rpx;
+            color: #ff5100;
+            font-size: 9px;
+            line-height: 1;
         }
     }
     .groupon{
-        &::before{
-            background-image: url('~@/assets/img/first_group.png');
+        display: flex; 
+        min-width: 100%;
+        justify-content: space-between;
+        .group-info{
+            width: 200rpx;
+            overflow: hidden;
+            border-radius: 10rpx;
+            line-height: 1.3;
+        }
+        .name{
+            font-size: 12px;
+            margin-top: 15rpx;
+            word-wrap: normal;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .price{
+            margin-top: 25rpx;
+            .new{
+                &::before{
+                    content: "￥";
+                    margin-right: -2rpx;
+                }
+                color: #ff1800;
+                font-size: 15px;
+                margin-right: 8rpx;
+                font-weight: 700;
+            }
+            .old{
+                &::before{
+                    content: "￥";
+                    margin-right: -2rpx;
+                }
+                font-size: 10px;
+                color: #818181;
+            }
         }
     }
 }

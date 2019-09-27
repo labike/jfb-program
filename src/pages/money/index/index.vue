@@ -211,10 +211,10 @@ export default {
             }
 
         },
-        goWithdraw() {
-            mpvue.navigateTo({
-                url: `/pages/money/withdraw/main`
-            })
+        goWithdraw() {         
+            this.$router.push({
+                path: '/pages/money/withdraw/main'
+            })  
         },
         swiperchange(e) {
             if (e.type !== 'change') {

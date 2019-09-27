@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-14 15:19:10
+ * @Description: file content
+ -->
 <template>
 <header class="hd-warp">
     <div class="top">
@@ -32,8 +37,8 @@ export default {
     },
     methods: {
         jumpSearch() {
-            mpvue.navigateTo({
-                url: '/pages/search/main'
+            this.$router.push({
+                path: '/pages/search/main'
             })
         }
     }

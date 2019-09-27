@@ -4,7 +4,7 @@
  * @Description: file content
  -->
 <template>
-	<div class="container" v-if="navList.length">
+	<div class="container" v-if="loading&&navList.length">
 		<scroll-view scroll-x class="nav-bar" :scroll-into-view="currentTabId" >
 		    <ul class="navs" >
                 <li class="nav" v-for="(nav, oix) in navList" :key="nav.id" 
@@ -65,7 +65,8 @@ export default {
             currentTabId: 'nav0',
             navList: [],
             title: '',
-            shop_id: ''
+            shop_id: '',
+            loading: false
         }
     },
     onLoad (options) {
@@ -75,6 +76,7 @@ export default {
             s_id: options.shop_id,
             pro_type: orderType[options.title]
         }).then(res => {
+            this.loading = true
             this.navList = this._normalizeListData(res, options)
         })
     },
@@ -82,6 +84,7 @@ export default {
     onUnload() {        
         const self = this;
         self.navlist = []
+        self.loading = false
     },
     methods: {
         _normalizeListData(list, params) {
@@ -131,6 +134,7 @@ export default {
     .nav-bar {
         border-bottom: 1rpx solid #ededed;
         background-color:#fff;
+        height: 88rpx;
     }
     .tab-content{
         flex: 1;

@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-17 14:08:16
+ * @Description: file content
+ -->
 <template>
 <div class="container" v-if="detailed">
     <div class="model shop" v-if="detailed.baseInfo"  @click="jumpShop(detailed.baseInfo.x_id)">
@@ -18,7 +23,9 @@
         </div>
     </div>
     <div class="model" :class="modelClass">
-        <div class="model-title"  v-if="detailed.type==orderType.vouchers ||detailed.type==orderType.combo">
+
+
+        <div class="model-title"  v-if="detailed.type==orderType.vouchers ||detailed.type==orderType.combo ||detailed.type==orderType.timesale">
             <i class="icon"></i>{{detailed.baseInfo.title}}({{detailed.projects[0].product_name}})
                 <div class="title">
                 <span>{{detailed.projects[0].num}}张</span>
@@ -29,7 +36,7 @@
             <i class="icon"></i>{{detailed.baseInfo.title}}
         </div>
 
-
+        <!-- 买单 -->
         <div class="model-content" v-if="detailed.type==orderType.paying">
             <ul class="cell">
                 <li>
@@ -49,7 +56,7 @@
 
         
         <div class="model-content" v-if="detailed.baseInfo.is_pay_success==1">
-            <ul class="cell" v-if="detailed.type==orderType.vouchers || detailed.type==orderType.combo">
+            <ul class="cell" v-if="detailed.type==orderType.vouchers || detailed.type==orderType.combo || detailed.type==orderType.timesale">
                 <li v-for="(codes,index) in detailed.projects[0].consume_codes" :key="index"
                     :class="{del: codes.is_use == 1}"
                 >
@@ -80,7 +87,7 @@
 
     </div>
     
-    <div class="model use-rule"  v-if="detailed.type==orderType.vouchers || detailed.type==orderType.combo">
+    <div class="model use-rule"  v-if="detailed.type==orderType.vouchers || detailed.type==orderType.combo ||detailed.type==orderType.timesale">
         <div class="model-title">
             <i class="icon"></i>使用规则
         </div>
@@ -167,7 +174,6 @@ export default {
     },
     onLoad (options) {
         this.order_id = options.order_id;
-        console.log(options);
         this.getOrderDetails()
     },
     computed: {
@@ -218,7 +224,7 @@ export default {
         },
         getOrderDetails() {
             apiOrderDetails(this.order_id).then(res => {
-                this.detailed = res            
+                this.detailed = res           
             })
         },
     }

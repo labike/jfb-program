@@ -1,15 +1,21 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-24 09:24:53
+ * @Description: file content
+ -->
 <template>
 
 <div  class="pastime-warp">
     <div class="pastime">
+        <div class="bg"></div>
         <div class="menu-warp">
             <ul class="menu" v-if="menu.length">
                 <li class="menu-item" v-for="(item, m1) of menu" :key="item.id"
                     :id="'menu_' + m1"
                     @click.stop="jumpPages(item.target)"
                 >
-                    <div class="img-warp" >
-                        <img :src="item.icon"  mode="aspectFill" >
+                    <div class="img-warp" >                        
+                        <ImageView :src="item.icon" width='130rpx'></ImageView>
                     </div>
                     <div class="text">{{item.name}}</div>
                 </li>
@@ -19,7 +25,7 @@
             <lay-swiper :list='advertList' sHeight='160rpx'></lay-swiper>
         </div>
     </div>
-    <category top_sort='3' :page='page'
+    <category :top_sort='3' :page='page'
         @length='setShopPageLength'
     ></category>
 </div>
@@ -29,7 +35,9 @@
 <script>
 import Category from "./../views/Category.vue";
 import LaySwiper from "@c/swiper/Advertise.vue";
+import ImageView from '@c/layouts/ImageView.vue'
 import { apiGetAdvert } from "@/api/api";
+import { WAPHOST, shopType } from "@/config/base";
 export default {
     name: "pastime",
     data() {
@@ -41,51 +49,52 @@ export default {
             advertList: [],
             menu: [
                 {
-                    id: 0,
-                    name: '按摩足疗',
-                    icon: '/static/tabs/relaxation_foot.png',
-                    target: '/pages/filter/category/main?top_sort=3&sort_one=702'
+                    id: 106,
+                    name: '丽人',
+                    icon: WAPHOST + 'static/tabs/relaxation_belle.png',
+                    target: '/pages/filter/category/main?top_sort=3&sort_one=106'
                 }, {
-                    id: 1,
-                    name: '洗浴/汗蒸',
-                    icon: '/static/tabs/relaxation_shower.png',
-                    target: '/pages/filter/category/main?top_sort=3&sort_one=718'
+                    id: 131,
+                    name: 'DIV手工坊',
+                    icon: WAPHOST + 'static/tabs/relaxation_hand.png',
+                    target: '/pages/filter/category/main?top_sort=3&sort_one=131'
                 }, {
-                    id: 2,
-                    name: 'KTV',
-                    icon: '/static/tabs/relaxation_ktv.png',
-                    target: '/pages/filter/category/main?top_sort=3&sort_one=710'
+                    id: 132,
+                    name: '生活服务',
+                    icon: WAPHOST + 'static/tabs/relaxation_cup.png',
+                    target: '/pages/filter/category/main?top_sort=3&sort_one=132'
                 }, {
-                    id: 3,
-                    name: '夜店酒吧',
-                    icon: '/static/tabs/relaxation_hotel.png',
-                    target: '/pages/filter/category/main?top_sort=3&sort_one=701'
+                    id: 144,
+                    name: '周边游乐',
+                    icon: WAPHOST + 'static/tabs/relaxation_airplane.png',
+                    target: '/pages/filter/category/main?top_sort=3&sort_one=144'
                 }, {
-                    id: 4,
+                    id: 116,
                     name: '运动健身',
-                    icon: '/static/tabs/relaxation_sport.png',
-                    target: '/pages/filter/category/main?top_sort=3&sort_one=712'
+                    icon: WAPHOST + 'static/tabs/relaxation_sport.png',
+                    target: '/pages/filter/category/main?top_sort=3&sort_one=116'
                 }, {
-                    id: 5,
-                    name: '游泳',
-                    icon: '/static/tabs/relaxation_swmming.png',
-                    target: '/pages/filter/category/main?top_sort=3&sort_one=715'
+                    id: 92,
+                    name: '娱乐',
+                    icon: WAPHOST + 'static/tabs/relaxation_hotel.png',
+                    target: '/pages/filter/category/main?top_sort=3&sort_one=92'
                 }, {
-                    id: 6,
-                    name: '茶馆',
-                    icon: '/static/tabs/relaxation_cup.png',
-                    target: '/pages/filter/category/main?top_sort=3&sort_one=703'
+                    id: 126,
+                    name: 'KTV',
+                    icon: WAPHOST + 'static/tabs/relaxation_ktv.png',
+                    target: '/pages/filter/category/main?top_sort=3&sort_one=126'
                 }, {
                     id: 7,
                     name: '全部',
-                    icon: '/static/tabs/relaxation_all.png',
-                    target: '/pages/filter/category/main?top_sort=3&sort_one=226'
+                    icon: WAPHOST + 'static/tabs/relaxation_all.png',
+                    target: '/pages/filter/category/main?top_sort=3'
                 }
             ],
         };
     },
     components: {
         Category,
+        ImageView,
         LaySwiper
     },
     computed: {
@@ -95,10 +104,11 @@ export default {
     },
     onLoad (options) {
         const that = this
+        const pastime = shopType.pastime
         apiGetAdvert({
             city_id: this.appData.currentCity.code,
             position: 1,
-            industry: 3
+            industry: pastime
         }).then(advers => {
             this.advertList = advers.advert
         })
@@ -111,10 +121,9 @@ export default {
         },
         jumpPages(pageUrl) {
             console.log(pageUrl);
-            
-            mpvue.navigateTo({
-                url: pageUrl
-            }) 
+            this.$router.push({
+                path: pageUrl
+            })
         }
     },
     onPullDownRefresh () {
@@ -145,30 +154,52 @@ export default {
     background: #fff;
     padding: 24rpx;
     overflow: hidden;
-    margin-bottom: 14rpx;
+    position: relative;
+    z-index: 0;
+    .bg{
+        position: absolute;
+        z-index: 8;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #ff8a35;
+        height: 80rpx;
+        &::after{
+            content: '';
+            position: absolute;
+            z-index: 9;
+            top: 50rpx;
+            left: -20%;
+            background: #fff;
+            width: 140%;
+            height: 200rpx;
+            border-radius: 50% 50% 0 0;
+        }
+    }
     .advert{
         margin-bottom: 24rpx;
     }
     .menu-warp{
+        position: relative;
+        z-index: 10;
         .menu{
             display: flex;
             flex-wrap: wrap;
             .menu-item{
                 width: 25%;
-                margin-bottom: 24rpx;
+                margin-bottom: 30rpx;
             }
         }
         .img-warp{
+            width: 130rpx;
             text-align: center;
-            img{
-                width: 100rpx;
-                height: 100rpx;
-            }
+            margin: auto;
         }
         .text{
-            font-size: 10pt;
+            font-size: 12px;
             color: #323232;
             text-align: center;
+            margin-top: 16rpx;
         }
     }
 }

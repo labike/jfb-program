@@ -88,10 +88,10 @@ export default {
         }
     },
     methods: {
-        jumpShop(id) {
-            mpvue.navigateTo({
-                url: '/pages/shop/index/main?shop_id=' + id
-            }) 
+        jumpShop(id) {            
+            this.$router.push({
+                path: '/pages/shop/index/main?shop_id=' + id
+            })  
         },
         joinShare(s_id) {
             const that = this

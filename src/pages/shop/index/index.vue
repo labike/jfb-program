@@ -7,6 +7,7 @@
 <section class="jfb-flexview" v-if="loading&&shopInfo && shopInfo.infoData">
     <section class="jfb-scrollview" id="scrollView">
         <shop-header :infoData="shopInfo.infoData"></shop-header>
+        <shop-sale :infoData="shopInfo.proData.give"></shop-sale>
         <div class="shop-navbar">
             <ul class="navbar">
                 <li v-for="(nav, key) in storeNav" :key="key"
@@ -33,6 +34,7 @@
 <script>
 import LayFooter from "@c/footer/Footer.vue";
 import ShopHeader from "./../views/ShopHeader.vue";
+import ShopSale from "./../views/ShopSale.vue";
 import ShopHome from "./../views/ShopHome.vue";
 import ShopRate from "./../views/TabRate.vue";
 import ShopBase from "./../views/TabInfo.vue";
@@ -51,6 +53,7 @@ export default {
     components: {
         LayFooter,
         ShopHeader,
+        ShopSale,
         ShopHome,
         ShopRate,
         ShopBase
@@ -82,17 +85,17 @@ export default {
 <style lang="scss" scoped>
 @import "~@/assets/styles/components/layout.scss";
 .shop-navbar {
-    margin-top: .1rem;
-    height: 0.88rem;
+    margin-top: 20rpx;
+    height: 88rpx;
     background: #fff;
     .navbar {
-        height: 0.88rem;
-        line-height: 0.88rem;
+        height: 88rpx;
+        line-height: 88rpx;
         font-size: 15px;
         display: flex;
         background: #fff;
         &.fiexd {
-            top: 0.88rem;
+            top: 88rpx;
             box-shadow: 0px 1px 4px #e1e1e1;
         }
         li {

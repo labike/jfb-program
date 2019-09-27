@@ -8,7 +8,7 @@
 <div  class="repast-warp">
     <div class="repast">
         <div class="advert" v-if="advertList.length" >
-            <lay-swiper :list='advertList' sHeight='160rpx'></lay-swiper>
+            <lay-swiper :list='advertList' sHeight='240rpx'></lay-swiper>
         </div>
         <div class="menu-warp">
             <ul class="menu1" v-if="menu.length">
@@ -17,7 +17,7 @@
                     @click.stop="jumpPages(item.target)"
                 >
                     <div class="img-warp" >
-                        <img :src="item.icon"  mode="aspectFill" >
+                        <ImageView :src="item.icon" width='100rpx' height='100rpx'></ImageView>
                     </div>
                     <div class="text">{{item.name}}</div>
                 </li>
@@ -28,12 +28,23 @@
                     @click.stop="jumpPages(item.target)"
                 >
                     <div class="img-warp">
-                        <img :src="item.icon"  mode="aspectFill" >
+                        <ImageView :src="item.icon" width='44rpx' height='44rpx'></ImageView>
                     </div>
                     <div class="text">{{item.name}}</div>
                 </li>
             </ul>
         </div>
+
+        <scroll-view class="carry-warp" scroll-x="true">
+            <ul class="carry"  v-if="carry && carry.length">
+                <li class="item"
+                    v-for="nav in carry" :key="nav.gcid"
+                    @click.stop="jumpListPages(nav)"
+                >
+                    <ImageView :src="nav.img" width='220rpx' height='165rpx'></ImageView>
+                </li>
+            </ul>
+        </scroll-view>
     </div>
     <category top_sort='1' :page='page'
         @length='setShopPageLength'
@@ -45,7 +56,9 @@
 <script>
 import Category from "./../views/Category.vue";
 import LaySwiper from "@c/swiper/Advertise.vue";
-import { apiGetAdvert } from "@/api/api";
+import ImageView from '@c/layouts/ImageView.vue'
+import { apiGetAdvert,apiSalesType } from "@/api/api";
+import { WAPHOST, shopType } from "@/config/base";
 export default {
     name: "repast",
     data() {
@@ -57,65 +70,67 @@ export default {
             advertList: [],
             menu: [
                 {
-                    id: '0',
+                    id: '49',
                     name: '团购',
-                    icon: '/static/tabs/food_icon_four.png',
+                    icon: WAPHOST + 'static/tabs/food_icon_four.png',
                     target: '/pages/filter/category/main?top_sort=1&sort_one=49'
                 }, {
-                    id: '1',
+                    id: '42',
                     name: '人气店家',
-                    icon: '/static/tabs/food_icon_six.png',
+                    icon: WAPHOST + 'static/tabs/food_icon_six.png',
                     target: '/pages/filter/category/main?top_sort=1&sort_one=42'
                 }, {
-                    id: '2',
+                    id: '39',
                     name: '饮品',
-                    icon: '/static/tabs/food_icon_ten.png',
+                    icon: WAPHOST + 'static/tabs/food_icon_ten.png',
                     target: '/pages/filter/category/main?top_sort=1&sort_one=39'
                 }, {
-                    id: '3',
+                    id: '27',
                     name: '水果生鲜',
-                    icon: '/static/tabs/food_icon_nine.png',
+                    icon: WAPHOST + 'static/tabs/food_icon_nine.png',
                     target: '/pages/filter/category/main?top_sort=1&sort_one=27'
                 }, {
-                    id: '4',
+                    id: '23',
                     name: '高端商务',
-                    icon: '/static/tabs/food_icon_seven.png',
-                    target: '/pages/filter/category/main?top_sort=1&sort_one=35'
+                    icon: WAPHOST + 'static/tabs/food_icon_seven.png',
+                    target: '/pages/filter/category/main?top_sort=1&sort_one=23'
                 }
             ],
             menu2: [
                 {
-                    id: '5',
+                    id: '30',
                     name: '火锅',
-                    icon: '/static/tabs/food_icon_one.png',
-                    target: '/pages/filter/category/main?top_sort=1&sort_one=23'
-                }, {
-                    id: '6',
-                    name: '自助餐',
-                    icon: '/static/tabs/food_icon_two.png',
-                    target: '/pages/filter/category/main?top_sort=1&sort_one=53'
-                }, {
-                    id: '7',
-                    name: '烧烤',
-                    icon: '/static/tabs/food_icon_three.png',
-                    target: '/pages/filter/category/main?top_sort=1&sort_one=47'
+                    icon: WAPHOST + 'static/tabs/food_icon_one.png',
+                    target: '/pages/filter/category/main?top_sort=1&sort_one=30'
                 }, {
                     id: '8',
-                    name: '西餐',
-                    icon: '/static/tabs/food_icon_eight.png',
-                    target: '/pages/filter/category/main?top_sort=1&sort_one=41'
+                    name: '自助餐',
+                    icon: WAPHOST + 'static/tabs/food_icon_two.png',
+                    target: '/pages/filter/category/main?top_sort=1&sort_one=8'
                 }, {
-                    id: '9',
+                    id: '56',
+                    name: '烧烤',
+                    icon: WAPHOST + 'static/tabs/food_icon_three.png',
+                    target: '/pages/filter/category/main?top_sort=1&sort_one=56'
+                }, {
+                    id: '20',
+                    name: '西餐',
+                    icon: WAPHOST + 'static/tabs/food_icon_eight.png',
+                    target: '/pages/filter/category/main?top_sort=1&sort_one=20'
+                }, {
+                    id: '19',
                     name: '面包甜点',
-                    icon: '/static/tabs/food_icon_five.png',
-                    target: '/pages/filter/category/main?top_sort=1&sort_one=30'
+                    icon: WAPHOST + 'static/tabs/food_icon_five.png',
+                    target: '/pages/filter/category/main?top_sort=1&sort_one=19'
                 }
             ],
+            carry: []
         };
     },
     components: {
         Category,
-        LaySwiper
+        LaySwiper,
+        ImageView
     },
     computed: {
         appData() {
@@ -124,25 +139,31 @@ export default {
     },
     onLoad (options) {
         const that = this
+        const repast = shopType.repast
         apiGetAdvert({
             city_id: this.appData.currentCity.code,
             position: 1,
-            industry: 1
+            industry: repast
         }).then(advers => {
             this.advertList = advers.advert
+        })
+        apiSalesType(repast).then(carry => {
+            console.log(carry);
+            this.carry = carry
         })
     },
     methods: {
         setShopPageLength(length) {
-            console.log(length);
-            
             this.remainListsLength = length
         },
         jumpPages(pageUrl) {
-            console.log(pageUrl);
-            
-            mpvue.navigateTo({
-                url: pageUrl
+            this.$router.push({
+                path: pageUrl
+            }) 
+        },
+        jumpListPages(advers) {
+            this.$router.push({
+                path: `/pages/shop/salelist/main?industry=${advers.industry_id}&gcid=${advers.gcid}`
             }) 
         }
     },
@@ -172,9 +193,10 @@ export default {
     background: #fff;
     padding: 24rpx;
     overflow: hidden;
-    margin-bottom: 14rpx;
     .advert{
         margin-bottom: 24rpx;
+        overflow: hidden;
+        border-radius: 10rpx;
     }
     .menu-warp{
         ul{
@@ -185,24 +207,49 @@ export default {
         }
         .img-warp{
             text-align: center;
-            img{
-                width: 100rpx;
-                height: 100rpx;
-            }
-        }
-        .menu2{
-            .img-warp{
-                padding: 20rpx 0 10rpx;
-                img{
-                    width: 40rpx;
-                    height: 40rpx;
-                }
-            }
+            width: 100rpx;
+            margin: auto;
         }
         .text{
-            font-size: 10pt;
+            margin-top: 10rpx;
+            font-size: 12px;
             color: #323232;
             text-align: center;
+        }
+        .menu2{
+            margin-top: 10rpx;
+            .img-warp{
+                margin: 22rpx auto 0;
+                width: 44rpx;
+            }
+            .text{
+                font-size: 12px;
+            }
+        }
+    }
+
+    .carry-warp{
+        margin-top: 36rpx;
+    }
+    .carry {
+        color: #323232;
+        white-space: nowrap;
+        display: flex;
+        .item {
+            margin-right: 8rpx;
+            display: inline-block;
+            text-align: center;
+            .name{
+                font-size: 16px;
+                font-weight: 700;
+            }
+            .desc{
+                margin-top: 10rpx;
+                padding: 0 24rpx;
+                font-size: 11px;
+                font-weight: 400;
+                color: #818181;
+            }
         }
     }
 }

@@ -1,8 +1,13 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-07-02 14:45:42
+ * @Description: file content
+ -->
 <template>
 <div class="confirm-order" v-if="currentItem">
     <div class="order-details">
         <div class="dts-img">
-            <img :src="currentItem.headerImg" alt="">
+            <ImageView :src="currentItem.headerImg" mode='scaleToFill' height="140rpx" width="210rpx"></ImageView>
         </div>
         <div class="dts-info">
             <div class="name">{{currentItem.name}}</div>
@@ -20,7 +25,7 @@
 
     <div class="order-tools">
         <ul class="cell">
-            <li class="cell-item num">
+            <li class="cell-item num" v-if="orderType != 'timesale'">
                 <div class="cell-left">数量</div>
                 <div class="cell-right">
                     <div class="spinner">
@@ -50,12 +55,19 @@
 import { mapState, mapMutations } from "vuex";
 import Voucher from '@/config/class/voucher';
 import Combo from '@/config/class/combo';
+import Timesale from '@/config/class/timesale';
+import ImageView from '@c/layouts/ImageView.vue'
+
 
 export default {
     name: "Vouchers",
+    components: {
+        ImageView
+    },
     data() {
         return {
             orderNum: 1,
+            orderType: ''
         }
     },
     watch: {
@@ -79,6 +91,7 @@ export default {
     },
     onLoad (options) {
         this.orderNum = 1
+        this.orderType = options.title
         if (this.currentItem && this.currentItem.id === options.item_id) {
             
         } else {
@@ -99,7 +112,21 @@ export default {
                     this.SET_CURRENT_ITEM(res)
                 })
             }
+            if (options.title === 'timesale') {
+
+                let timesale = new Timesale({
+                    id: options.item_id
+                })
+                timesale.getTimesaleRules(options.shop_id).then(res => {
+                    this.SET_CURRENT_ITEM(res)
+                })
+            }
         }
+    },
+    onUnload() {        
+        const self = this;
+        self.orderNum = 1
+        self.orderType = ''
     },
     methods: {
         ...mapMutations('shop', [

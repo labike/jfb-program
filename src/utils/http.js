@@ -5,7 +5,7 @@
  */
 import QS from 'qs';
 import Fly from 'flyio/dist/npm/wx';
-import { APIHOST } from '@/config/base';
+import { APIHOST,APIHOST2 } from '@/config/base';
 
 
 const fly = new Fly();
@@ -68,8 +68,8 @@ fly.interceptors.response.use(
         
         wx.hideLoading();
         let msg = '';
-        if (err.response.data.msg) {
-            msg = err.response.data.msg
+        if (err.message) {
+            msg = err.message
         } else {
             msg = '请求数据失败,请稍后再试'
         }
@@ -89,8 +89,19 @@ export function get(url, data) {
     return fly.get(url,data);
 }
 
+export function get2(url, data) {
+    url = APIHOST2 + url
+    return fly.get(url,data);
+}
+
 export function post(url, data) {
     url = APIHOST + url
+    return fly.post(url, data);
+}
+
+
+export function post2(url, data) {
+    url = APIHOST2 + url
     return fly.post(url, data);
 }
 

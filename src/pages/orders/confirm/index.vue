@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-26 11:34:20
+ * @Description: file content
+ -->
 <template>
 <div class="container">
     <div class="confirm-warp">
@@ -43,7 +48,7 @@ export default {
         this.shop_id = options.shop_id;
         this.title = options.title;
         this.item_id = options.item_id;
-        if (this.title === 'vouchers' || this.title === 'combo') {
+        if (this.title === 'vouchers' || this.title === 'combo' || this.title === 'timesale') {
             this.showOrderVouchers = true
         }
     },
@@ -63,7 +68,7 @@ export default {
                 s_id: that.shop_id,
                 type: orderType[that.title]
             }
-            if (that.title === 'vouchers' || this.title === 'combo') {
+            if (that.title === 'vouchers' || that.title === 'combo' || that.title === 'timesale') {
                 baseData.number = that.orderNum
                 baseData.p_id = that.item_id
             }

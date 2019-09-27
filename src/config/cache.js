@@ -1,3 +1,8 @@
+/*
+ * @Author: zhangHang
+ * @Date: 2019-05-14 14:40:32
+ * @Description: file content
+ */
 
 /**************************************************/
 const CURRENT_SHOP_KEY = '__CURRENT_SHOP__';
@@ -27,6 +32,15 @@ function deleteFromArray(arr, compare) {
         arr.splice(index, 1)
     }
 }
+
+
+
+
+export function loadAppData() {
+    return mpvue.getStorageSync('appData') || {};
+}
+
+
 /** ***************************** shop *********************************/
 export function saveShop(shopInfo) {
     mpvue.setStorageSync(CURRENT_SHOP_KEY, shopInfo);

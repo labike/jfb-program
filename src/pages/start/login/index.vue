@@ -50,7 +50,7 @@
 import { mapActions } from 'vuex'
 import LayModel from "@c/layouts/Model.vue";
 import { apiGetOpenId, apiGetMobileByWx, apiGetCodeByLogin, apiBindMobile } from '@/api/api'
-import { tabbar } from "@/config/base";
+import { authLogin } from '@/api/wechat'
 
 export default {
     data() {
@@ -71,7 +71,18 @@ export default {
     },
     onLoad() {
         const self = this;
-        self.again_getLocation()
+        authLogin(succ => {
+            setTimeout(function() {
+                self.remind = ''
+            }, 1000);
+            if (succ.code) {
+                console.log('授权登录成功！' + JSON.stringify(succ))
+                self.code = succ.code
+                self.wxGetUserInfo(succ.code);
+            } else {
+                console.log('code获取失败！' + succ.errMsg)
+            }
+        })
     },
     computed: {
         codeItem() {
@@ -97,7 +108,6 @@ export default {
         ...mapActions('user', [
             'Login',
             'bingMobile',
-            'setLocation'
         ]),
         closeMobile() {
             this.modelBind = false;
@@ -106,86 +116,9 @@ export default {
         set_focus() {
             this.sendCodeFocus = true
         },
-        getLocation: function () {
-            var self = this;
-            wx.getLocation({
-                type: 'wgs84',
-                success: function (res) {
-                    self.setLocation(res)
-                    mpvue.login({
-                        success(res) {
-                            setTimeout(function() {
-                                self.remind = ''
-                            }, 1000);
-                            if (res.code) {
-                                console.log('授权登录成功！' + JSON.stringify(res))
-                                self.code = res.code
-                                self.wxGetUserInfo(res.code);
-                            } else {
-                                console.log('授权登录失败！' + res.errMsg)
-                            }
-                        }
-                    })
-                },
-                fail() {
-                    self.again_getLocation()
-                }
-            })
-        },
-        again_getLocation: function() {
-            let that = this;
-            // 获取位置信息
-            wx.getSetting({
-                success: (res) => {
-                    console.log(res)
-                    if (res.authSetting['scope.userLocation'] !== undefined && res.authSetting['scope.userLocation'] !== true) { //非初始化进入该页面,且未授权
-                        wx.showModal({
-                            title: '是否授权当前位置',
-                            content: '需要获取您的地理位置，请确认授权，否则无法获取您所需数据',
-                            success: function (res) {
-                                console.log(res)
-                                if (res.cancel) {
-                                    wx.showToast({
-                                        title: '授权失败',
-                                        icon: 'success',
-                                        duration: 1000
-                                    })
-                                } else if (res.confirm) {
-                                    wx.openSetting({
-                                        success: function (dataAu) {
-                                            console.log(dataAu)
-                                            if (dataAu.authSetting["scope.userLocation"] === true) {
-                                                wx.showToast({
-                                                    title: '授权成功',
-                                                    icon: 'success',
-                                                    duration: 1000
-                                                })
-                                                //再次授权，调用getLocationt的API
-                                                that.getLocation(that);
-                                            } else {
-                                                wx.showToast({
-                                                    title: '授权失败',
-                                                    icon: 'fail',
-                                                    duration: 1000
-                                                })
-                                            }
-                                        }
-                                    })
-                                }
-                            }
-                        })
-                    } else if (res.authSetting['scope.userLocation'] === undefined) { //初始化进入
-                        that.getLocation(that);
-                    } else { //授权后默认加载
-                        that.getLocation(that);
-                    }
-                }
-            })
-
-        },
         wxGetUserInfo(code) {
             const self = this;            
-            wx.getUserInfo({
+            mpvue.getUserInfo({
                 withCredentials: true,
                 success(info) {
                     let { encryptedData, iv, userInfo } = info;
@@ -215,10 +148,10 @@ export default {
             })
         },
         getUserInfoClick() {
-            wx.showLoading({
+            mpvue.showLoading({
                 title: '请求授权中...',
             })
-            if (!wx.canIUse('button.open-type.getUserInfo')) {
+            if (!mpvue.canIUse('button.open-type.getUserInfo')) {
                 console.log('请升级微信版本')
             }
         },
@@ -245,10 +178,10 @@ export default {
                     }
                 })
             } else {
-                wx.hideLoading()
-                wx.showModal({
+                mpvue.hideLoading()
+                mpvue.showModal({
                     title: '温馨提示',
-                    content: '亲，拒绝授权将无法购物，您确定要这么做吗？',
+                    content: '亲，拒绝授权将无法登陆，您确定要这么做吗？',
                     showCancel: false,
                     confirmText: '确定'
                 })
@@ -256,7 +189,7 @@ export default {
         },
         async doLogin(info) {
             const that = this
-            wx.showLoading({
+            mpvue.showLoading({
                 title: '登录中...',
                 mask: true,
             });
@@ -285,7 +218,7 @@ export default {
         getPhoneNumber: function(e) {
             const self = this  
             if (e.mp.detail.errMsg === 'getPhoneNumber:user deny') {  
-                wx.showModal({  
+                mpvue.showModal({  
                     title: '提示',  
                     showCancel: false,  
                     content: '未授权',  
@@ -315,7 +248,7 @@ export default {
             }).then(() => {
                 that.jumpHistory() 
             }).catch(err => {
-                wx.showToast({
+                mpvue.showToast({
                     title: err.msg,
                     icon: 'none',
                     duration: 1000
@@ -327,18 +260,10 @@ export default {
             if (beforeUrl === "") {
                 beforeUrl = 'pages/index/main'
             }
-            let current = tabbar.find(item => {
-                return item === beforeUrl
+            this.$router.push({
+                path: "/" + beforeUrl,
+                reLaunch: true
             })
-            if (current) {
-                mpvue.switchTab({
-                    url: "/" + beforeUrl,
-                });
-            } else {
-                wx.redirectTo({
-                    url: "/" + beforeUrl,
-                }); 
-            } 
         }
         
     }

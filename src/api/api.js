@@ -1,4 +1,9 @@
-import { get, post } from "../utils/http";
+/*
+ * @Author: zhangHang
+ * @Date: 2019-05-14 16:43:36
+ * @Description: file content
+ */
+import { get, get2, post, post2 } from "../utils/http";
 
 /***************************************** 首页接口 *****************************************/
 
@@ -22,26 +27,6 @@ export const apiGetIndex = params => {
     });
 };
 
-/**
- * 2.1.2 首页推荐店铺或产品上拉请求
- * @method GET https://clients.qmw111.com/v1/index/recommends 
- * @params city_id:城市id (非必填，如果没有填写 ，根据ip获取当前城市) 
- * @params lng: 经度 
- * @params lat: 纬度
- * @params page:页码（上拉必须从2开始）
- * @return {}
- */
-export const apiGetRecommends = params => {
-    return get(`index/recommends`, params).then(res => {        
-        return Promise.resolve(res.data); 
-    }).catch(err => {
-        if (err.code === 0) {
-            return Promise.reject(err);
-        } else {
-            throw err.msg;
-        }
-    });
-};
 
 
 /********************************************** 广告位 ******************************************** */
@@ -902,5 +887,120 @@ export const apiVerifyByAlipay = params => {
         }
     });
 };
+
+
+/**********************************v2******************/
+
+
+/**
+ * 2.1.2 首页推荐店铺或产品上拉请求
+ * @method GET https://clients.qmw111.com/v1/index/recommends 
+ * @params city_id:城市id (非必填，如果没有填写 ，根据ip获取当前城市) 
+ * @params lng: 经度 
+ * @params lat: 纬度
+ * @params page:页码（上拉必须从2开始）
+ * @return {}
+ */
+export const apiGetRecommends = params => {
+    return post2(`index/recommend`, params).then(res => {        
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        if (err.code === 0) {
+            return Promise.reject(err);
+        } else {
+            throw err.msg;
+        }
+    });
+};
+
+/**
+* 美食点击进去【活动分类列表】
+* @method GET  https://clients.qmw111.com/v2/category/range
+* @params  industry_id: 每页显示条数
+*/
+export const apiSalesType = type => {
+    return get2('category/range', {industry_id: type}).then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        throw err;
+    });
+};
+
+/**
+* 分类接口【首页七大类】
+* @method GET  https://clients.qmw111.com/v2/nav/list
+* @params  path: index(首页index,)
+*/
+export const apiNavList = type => {
+    return get2('nav/list', {path: type}).then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        throw err;
+    });
+};
+
+/**
+* 分类接口【二级页面】
+* @method GET  https://clients.qmw111.com/v2/nav/industry
+* @params  path: index(首页index,)
+*/
+export const apiNavTwoList = industry_id => {
+    return get2('nav/industry', { industry_id }).then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        throw err;
+    });
+};
+
+/**
+* 优质门店【首页】
+* @method GET  https://clients.qmw111.com/v2/index/good
+* @params  path: index(首页index,)
+*/
+export const apiSuperStores = () => {
+    return get2('index/good').then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        throw err;
+    });
+};
+
+/**
+ * 活动列表页
+ * @method GET https://clients.qmw111.com/v2/give/list
+ * @params industry_id: 1 
+ * @params give_category: 4【活动分类】
+ * @params lng: 经度 
+ * @params lat: 纬度
+ * @params page:页码
+ * @return {}
+ */
+export const apiGiveList = params => {
+    return post2('give/list', params).then(res => {        
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        if (err.code === 0) {
+            return Promise.reject(err);
+        } else {
+            throw err.msg;
+        }
+    });
+};
+
+
+
+/**
+* 活动详情页
+* @method GET  https://clients.qmw111.com/v2/give/detail?gid=14
+* @params  path: index(首页index,)
+*/
+export const apiGiveDetail = gid => {
+    return get2('give/detail', { gid }).then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        throw err;
+    });
+};
+
 
 

@@ -4,39 +4,56 @@
  * @Description: file content
  -->
 <template>
-<div class="shop-card" v-if="shop && shop.s_id" @click="jumpShop(shop.s_id)">
+<div class="shop-card" 
+    v-if="shop && shop.s_id"
+    @click="jumpShop(shop.s_id)"
+    
+>
     <div class="card other" v-if="shop.type=='other'">
-        <div class="lt-img">
-            <img :src="shop.headerImg[0].img_url" alt="">
+        <div class="sends"  v-if='shop.indexActivity'>
+            <img src="/static/img/send2.png"/>
         </div>
-        <div class="rt-content">
-            <div class="title">
-                <div class="name">{{shop.store_name}}</div>
-                <div class="discount" v-if="discount">
-                    <p class="text">{{discount}}<span>折</span>买</p>
-                </div>
-                <!-- <div class="dishes" v-if="shop.sort_name==='美食'"></div> -->
+        <div class="title">
+            <div class="name">{{shop.store_name}}</div>
+            <div class="discount" v-if="discount">
+                <p class="text">{{discount}}<span>折</span>买</p>
             </div>
-            <div class="info">
-                <ul class="score" :class="scoreName">
-                    <li class="star"></li>
-                    <li class="star"></li>
-                    <li class="star"></li>
-                    <li class="star"></li>
-                    <li class="star"></li>
-                    <li class="text">{{shop.score}}分</li>
-                </ul>
-                <div class="distance" v-if="shop.distance">{{shop.distance}}</div>
-            </div>
-            
-            <div class="address">{{shop.address}}</div>
-            <div class="vouchers" v-if="vouchers">{{vouchers}}</div>
-            <div class="groupon" v-if="groupon">{{groupon}}</div>
+            <!-- <div class="dishes" v-if="shop.sort_name==='美食'"></div> -->
         </div>
+        <div class="rate">
+            <ul class="score" :class="scoreName">
+                <li class="star"></li>
+                <li class="star"></li>
+                <li class="star"></li>
+                <li class="star"></li>
+                <li class="star"></li>
+                <li class="text">{{shop.score}}</li>
+            </ul>
+            <div class="record" v-if="shop.msgData">
+                <rollnotice autoplay="2000" :rollData='shop.msgData'>
+                </rollnotice>
+            </div>
+        </div>
+        <ul class="info">
+            <li>{{shop.sort_name}}</li>
+            <li class="address">{{shop.address}}</li>
+            <li class="distance"  v-if="shop.distance">{{shop.distance}}</li>
+        </ul>
+        <!-- <div class="address">{{shop.address}}</div> -->
+                        
+        <ul class="list-img">
+            <block v-for="group of shop.headerImg" :key="group.id">
+                <li class="img-warp">
+                    <ImageView :src="group.img_url" mode='scaleToFill' height="210rpx" width="210rpx"></ImageView>
+                </li>
+            </block>
+        </ul>
+        <div class="vouchers" v-if="vouchers">{{vouchers}}</div>
+        <div class="groupon" v-if="groupon">{{groupon}}</div>
     </div>
     <div class="card hotel" v-if="shop.type=='hotel'">
         <div class="hl-img">
-            <img :src="shop.headerImg[0].img_url" alt="">
+            <ImageView :src="shop.headerImg[0].img_url" ></ImageView>
         </div>
         <div class="hl-content">
             <div class="title">
@@ -63,6 +80,7 @@
 
 <script>
 import Rollnotice from "@c/rollnotice/Rollnotice.vue";
+import ImageView from '@c/layouts/ImageView.vue'
 import { likeShare, apiShareStore } from "@/api/api";
 export default {
     name: 'ShopCard',
@@ -122,13 +140,14 @@ export default {
         }
     },
     components: {
-        Rollnotice
+        Rollnotice,
+        ImageView
     },
     methods: {
         jumpShop(id) {
-            mpvue.navigateTo({
-                url: '/pages/shop/index/main?shop_id=' + id
-            }) 
+            this.$router.push({
+                path: '/pages/shop/index/main?shop_id=' + id
+            })
         },
         tapLike(s_id) {
             likeShare({
@@ -153,11 +172,21 @@ export default {
 
 <style lang="scss" scoped>
 @import "~@/assets/styles/common/mixins.scss";
+.sends{
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
+    img{
+        width: 110rpx;
+        height: 110rpx;
+    }
+}
 .card{
-    background: #fff;
+    background-color: #fff;
     margin-bottom: 14rpx;
     border-radius: 10rpx;
-    padding: 30rpx 24rpx;
+    padding: 40rpx 24rpx;
     position: relative;
     .title{
         display: flex;
@@ -217,20 +246,20 @@ export default {
     .score{
         display: flex;
         align-items: center;
-        margin-bottom: 18rpx;
         .text{
-            color:#818181;
+            color:#ff1800;
             margin-left: 10rpx;
-            font-size: 22rpx;
+            font-size: 24rpx;
             line-height: 1;
+            font-weight: 700;
         }
         .star{
-            width: 24rpx;
-            height: 24rpx;
+            width: 28rpx;
+            height: 28rpx;
             margin-right: 5rpx;
             display: inline-block;
             vertical-align: bottom;
-            background-size: 24rpx 24rpx;
+            background-size: 28rpx 28rpx;
             background-position: center;
             background-repeat: no-repeat;
             background-image: url('~@/assets/img/star.png');
@@ -265,40 +294,57 @@ export default {
     }
 }
 .other{
-    background: #fff;
+    background-color: #fff;
     position: relative;
-    .lt-img{
-        position: absolute;
-        left: 24rpx;
-        top: 30rpx;
-        width: 150rpx;
-        height: 150rpx;
-        flex-shrink: 0;
-        img{
-            width: 150rpx;
-            height: 150rpx;
-        }
+    margin: 24rpx;
+    border-radius: 10rpx;
+    .rate{
+        display: flex;
+        justify-content: space-between;
     }
-    .rt-content{
-        margin-left: 174rpx;
-        .info{
-            display: flex;
-            justify-content: space-between;
-        }
-        .distance{
+    .record{
+        flex: 1;
+        text-align: right;
+        color: #f9904c;
+        margin-left: 20rpx;
+    }
+    .info{
+        display: flex;
+        line-height: 1;
+        margin: 20rpx 0;
+        li{
             color:#818181;
             font-size: 22rpx;
-            line-height: 1;
+            position: relative;
+            padding-right: 20rpx;
+            &:not(:last-child)::before {
+                content: '';
+                position: absolute;
+                z-index: 2;
+                bottom: 0;
+                right: 10rpx;
+                width: 1rpx;
+                height: 100%;
+                border-right: 1rpx solid #818181;
+            }
+        }
+        .address{
+            overflow: hidden;
+            width: 200rpx;
+            word-wrap: normal;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
         }
     }
     .title{
         display: flex;
-        margin-bottom: 20rpx;
+        margin-bottom: 16rpx;
         justify-items: center;
         align-items: center;
         .name{
-            font-size:11pt;
-            font-weight:700;
+            font-size: 16px;
+            font-weight: 700;
             margin-right: 10rpx;
             word-wrap: normal;
             text-overflow: ellipsis;
@@ -348,10 +394,13 @@ export default {
             background-image: url('~@/assets/img/self_cart.png');
         }
     }
-    
-    .address{
-        color: #818181;
-        font-size: 22rpx;
+    .list-img{
+        display: flex; 
+        min-width: 100%;
+        justify-content: space-between;
+        .img-warp{
+            width: 210rpx;
+        }
     }
     .vouchers{
         font-size: 24rpx;

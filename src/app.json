@@ -29,6 +29,9 @@
         "pages/filter/hotel/main",
         "pages/filter/pastime/main",
         "pages/filter/icar/main",
+        "pages/filter/health/main",
+        "pages/filter/education/main",
+        "pages/filter/fransnana/main",
         "pages/filter/all/main",
         "pages/filter/category/main",
         "pages/shop/index/main",
@@ -36,7 +39,10 @@
         "pages/shop/photos/main",
         "pages/shop/item/main",
         "pages/shop/pay/main",
-        "pages/shop/payok/main"
+        "pages/shop/payok/main",
+        "pages/shop/salelist/main",
+        "pages/shop/saletime/main"
+        
     ],
     "window": {
         "backgroundTextStyle": "light",

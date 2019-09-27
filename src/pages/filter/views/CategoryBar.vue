@@ -1,6 +1,11 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-07-20 09:53:30
+ * @Description: file content
+ -->
 <template>
 <div class="mask-warp" v-if="show">
-    <div class="mask" @click="closeMask"></div>
+    <div class="mask" @click="closeMask" ></div>
     <div class="mask-inner">
         <div class="bar-warp top">
             <ul class="nav-bar">
@@ -99,23 +104,25 @@ export default {
         show: Boolean
     },
     onLoad () {
-        this.selectNav = this.select
+        const self = this;
+        self.selectNav = self.select
+        self.selectNavList = ['全部', '附近', '智能排序']
         apiBusinessSort({
-            adCode: this.appData.currentCity.code,
-            top_sort: this.params.top_sort
+            adCode: self.appData.currentCity.code,
+            top_sort: self.params.top_sort
         }).then(res => {
             console.log(res);
-            this.nearList = res.addrData
-            if (this.params.list && this.params.list.length) {
-                this.typeList = this.params.list
+            self.nearList = res.addrData
+            if (self.params.list && self.params.list.length) {
+                self.typeList = self.params.list
             } else {
-                this.typeList = res.sortData
-                let current = this.typeList.find(item => {
-                    return this.params.sort_one === item.id
+                self.typeList = res.sortData
+                let current = self.typeList.find(item => {
+                    return self.params.sort_one === item.id
                 })
                 if (current) {
-                    this.selectNavList[0] = current.sort_name
-                    this.$emit('init', current.sort_name)
+                    self.selectNavList[0] = current.sort_name
+                    self.$emit('init', current.sort_name)
                 }
             }
         })
@@ -147,6 +154,8 @@ export default {
         selectItem(item) {
             const newData = JSON.parse(JSON.stringify(item))
             newData.type = this.selectNav
+            console.log(newData);
+            
             this.$emit('change', newData)
             this.closeMask()
         }
@@ -156,7 +165,7 @@ export default {
 
 <style lang="scss" scoped>
 .mask-warp{
-    position: absolute;
+    position: fixed;
     left: 0;
     right: 0;
     top: 0;
@@ -166,7 +175,7 @@ export default {
     z-index: 9999;
     justify-content: flex-start;
     .mask{
-        position: absolute;
+        position: fixed;
         left: 0;
         right: 0;
         top: 0;
@@ -176,7 +185,7 @@ export default {
     }
     .mask-inner{
         background: #fff;
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         width: 100%;

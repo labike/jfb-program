@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-24 12:03:04
+ * @Description: file content
+ -->
 <template>
 <div class="container" >
     <div class="rate-list" v-if="rateList.length">
@@ -103,8 +108,8 @@ export default {
     },
     methods: {
         jumpShop(id) {
-            mpvue.navigateTo({
-                url: '/pages/shop/index/main?shop_id=' + id
+            this.$router.push({
+                path: '/pages/shop/index/main?shop_id=' + id
             }) 
         },
         getMyRate() {

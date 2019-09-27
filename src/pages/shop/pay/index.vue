@@ -1,7 +1,12 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-26 14:18:22
+ * @Description: file content
+ -->
 <template>
 	<div class="pay-wrapper"  v-if="showPay">
 		<div class="order-details">
-			<last-time  :endTime="createOrderReturn.deadlinetime" @callback='closePay'></last-time >
+			<!-- <last-time  :endTime="createOrderReturn.deadlinetime" @callback='closePay'></last-time > -->
 			<div class="price">{{createOrderReturn.actual}}</div>
 			<div class="details"
 			 v-if="createOrderReturn.order_name">
@@ -54,10 +59,10 @@ export default {
     },
     methods: {
         ...mapActions(['updateOrderReturn']),
-        closePay() {
-            console.log('closePay');
-            this.paying = false
-        },
+        // closePay() {
+        //     console.log('closePay');
+        //     this.paying = false
+        // },
         goPay() {
             const that = this
             that.orderPay().then(wxConfig => {

@@ -195,16 +195,16 @@ export default {
         ]),
         jumpCombo(title, id) {
             const that = this
-            this.SET_CURRENT_ITEM(null)
-            mpvue.navigateTo({
-                url: `/pages/shop/item/main?shop_id=${that.s_id}&title=${title}&item_id=${id}`
+            that.SET_CURRENT_ITEM(null)
+            that.$router.push({
+                path: `/pages/shop/item/main?shop_id=${that.s_id}&title=${title}&item_id=${id}`
             })
         },
         jumpConfirm(title, id) {
             const that = this 
-            mpvue.navigateTo({
-                url: `/pages/orders/confirm/main?shop_id=${that.s_id}&title=${title}&item_id=${id}`
-            }) 
+            that.$router.push({
+                path: `/pages/orders/confirm/main?shop_id=${that.s_id}&title=${title}&item_id=${id}`
+            })
         }
     }
 };

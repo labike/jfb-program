@@ -6,26 +6,15 @@
 <template>
 <div class="container">
     <div class="banner">
-        <lay-swiper :list='params' v-if="params.length" sHeight='200rpx'></lay-swiper>
+        <lay-swiper :list='banners' v-if="banners.length" sHeight='200rpx'></lay-swiper>
     </div>
     <div class="content">
         <ul class="menu">
             <li class="nav-item" v-for="item of menu" :key="item.id" 
-                @click="jumpPages(item.tager)"
+                @click="jumpTypePages(item.sign)"
             >
                 <div class="img-warp">
-                    <img :src="item.icon" class='icon' mode="aspectFill">
-                    <img v-if="item.minIcon" :src="item.minIcon" class='min-icon' mode="aspectFit">
-                </div>
-                <div class="text">{{item.name}}</div>
-            </li>
-        </ul>
-        <ul class="menu2">
-            <li class="nav-item" v-for="item of menu2" :key="item.id"
-                @click="jumpPages(item.tager)"
-            >
-                <div class="img-warp">
-                    <img :src="item.icon" class='icon' mode="aspectFill">
+                    <ImageView :src="item.img"></ImageView>
                 </div>
                 <div class="text">{{item.name}}</div>
             </li>
@@ -36,75 +25,47 @@
 
 <script>
 import LaySwiper from "@c/swiper/Advertise.vue";
+import { mapState } from 'vuex';
+import { apiGetAdvert, apiNavList } from "@/api/api";
+import { WAPHOST } from "@/config/base";
+import ImageView from '@c/layouts/ImageView.vue'
 export default {
     name: "Menus",
-    data() {
-        return {
-            menu: [{
-                id: 0,
-                name: '美食',
-                icon: '/static/tabs/icon_grid_cate.png',
-                tager: '/pages/filter/repast/main'
-            }, {
-                id: 1,
-                name: '酒店',
-                icon: '/static/tabs/icon_grid_hotel.png',
-                minIcon: '/static/tabs/full_bage.png',
-                tager: '/pages/filter/hotel/main'
-            }, {
-                id: 2,
-                name: '休闲娱乐',
-                icon: '/static/tabs/icon_grid_yule.png',
-                tager: '/pages/filter/pastime/main'
-            }, {
-                id: 3,
-                name: '爱车',
-                icon: '/static/tabs/icon_grid_car.png',
-                tager: '/pages/filter/icar/main'
-            }, {
-                id: 4,
-                name: '更多',
-                icon: '/static/tabs/icon_grid_more.png',
-                tager: '/pages/filter/all/main'
-            }],
-            menu2: [{
-                id: 5,
-                name: '火锅',
-                icon: '/static/tabs/icon_home_big_classify_huog.png',
-                tager: '/pages/filter/category/main?top_sort=1&sort_one=23'
-            }, {
-                id: 6,
-                name: 'KTV',
-                icon: '/static/tabs/icon_home_big_classify_ktv.png',
-                tager: '/pages/filter/category/main?top_sort=3&sort_one=710'
-            }, {
-                id: 7,
-                name: '洗车',
-                icon: '/static/tabs/icon_home_big_classify_xic.png',
-                tager: '/pages/filter/category/main?top_sort=4&sort_one=217'
-            }, {
-                id: 8,
-                name: '丽人',
-                icon: '/static/tabs/icon_home_big_classify_sport.png',
-                tager: '/pages/filter/category/main?top_sort=3&sort_one=735'
-            }, {
-                id: 9,
-                name: '足疗按摩',
-                icon: '/static/tabs/icon_home_big_classify_zul.png',
-                tager: '/pages/filter/category/main?top_sort=3&sort_one=702'
-            }, ]
-        }
-    },
-    props: {
-        params: Object
-    },
     components: {
+        ImageView,
         LaySwiper,
     },
+    data() {
+        return {
+            banners: [],
+            menu: []
+        }
+    },
+    mounted () {
+        const _this = this
+        apiGetAdvert({
+            city_id: _this.city_id,
+            position: 1,
+            industry: 0
+        }).then(advers => {
+            _this.banners = advers.advert
+        })
+        apiNavList('index').then(mList => {
+            console.log(mList);
+            
+            _this.menu = mList
+        })
+    },
+    
+    computed: {
+        ...mapState({
+            "city_id": state => state.user.city_id
+        }),
+    },
     methods: {
-        jumpPages(pageUrl) {
-            mpvue.navigateTo({
-                url: pageUrl
+        jumpTypePages(type) {
+            this.$router.push({
+                path: `/pages/filter/${type}/main`
             }) 
         }
     }
@@ -115,44 +76,28 @@ export default {
 <style lang="scss" scoped>
 .container{
     background: #fff;
-    padding: 24rpx;
-    // margin-bottom: 24rpx;
+    padding: 24rpx 0;
     .banner{
-        margin-bottom: 24rpx;
+        margin: 0 24rpx;
+        border-radius: 10rpx;
+        overflow: hidden;
+
     }
     .content{
         ul{
             display: flex;
+            flex-wrap: wrap;
             li{
-                flex: 1;
+                width: 25%;
             }
         }
         .img-warp{
-            text-align: center;
-            position: relative;
-            .icon{
-                width: 100rpx;
-                height: 100rpx;
-            }
-            .min-icon{
-                position: absolute;
-                top: 0;
-                left: 50%;
-                width: 80rpx;
-                height: 30rpx;
-            }
-        }
-        .menu2{
-            .img-warp{
-                padding: 20rpx 0 10rpx;
-                img{
-                    width: 40rpx;
-                    height: 40rpx;
-                }
-            }
+            margin: 35rpx auto 0;
+            width: 130rpx;
+            height: 130rpx;
         }
         .text{
-            font-size: 10pt;
+            font-size: 12px;
             color: #323232;
             text-align: center;
         }

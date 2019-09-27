@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-07-20 09:53:30
+ * @Description: file content
+ -->
 <template>
 <section class="category-warp">
     <scroll-view class="category" scroll-y @scroll="getScroll">
@@ -21,7 +26,7 @@
 
         <section class="empty" v-else>
             <div class="loading" v-if="listLoading"></div>
-            <img src="/static/img/null_bg.png" mode="aspectFit" >
+            <ImageView class="icon" src="/static/img/null_bg.png" mode="widthFix"></ImageView>
             <div class="text">暂无相关商铺！</div>
         </section>
     </scroll-view>
@@ -50,6 +55,7 @@ import LayHeader from "@c/header/Header.vue";
 import LayModel from "@c/layouts/Model.vue";
 import Menus from "./../views/MenuList.vue";
 import ShopCard from "@c/shop/ShopCard.vue";
+import ImageView from '@c/layouts/ImageView.vue'
 import { apiBusinessSort, apiSearch } from "@/api/api";
 export default {
     name: "category",
@@ -68,7 +74,8 @@ export default {
     components: {
         LayHeader,
         LayModel,
-        ShopCard
+        ShopCard,
+        ImageView
     },
     computed: {
         appData() {

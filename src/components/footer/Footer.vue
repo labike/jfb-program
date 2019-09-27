@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-16 10:28:57
+ * @Description: file content
+ -->
 <template>
     <ul class="footer border-top" >
         <li v-if="cart==='open'"  @click="jumpGoods">
@@ -41,8 +46,8 @@ export default {
         
         jumpGoods() {
             const page = WAPHOST + "goods?shop_id=" + this.shop_id + "&token=" + wx.getStorageSync('token')
-            mpvue.navigateTo({
-                url: `/pages/web/main?url=${encodeURIComponent(page)}`
+            this.$router.push({
+                path: `/pages/web/main?url=${encodeURIComponent(page)}`
             })
         },
     },

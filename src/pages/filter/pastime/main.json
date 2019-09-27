@@ -2,5 +2,6 @@
   "navigationBarTitleText": "休闲娱乐",
   "enablePullDownRefresh": true,
   "backgroundTextStyle":"dark",
-  "onReachBottomDistance":50
+  "onReachBottomDistance":50,
+  "navigationBarBackgroundColor": "#ff8a35"
 }

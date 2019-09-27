@@ -20,7 +20,7 @@
                 </li>
                 <li class="nav-item" v-for="item of params" :key="item.id"
                     :class="{active: active === item.id}"
-                    @click="jumpPages(item.target)"
+                    @click="jumpPages(item)"
                     :id="'menu_' + item.id"
                 >
                     <div class="text">{{item.sort_name}}</div>
@@ -29,20 +29,20 @@
         </scroll-view>
         <div class="toggle-show" @click="toggleShow"></div>
     </div>
-    <div class="mask-warp" v-if="showBottom">
+    <div class="mask-warp" v-if="showBottom" :style="{height: windowHeight}">
         <div class="mask" @click="closeMask"></div>
         <div class="mask-inner content">
             <ul class="menu" v-if="params.length">
                 <li class="nav-item"
                     :class="{active: !active}"
-                    @click="jumpPages(item.target)"
+                    @click="jumpPages()"
                     id="menu_0"
                 >
                     <div class="text">全部</div>
                 </li>
                 <li class="nav-item" v-for="item of params" :key="item.id"
                     :class="{active: active === item.id}"
-                    @click="jumpPages(item.target)"
+                    @click="jumpPages(item)"
                 >
                     <div class="text">{{item.sort_name}}</div>
                 </li>
@@ -61,7 +61,8 @@ export default {
         return {
             menuId: '',
             active: '',
-            showBottom: false
+            showBottom: false,
+            windowHeight: 650
         }
     },
     props: {
@@ -76,22 +77,38 @@ export default {
             this.menuId = 'menu_' + options.sort_two
         }
         console.log(this.menuId);
+        
+        let system = wx.getSystemInfoSync();
+        this.windowHeight = system.windowHeight + 'px';
+    },
+    onUnload() {        
+        this.closeMask()
     },
     components: {
         LaySwiper,
     },
     methods: {
-        jumpPages(pageUrl) {
-            if (!pageUrl) {
-                pageUrl = getCurrentPageUrlWithArgs()
-                const last = pageUrl.indexOf("&sort_two")
-                if (last > -1) {
-                    pageUrl = pageUrl.substring(0,last)
-                }
+        jumpPages(item) {
+            console.log(item);
+            item.type = 0
+            this.$emit('change', item)
+            this.active = item.id
+            if (!item.id) {
+                this.menuId = 'menu_0'
+            } else {
+                this.menuId = 'menu_' + item.id
             }
-            mpvue.redirectTo({
-                url: pageUrl
-            })
+            this.closeMask()
+            // if (!pageUrl) {
+            //     pageUrl = getCurrentPageUrlWithArgs()
+            //     const last = pageUrl.indexOf("&sort_two")
+            //     if (last > -1) {
+            //         pageUrl = pageUrl.substring(0,last)
+            //     }
+            // }
+            // mpvue.redirectTo({
+            //     url: pageUrl
+            // })
         },
         closeMask() {
             this.showBottom = false
@@ -153,7 +170,7 @@ export default {
         position: absolute;
         left: 0;
         right: 0;
-        top: 0;
+        top: 80rpx;
         bottom: 0;
         display: flex;
         align-items: center;

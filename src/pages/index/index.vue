@@ -4,7 +4,7 @@
  * @Description: file content
  -->
 <template>
-<section class="jfb-flexview">
+<scroll-view  class="jfb-main"  scroll-y >
     <div class="jfb-header">
         <lay-header></lay-header>
         <ul class="nav">
@@ -22,14 +22,14 @@
             </li>
         </ul>
     </div>
-    <div  class="jfb-warp">
+    <div class="jfb-warp"   v-if="user && user.city_id">
         <div class="jfb-content">
-            <menus v-if="banners.length" :params='banners'></menus>
+            <menus></menus>
             <advertise></advertise>
-            <shop-list v-if="shopList.length"  :list='shopList'></shop-list>
+            <shop-list></shop-list>
         </div>
     </div>
-</section>
+</scroll-view>
 </template>
 
 <script>
@@ -38,23 +38,14 @@ import Menus from "./views/Menus.vue";
 import Advertise from "./views/Advertise.vue";
 import ShopList from "./views/ShopList.vue";
 import { mapActions, mapState } from 'vuex';
-import { shopType, WAPHOST } from "@/config/base";
+import { WAPHOST } from "@/config/base";
 import { Toast } from '@/utils/index';
-import { apiGetIndex, apiGetAdvert, apiGetRecommends, apiStoreScan } from "@/api/api";
+import { apiGetIndex, apiGetRecommends, apiStoreScan } from "@/api/api";
+import { getLocation } from '@/api/wechat'
 
 export default {
     name: "index",
-    data() {
-        return {
-            page: 1,
-            shopType,
-            scrollTop: 0,
-            scrollStatus: true,
-            remainListsLength: 5,
-            banners: [],
-            shopList: []
-        };
-    },
+
     components: {
         LayHeader,
         Menus,
@@ -69,55 +60,27 @@ export default {
     onLoad() {
         this.getIndex()
     },
-    onPageScroll (e) {
-        this.scrollTop = e.scrollTop
-    },
     methods: {
         ...mapActions('user', [
             'setLocation'
         ]),
         getIndex() {
             const _this = this
-            mpvue.getLocation({
-                type: 'wgs84',
-                success(loca) {
-                    apiGetIndex({
-                        lng: loca.longitude, 
-                        lat: loca.latitude
-                    }).then(res => {
-                        // console.log(res);
-                        _this.setLocation({
-                            latitude: loca.latitude,
-                            longitude: loca.longitude,
-                            city_id: res.city_id,
-                            city_name: res.city_name,
-                        })
-                        _this.shopList = res.stores.list
-                        apiGetAdvert({
-                            city_id: res.city_id,
-                            position: 1,
-                            industry: 0
-                        }).then(advers => {
-                            _this.banners = advers.advert
-                        })
+            getLocation(loca => {
+                apiGetIndex({
+                    lng: loca.longitude, 
+                    lat: loca.latitude
+                }).then(res => {
+                    // console.log(res);
+                    _this.setLocation({
+                        latitude: loca.latitude,
+                        longitude: loca.longitude,
+                        city_id: res.city_id,
+                        city_name: res.city_name,
                     })
-
-                },
-                fail(err) {
-                    console.log(err);
-                }
-            })
-        },
-        getShopload() {
-            const _this = this
-            apiGetRecommends({
-                city_id: _this.user.city_id, 
-                lng: _this.user.lng,
-                lat: _this.user.lat,
-                page: _this.page
-            }).then(res => {
-                _this.shopList = _this.shopList.concat(res.stores.list)
-                _this.remainListsLength = res.stores.list.length
+                    // _this.shopList = res.stores.list
+                })
+                
             })
         },
         codeToPay () {
@@ -160,28 +123,29 @@ export default {
                 }
             })
         },
-        jumpPages(pageUrl) {
-            mpvue.navigateTo({
-                url: `/pages/${pageUrl}`
-            }) 
+        jumpPages(pageUrl) { 
+            
+            this.$router.push({
+                path: `/pages/${pageUrl}`
+            })
         },
     },
-    onPullDownRefresh () {
-        this.getIndex()
-        this.page = 1
-        this.remainListsLength = 5
-        mpvue.stopPullDownRefresh()
-    },
-    onReachBottom () {
-        if (this.remainListsLength === 5) {
-            this.page++
-            this.getShopload()
-            this.scrollStatus = true
-        } else {
-            Toast("没有更多数据了！");
-            this.scrollStatus = false
-        }
-    },
+    // onPullDownRefresh () {
+    //     this.getIndex()
+    //     this.page = 1
+    //     this.remainListsLength = 5
+    //     mpvue.stopPullDownRefresh()
+    // },
+    // onReachBottom () {
+    //     if (this.remainListsLength === 5) {
+    //         this.page++
+    //         this.getShopload()
+    //         this.scrollStatus = true
+    //     } else {
+    //         Toast("没有更多数据了！");
+    //         this.scrollStatus = false
+    //     }
+    // },
     onShareAppMessage (options) {
         if (options.from === "menu") {
             return {
@@ -205,20 +169,20 @@ export default {
 @import "~@/assets/styles/components/layout.scss";
 .jfb-header{
     background: $base-color;
-    padding: 0 .24rem;
+    padding: 0 24rpx;
     .nav {
-        margin: .4rem 0;
+        padding: 40rpx 0;
         display: flex;
         text-align: center;
         .icon {
-            width: .6rem;
-            height: .6rem;
+            width: 60rpx;
+            height: 60rpx;
         }
         .item {
             flex: 1;
         }
         .text {
-            margin-top: .1rem;
+            margin-top: 10rpx;
             color: #fff;
             font-size: 12px;
         }

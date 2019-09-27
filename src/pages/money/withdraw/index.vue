@@ -158,9 +158,9 @@ export default {
                 return
             }
             if (payType === 'alipay') {
-                mpvue.navigateTo({
-                    url: `/pages/money/alipay/main`
-                })
+                this.$router.push({
+                    path: '/pages/money/alipay/main'
+                }) 
             }
             
         }

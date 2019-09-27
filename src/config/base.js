@@ -8,22 +8,27 @@
  *  proxy HOST
  */
 //  测试
-export const APIHOST = 'http://clients.qmwjj.cc/v1/';
-export const WAPHOST = 'http://wap2.qmwjj.cc/';
+// export const APIHOST = 'http://clients.qmwjj.cc/v1/';
+// export const APIHOST2 = 'http://clients.qmwjj.cc/v2/';
+// export const WAPHOST = 'http://wap2.qmwjj.cc/';
 
 //  线上
-// export const APIHOST = 'https://clients.qmw111.com/v1/';
-// export const WAPHOST = 'https://wap2.qmw111.com/';
+export const APIHOST = 'https://clients.qmw111.com/v1/';
+export const APIHOST2 = 'https://clients.qmw111.com/v2/';
+export const WAPHOST = 'https://wap2.qmw111.com/';
 
 
 /**
- *  门店类型 （1-餐饮 2-酒店 3-休闲娱乐4-爱车）
+ *  门店类型 （1-餐饮 2-酒店 3-休闲娱乐4-爱车 5-大健康 6-教育 7-母婴）
  */
 export const shopType = {
     repast: 1,
     hotel: 2,
     pastime: 3,
-    icar: 4
+    icar: 4,
+    health: 5,
+    education: 6,
+    fransnana: 7
 };
 
 /**
@@ -47,13 +52,14 @@ export const rateType = {
 };
 
 /**
- *  type:订单类型（1：代金券 2：团购 3：买单 4：购物车）
+ *  type:订单类型（1：代金券 2：团购 3：买单 4：购物车 7:限时抢购）
  */
 export const orderType = {
     vouchers: '1',
     combo: '2',
     paying: '3',
-    goods: '4'
+    goods: '4',
+    timesale: '7'
 };
 
 /**

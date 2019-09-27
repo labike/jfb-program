@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-07-20 09:53:30
+ * @Description: file content
+ -->
 <template>
 <div class="swiper-container" :class="className">
     <swiper v-if="list.length" class="swiper_box"
@@ -12,9 +17,13 @@
         @change="swiperchange"
     >
         <swiper-item class='swiper_item' v-for="(banner,index) of list" :key="index">
-            <img @click='tapBanner(banner)' class='slide-image' mode="aspectFill" :src="banner.img_url" 
-                :class="{active:index===swiperCurrent}" data-index='index'
-            >
+            <div class='slide-image' :class="{active:index===swiperCurrent}" data-index='index'>
+                <ImageView  
+                    :src="banner.img_url"
+                    mode='scaleToFill' :height="sHeight"
+                    @onClick="tapBanner(banner)"
+                ></ImageView>
+            </div>
         </swiper-item>
     </swiper>
 </div>
@@ -22,7 +31,11 @@
 
 <script>
 import { adFeature } from "@/config/base";
+import ImageView from '@c/layouts/ImageView.vue'
 export default {
+    components: {
+        ImageView,
+    },
     name: "Advertise",
     data() {
         return {

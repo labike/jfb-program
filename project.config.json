@@ -8,6 +8,7 @@
 		"minified": true,
 		"newFeature": true,
 		"coverView": true,
+		"nodeModules": false,
 		"autoAudits": false,
 		"uglifyFileName": false,
 		"checkInvalidKey": true,
@@ -25,7 +26,7 @@
 	"projectname": "mpvue-jfb",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
-	"libVersion": "2.8.0",
+	"libVersion": "2.8.3",
 	"condition": {
 		"search": {
 			"current": -1,
@@ -96,7 +97,7 @@
 					"id": 6,
 					"name": "orders/details/",
 					"pathName": "pages/orders/details/main",
-					"query": "order=201907051705572323480425",
+					"query": "order_id=201909271003159098793312",
 					"scene": null
 				},
 				{
@@ -117,7 +118,7 @@
 					"id": 9,
 					"name": "filter/category",
 					"pathName": "pages/filter/category/main",
-					"query": "",
+					"query": "top_sort=1&sort_one=30",
 					"scene": null
 				},
 				{
@@ -131,7 +132,7 @@
 					"id": 11,
 					"name": "shop",
 					"pathName": "pages/shop/index/main",
-					"query": "shop_id=71",
+					"query": "shop_id=48",
 					"scene": null
 				},
 				{
@@ -201,14 +202,14 @@
 					"id": 21,
 					"name": "payok",
 					"pathName": "pages/shop/payok/main",
-					"query": "order_id=201908171333504351412631",
+					"query": "order_id=201909261707174558477800",
 					"scene": null
 				},
 				{
 					"id": 22,
 					"name": "invitation",
 					"pathName": "pages/start/invitation/main",
-					"query": "code=VShUXVJmVmYAaAY3UCFVdA9nUHQBWAttAzZVPlpm",
+					"query": "code=A35RWAA0BzdVPQIzAW5VMFVxWngGagl0CwVTbAlmVDgNOFYx",
 					"scene": null
 				},
 				{
@@ -229,6 +230,55 @@
 					"id": -1,
 					"name": "pages/mine/message/main",
 					"pathName": "pages/mine/message/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/filter/health/main",
+					"pathName": "pages/filter/health/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/filter/education/main",
+					"pathName": "pages/filter/education/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/filter/fransnana/main",
+					"pathName": "pages/filter/fransnana/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 29,
+					"name": "pages/shop/salelist/main",
+					"pathName": "pages/shop/salelist/main",
+					"query": "industry=1&gcid=5",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/shop/saletime/main",
+					"pathName": "pages/shop/saletime/main",
+					"query": "gid=67",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/orders/confirm/main",
+					"pathName": "pages/orders/confirm/main",
+					"query": "shop_id=65&title=timesale&item_id=67",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/filter/near/main",
+					"pathName": "pages/filter/near/main",
 					"query": "",
 					"scene": null
 				}

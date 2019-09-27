@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-07-04 09:38:42
+ * @Description: file content
+ -->
 <template>
 <div class="container">
     <header class="info">
@@ -44,9 +49,9 @@ export default {
             this.getVisitedShop(oIndex)
         },
         jumpWeb(page) {
-            mpvue.navigateTo({
-                url: `/pages/web/main?url=${encodeURIComponent(page)}`
-            })
+            this.$router.push({
+                path: `/pages/web/main?url=${encodeURIComponent(page)}`
+            })  
         },
     }
 }

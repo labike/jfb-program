@@ -156,14 +156,15 @@ export default {
                 pageUrl = `pages/filter/category/main?top_sort=${group.parent_id}&sort_one=${group.id}`
                 break;
             }
-            mpvue.navigateTo({
-                url: pageUrl
+            
+            this.$router.push({
+                path: pageUrl
             })
         },
         selectItem(o_id, item, inx) {
             // console.log(o_id, item, inx);
-            mpvue.navigateTo({
-                url: `/pages/filter/category/main?top_sort=${o_id}&sort_one=${item.parent_id}&sort_two=${item.id}`
+            this.$router.push({
+                path: `/pages/filter/category/main?top_sort=${o_id}&sort_one=${item.parent_id}&sort_two=${item.id}`
             })
         },
         normalFrom(list) {

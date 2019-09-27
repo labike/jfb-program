@@ -7,7 +7,8 @@
 <section class="category-warp">
     <div class="category">
         <header class="bar-warp">
-            <ul class="nav-bar">
+            <ul class="nav-bar" 
+                :class="fixtop? 'fix':''">
                 <block  v-for="(snav, sinx) of selectNavList" :key="sinx">
                     <li class="nav"
                         :data-index="sinx"
@@ -17,7 +18,7 @@
             </ul>
         </header>
 
-        <section class="container" v-if="shopList && shopList.length">
+        <section class="container"   :style="{height: scrollBox}" v-if="shopList && shopList.length">
             <div class="shop-list-warp" >
                 <shop-card :shopInfo='shop' v-for="(shop, s_id) of shopList" :key="s_id"></shop-card>
             </div>
@@ -25,7 +26,7 @@
 
         <section class="empty" v-else>
             <div class="loading" v-if="listLoading"></div>
-            <img src="/static/img/null_bg.png" mode="aspectFit" >
+            <ImageView src="/static/img/null_bg.png" width='300rpx'></ImageView>
             <div class="text">暂无相关商铺！</div>
         </section>
     </div>
@@ -42,10 +43,9 @@
 </template>
 
 <script>
-import LayHeader from "@c/header/Header.vue";
 import CategoryBar from "./CategoryBar.vue";
-import Menus from "./../views/MenuList.vue";
 import ShopCard from "@c/shop/ShopCard.vue";
+import ImageView from '@c/layouts/ImageView.vue'
 import { apiBusinessSort, apiSearch } from "@/api/api";
 export default {
     name: "category",
@@ -54,17 +54,18 @@ export default {
             selectNavList: ['全部', '附近', '智能排序'],
             selectNav: '',
             modelStatus: false,
-            scrollTop: 0,
-            sort_one: '',
+            scrollBox: 'auto',
             shopList: [],
             barParams: {},
-            params: ''
+            params: '',
+            fixtop: false, //是否吸顶
+            scrollTop: 0, //导航栏初始到屏幕顶部高度
         };
     },
     components: {
-        LayHeader,
         CategoryBar,
-        ShopCard
+        ShopCard,
+        ImageView
     },
     computed: {
         appData() {
@@ -77,31 +78,62 @@ export default {
         page: Number
     },
     onLoad (options) {
-        // this.screenHeight = wx.getSystemInfoSync().windowHeight + 'px'
-        this.sort_one = options.sort_one || ''
-        if (this.sort_one) {
-            this.barParams.sort_one = this.sort_one
-            this.barParams.list = this.list
+        let that = this;
+        that.barParams.top_sort = that.top_sort
+        if (options.sort_one) {
+            that.barParams.sort_one = options.sort_one
+            that.barParams.list = that.list
         }
-        this.barParams.top_sort = this.top_sort
-        this.getSortShop()
+        if (options.sort_two) {
+            that.barParams.sort_two = options.sort_two
+        }
+        that.getSortShop().then(() => {
+            setTimeout(() => {
+                const query = wx.createSelectorQuery();             
+                query.select(".nav-bar").boundingClientRect();
+                query.exec(function(rect) {  
+                    that.scrollTop = rect[0].top
+                });
+            }, 500)
+        })
+    },
+    onUnload() {        
+        const self = this;
+        self.scrollBox = 'auto'
+        self.modelStatus = false
+        self.selectNav = ''
+        self.barParams = {}
+        self.selectNavList = ['全部', '附近', '智能排序']
     },
     watch: {
         page(val) {
-
             this.pullDownData(val)
         }
     },
+    
+    onPageScroll: function(e) {
+        // console.log(e.scrollTop);
+        
+        const that = this;
+        if (that.scrollTop === 0) {
+            return
+        }
+        if (e.scrollTop >= that.scrollTop) {
+            that.fixtop = true;
+        } else {
+            that.fixtop = false;
+        }
+    },
     methods: {
-        getScroll(e) {
-            this.scrollTop = e.target.scrollTop
-        },
         showModel(e) {
             this.modelStatus = true
+            this.scrollBox = '0'
+            
             this.selectNav = e.mp.currentTarget.dataset.index
         },
         closeModel() {
             this.modelStatus = false
+            this.scrollBox = 'auto'
             this.selectNav = ''
         },
         initSelectNavList(name) {
@@ -130,19 +162,22 @@ export default {
             })
         },
         getSortShop() {
-            const _this = this
-            _this.params = {
-                city_id: _this.appData.currentCity.code,
-                lng: _this.appData.currentLocation.lng,
-                lat: _this.appData.currentLocation.lat,
-                top_sort: _this.top_sort,
-                sort_one: _this.sort_one,
-                sort_two: _this.sort_two ? _this.sort_two : '',
-                page: 1
-            }
-            apiSearch(_this.params).then(res => {
-                this.shopList = res.list
-                this.$emit('length', res.list.length)
+            return new Promise((resolve,reject) => {
+                const _this = this
+                _this.params = {
+                    city_id: _this.appData.currentCity.code,
+                    lng: _this.appData.currentLocation.lng,
+                    lat: _this.appData.currentLocation.lat,
+                    top_sort: _this.top_sort,
+                    sort_one: _this.barParams.sort_one || '',
+                    sort_two: _this.barParams.sort_two || '',
+                    page: 1
+                }
+                apiSearch(_this.params).then(res => {
+                    this.shopList = res.list
+                    this.$emit('length', res.list.length)
+                    resolve(res.list.length)
+                })
             })
         },
         pullDownData (val) {
@@ -152,7 +187,6 @@ export default {
                 res.list.forEach(shop => {
                     this.shopList.push(shop)
                 });
-                
                 this.$emit('length', res.list.length)
             })
         }
@@ -161,16 +195,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.container{
+    overflow: hidden;
+}
 .bar-warp {
     position: relative;
+    height: 82rpx;
     .nav-bar {
         font-size: 26rpx;
         color: #000;
-        background-color: #fff;
+        background-image: linear-gradient(to bottom , #fff, #f2f2f2);
         display: flex;
         align-items: center;
         justify-content: center;
-        border-bottom: 1rpx solid #ededed;
         .nav{
             flex: 1;
             display: flex;
@@ -199,6 +236,15 @@ export default {
             }
         }
     }
+    .fix {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 999;
+        animation: move 0.2s linear;
+        box-shadow: 0 0 5px #333;
+    }
 }
 .empty{
     text-align: center;
@@ -215,5 +261,14 @@ export default {
     }
 }
 
+
+@keyframes move {
+	from {
+		opacity: 0.7;
+	}
+	to {
+		opacity: 1;
+	}
+}
 </style>
 

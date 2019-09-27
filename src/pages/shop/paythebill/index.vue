@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-14 11:58:39
+ * @Description: file content
+ -->
 <template>
 <section class="pay-the-bill" v-if="paying">
     <p class="address">{{paying.storeInfo.address}}</p>
@@ -78,19 +83,37 @@ export default {
         replaceInput(e) {
             let value = e.mp.detail.value
             // const reg = /(^[1-9]\d*(\.\d{1,2})?$)|(^0(\.\d{1,2})?$)/;
-            let money;
-            if (/^(\d?)+(\.\d{0,2})?$/.test(value)) { //正则验证，提现金额小数点后不能大于两位数字
-                money = value;
-            } else {
-                money = value.substring(0, value.length - 1);
+            // let money;
+            // if (/^(\d?)+(\.\d{0,2})?$/.test(value)) { //正则验证，提现金额小数点后不能大于两位数字
+            //     money = value;
+            // } else {
+            //     money = value.substring(0, value.length - 1);
+            // }
+            // this.orderPrice = money
+
+
+            let sNum = value.toString(); //先转换成字符串类型
+            if (sNum.indexOf('.') === 0) { //第一位就是 .
+                console.log('first str is .')
+                sNum = '0' + sNum
             }
-            this.orderPrice = money
+            sNum = sNum.replace(/[^\d.]/g,""); //清除“数字”和“.”以外的字符
+            sNum = sNum.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的
+            sNum = sNum.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+            sNum = sNum.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');//只能输入两个小数
+            //以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+            if (sNum.indexOf(".") < 0 && sNum !== "") {
+                sNum = parseFloat(sNum);
+            }
+            this.orderPrice = sNum
+
         },
         jumpPay() {
             const that = this;
             const orderPrice = that.orderPrice;
-            const reg = /(^[1-9]\d*(\.\d{1,2})?$)|(^0(\.\d{1,2})?$)/;
-            if (!reg.test(orderPrice)) {
+            // const reg = /(^[1-9]\d*(\.\d{1,2})?$)|(^0(\.\d{1,2})?$)/;
+            const reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;
+            if (!reg.test(orderPrice) || orderPrice <= 0) {
                 Toast("请核对您的输入金额！");
                 return; 
             }

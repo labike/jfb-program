@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-22 11:48:30
+ * @Description: file content
+ -->
 <template>
 <div class="mine_container">
     <header class="base-info">
@@ -125,14 +130,14 @@ export default {
              
         },
         jumpWeb(page) {
-            mpvue.navigateTo({
-                url: `/pages/web/main?url=${encodeURIComponent(page)}`
-            })
+            this.$router.push({
+                path: `/pages/web/main?url=${encodeURIComponent(page)}`
+            }) 
         },
         jumpMoneyPages(page) {
-            mpvue.navigateTo({
-                url: `/pages/money/${page}/main`
-            })
+            this.$router.push({
+                path: `/pages/money/${page}/main`
+            }) 
         },
         getCallPhone(phone) {
             callPhone(phone)

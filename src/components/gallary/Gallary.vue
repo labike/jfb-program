@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-25 15:18:20
+ * @Description: file content
+ -->
 <template>
 <div class="gallary">
     <swiper class='wrapper' indicator-color='rgba(0, 0, 0, .3)'
@@ -9,7 +14,7 @@
         <block v-for='(top,imgindex) in imgs' :key='imgindex'>
             <swiper-item>
                 <div class="gallary-img">
-                    <img class='slide-image' @click="close" mode="aspectFit" :src="top">
+                    <ImageView :src="top" @onClick="close" mode="aspectFit" ></ImageView>
                 </div>
             </swiper-item>
         </block>
@@ -18,8 +23,10 @@
 </template>
 
 <script>
+import ImageView from '@c/layouts/ImageView.vue'
 export default {
     name: "CommonGallary",
+    components: { ImageView },
     data() {
         return {
             current: 0

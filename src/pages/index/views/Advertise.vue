@@ -1,56 +1,80 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-16 16:01:57
+ * @Description: file content
+ -->
 <template>
 <div class="advertise">
-    <div class="ad-top" @click="jumpAD(adTop)">
-        <img :src="adTop.img_url" mode="widthFix">
-    </div>
-    <div class="ad-center"  @click="jumpAD(adCenter)">
-        <img :src="adCenter.img_url" mode="widthFix">
-    </div>
-    <div class="ad-bottom">
-        <div class="ad-item"  v-for="(item,aindex) of adBottom" :key="aindex">
-            <div class="img-warp" @click="jumpAD(item)">
-                <img :src="item.img_url" mode="widthFix">
+    
+    <div class="merit-mode"  v-if="meritMode.length">
+        <div class="title">
+            <span class="name">优质门店</span>
+        </div>
+        <div class="ad">
+            <div class="ad-item"  
+                v-for="(item,bindex) of meritMode" 
+                :key="bindex"
+                :class="{big:bindex<=1}"
+            >
+                <div class="img-warp"
+                    @click="jumpAD(item)"
+                >
+                    <ImageView :src="item.img" height="100%"></ImageView>
+                </div>
             </div>
         </div>
     </div>
     
+    <div class="live-mode" v-if="liveMode.length">
+        <div class="title">
+            <span class="name">友减生活</span>品质生活上减付宝
+        </div>
+        <div class="ad">
+            <div class="ad-item"  v-for="(item,aindex) of liveMode" :key="aindex">
+                <div class="img-warp" @click="jumpAD(item)">
+                    <ImageView :src="item.img_url" height="100%"></ImageView>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 </template>
 
 <script>
+import ImageView from '@c/layouts/ImageView.vue'
 import { adFeature, WAPHOST } from "@/config/base";
+import { apiSuperStores } from "@/api/api";
+
 export default {
     name: "Advertise",
+    components: { ImageView },
     data() {
         return {
-            adTop: {
-                href: "",
-                img_url: "/static/advert/one_ad.png",
-                type: "stop"
-            },
-            adCenter: {
-                href: "",
-                img_url: "/static/advert/two_ad.png",
-                type: "stop"
-            },
-            adBottom: [{
+            liveMode: [{
                 href: "reshop",
-                img_url: "/static/advert/three_ad.png",
+                img_url: WAPHOST + "static/advert/my_reshop.png",
                 type: "action"
             }, {
                 href: "money",
-                img_url: "/static/advert/four_ad.png",
+                img_url: WAPHOST + "static/advert/my_money.png",
                 type: "action"
             }],
+            meritMode: [],
         }
+    },
+    onLoad() {
+        apiSuperStores().then(mList => {
+            this.meritMode = mList.map(item => {
+                item.type = 'shop'
+                return item
+            })
+        })
     },
     methods: {
         jumpAD(adObj) {
             let URL = ''
             switch (adObj.type) {
-            case "shop":
-                URL = '/pages/shop/index/main?shop_id=' + adObj.href    
-                break;
             case "action":
                 URL = adFeature[adObj.href]
                 break;
@@ -58,6 +82,7 @@ export default {
                 URL = "/pages/web/main?url=" + encodeURIComponent(adObj.href)
                 break;
             default:
+                URL = '/pages/shop/index/main?shop_id=' + adObj.href
                 break;
             }
             if (URL) {
@@ -73,21 +98,57 @@ export default {
 <style lang="scss" scoped>
 .advertise{
     background: #fff;
-    padding: 12rpx;
-    .ad-bottom{
-        overflow: hidden;
+    padding: 24rpx 30rpx 0 30rpx;
+    overflow-y:scroll;
+    > div{
+        margin-bottom: 24rpx;
     }
-    .ad-item{
-        width: 50%;
-        float: left;
-        .img-warp{
-            padding: 12rpx;
+    .title{
+        padding: 12rpx 0;
+        text-align: right;
+        display: flex;
+        justify-content:space-between;
+        vertical-align: bottom;
+        align-items:flex-end;
+        color: #818181;
+        .name{
+            font-weight: 700;
+            font-size: 16px;
+            color: #323232;
         }
     }
-    img{
-        display: block;
-        width: 100%;
-        height: 80px;
+    .ad{
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        flex: 1;
+        padding: 12rpx 0;
+        .ad-item{
+            overflow: hidden;
+        }
+        .img-warp{
+            height: 100%;
+        }
+    }
+    .live-mode{
+        .ad-item{
+            width: 340rpx;
+            height: 200rpx;
+        }
+    }
+    .merit-mode{
+        .ad{  
+            flex-wrap: wrap;
+        }
+        .ad-item{
+            width: 165rpx;
+            height: 220rpx;
+            margin-top: 10rpx;
+            &.big{
+                width: 342rpx;
+                height: 270rpx;
+            }
+        }
     }
 }
 </style>

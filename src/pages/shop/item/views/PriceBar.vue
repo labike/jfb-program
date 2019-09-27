@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-07-01 15:28:36
+ * @Description: file content
+ -->
 <template>
 <div class="price-bar border-top" v-if="currentItem">
     <div class="price">
@@ -22,7 +27,7 @@ export default {
     methods: {
         jumpConfirm(id) {
             const that = this 
-            mpvue.navigateTo({
+            that.$router.push({
                 url: `/pages/orders/confirm/main?shop_id=${that.shop_id}&title=${that.title}&item_id=${id}`
             }) 
         }

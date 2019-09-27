@@ -14,7 +14,7 @@
             <div class="card-share" v-if="showWxShare" >
                 <header class="base-info">
                     <div class="avater">
-                        <img :src="userInfo.headimgurl" mode="aspectFit">
+                        <ImageView :src="userInfo.headimgurl" mode="aspectFit" ></ImageView>
                     </div>
                     <div class="nickname">{{userInfo.nickname}}</div>
                     <div class="close" @click="showShowShare=false"></div>
@@ -24,7 +24,7 @@
 			<div class="content" v-else>
 				<div class="hd border-bottom" v-if="storeInfo">
 					<div class="img-warp">
-						<img :src="storeInfo.header_img"  mode="aspectFit" >
+                        <ImageView :src="storeInfo.header_img" mode="aspectFit" ></ImageView>
 					</div>
 					<div class="info">
 						<div class="name">{{storeInfo.store_name}}</div>
@@ -65,6 +65,7 @@
 
 <script type="text/babel">
 import LayModel from "@c/layouts/Model.vue";
+import ImageView from '@c/layouts/ImageView.vue'
 import AppShare from "./AppShare.vue";
 import { orderType } from '@/config/base'
 import { apiShareStore, likeShare } from "@/api/api";
@@ -72,6 +73,7 @@ import { mapState } from 'vuex';
 export default {
     name: 'Share',
     components: {
+        ImageView,
         LayModel,
         AppShare
     },
