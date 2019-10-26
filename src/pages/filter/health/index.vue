@@ -21,6 +21,20 @@
                 </li>
             </ul>
         </div>
+
+        <scroll-view class="carry-warp" scroll-x="true">
+            <ul class="carry"  v-if="carry && carry.length">
+                <li class="item"
+                    v-for="nav in carry" :key="nav.gcid"
+                    @click.stop="jumpListPages(nav)"
+                >
+                    <ImageView :src="nav.img" width='220rpx' height='165rpx'></ImageView>
+                    <div class="name">商家<span>{{nav.gc_name}}</span></div>
+                    <div class="desc" v-if="nav.gcNumber">{{nav.gcNumber}}家老板</div>
+                </li>
+            </ul>
+        </scroll-view>
+
         <div class="advert" v-if="advertList.length" >
             <lay-swiper :list='advertList' sHeight='160rpx'></lay-swiper>
         </div>
@@ -36,8 +50,8 @@
 import Category from "./../views/Category.vue";
 import LaySwiper from "@c/swiper/Advertise.vue";
 import ImageView from '@c/layouts/ImageView.vue'
-import { apiGetAdvert } from "@/api/api";
-import { WAPHOST } from "@/config/base";
+import { apiGetAdvert,apiSalesType } from "@/api/api";
+import { WAPHOST, shopType } from "@/config/base";
 export default {
     name: "health",
     data() {
@@ -90,6 +104,7 @@ export default {
                     target: '/pages/filter/category/main?top_sort=5&sort_one=172'
                 }
             ],
+            carry: []
         };
     },
     components: {
@@ -104,12 +119,20 @@ export default {
     },
     onLoad (options) {
         const that = this
+        const industry = shopType.health //health
         apiGetAdvert({
-            city_id: this.appData.currentCity.code,
+            city_id: that.appData.currentCity.code,
             position: 1,
-            industry: 5
+            industry: industry
         }).then(advers => {
             this.advertList = advers.advert
+        })
+        apiSalesType({
+            lng: that.appData.currentLocation.lng,
+            lat: that.appData.currentLocation.lat,
+            industry_id: industry
+        }).then(carry => {
+            this.carry = carry
         })
     },
     methods: {
@@ -123,6 +146,11 @@ export default {
             this.$router.push({
                 path: pageUrl
             })
+        },
+        jumpListPages(advers) {
+            this.$router.push({
+                path: `/pages/shop/salelist/main?industry=${advers.industry_id}&gcid=${advers.gcid}`
+            }) 
         }
     },
     onPullDownRefresh () {
@@ -176,7 +204,9 @@ export default {
         }
     }
     .advert{
-        margin-bottom: 24rpx;
+        margin-top: 10rpx;
+        overflow: hidden;
+        border-radius: 10rpx;
     }
     .menu-warp{
         position: relative;
@@ -199,6 +229,38 @@ export default {
             color: #323232;
             text-align: center;
             margin-top: 16rpx;
+        }
+    }
+}
+.carry-warp{
+    margin-top: 10rpx;
+}
+.carry {
+    color: #323232;
+    white-space: nowrap;
+    display: flex;
+    .item {
+        margin-right: 8rpx;
+        display: inline-block;
+        text-align: center;
+        position: relative;
+        .name{
+            font-size: 16px;
+            font-weight: 700;
+            position: absolute;
+            left: 30rpx;
+            top: 10rpx;
+            span{
+                color: #f00;
+            }
+        }
+        .desc{
+            position: absolute;
+            left: 30rpx;
+            top: 60rpx;
+            font-size: 11px;
+            font-weight: 400;
+            color: #818181;
         }
     }
 }

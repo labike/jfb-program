@@ -25,8 +25,7 @@
         </section>
 
         <section class="empty" v-else>
-            <div class="loading" v-if="listLoading"></div>
-            <ImageView src="/static/img/null_bg.png" width='300rpx'></ImageView>
+            <ImageView src="/static/img/null_bg.png" width='160rpx'></ImageView>
             <div class="text">暂无相关商铺！</div>
         </section>
     </div>
@@ -184,6 +183,9 @@ export default {
             const _this = this
             _this.params.page = val
             apiSearch(_this.params).then(res => {
+                if (val === 1) {
+                    this.shopList = []
+                }
                 res.list.forEach(shop => {
                     this.shopList.push(shop)
                 });
@@ -248,11 +250,7 @@ export default {
 }
 .empty{
     text-align: center;
-    img{
-        width: 300rpx;
-        height: 300rpx;
-        margin-top: 100rpx;
-    }
+    padding-top: 160rpx;
     .text{
         margin-top: 15rpx;
         font-size: 24rpx;

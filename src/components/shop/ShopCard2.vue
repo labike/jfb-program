@@ -24,7 +24,7 @@
                     <li class="star"></li>
                     <li class="star"></li>
                     <li class="star"></li>
-                    <li class="text">{{shop.score}}分</li>
+                    <li class="text">{{score}}分</li>
                 </ul>
                 <div class="distance" v-if="shop.distance">{{shop.distance}}</div>
             </div>
@@ -79,6 +79,13 @@ export default {
         this.shop = this.shopInfo
     },
     computed: {
+        score() {
+            let score = parseFloat(this.shop.score)
+            if (score === 0) {
+                return 0;
+            }
+            return score.toFixed(1);
+        },
         scoreName() {
             if (!this.shop.score) {
                 return ''
@@ -260,7 +267,7 @@ export default {
                 background-size: 25rpx 25rpx;
                 background-position: 0 0;
                 background-repeat: no-repeat;
-                background-image: url('~@/assets/img/icon_rating_bar_progress.png');
+                background-image: url('~@/assets/img/starSelect.png');
             }
             
         }

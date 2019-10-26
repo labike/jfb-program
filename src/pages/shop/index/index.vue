@@ -78,7 +78,15 @@ export default {
     },
     methods: {
         ...mapActions('shop',['saveShopInfo'])
-    }
+    },
+    onShareAppMessage (options) {
+        const that = this
+        return {
+            title: that.shopInfo.infoData.store_name,
+            path: '/pages/shop/index/main?shop_id=' + that.shopInfo.infoData.s_id,
+            imageUrl: that.shopInfo.infoData.headerImgData.imgUrl,
+        }
+    },
 };
 </script>
 

@@ -10,7 +10,15 @@
         <div class="activity" :class="{gray: shopAdvt.stopActivity}" >
             <div class="top">
                 <div class="img-warp">
-                    <ImageView :src="shopAdvt.img" mode='scaleToFill' height="400rpx" width="750rpx"></ImageView>
+                    
+                    <swiper :indicator-dots='true' indicator-color='rgba(0, 0, 0, .3)' indicator-active-color="#fff" :style="{height: '400rpx'}" :autoplay='false' :interval='6000' :duration='1000' :circular='true'>
+                        <swiper-item>
+                            <ImageView :src="shopAdvt.img" mode='scaleToFill' height="400rpx" width="750rpx"></ImageView>
+                        </swiper-item>
+                        <swiper-item>
+                            <ImageView :src="shopAdvt.proImg" mode='scaleToFill' height="400rpx" width="750rpx"></ImageView>
+                        </swiper-item>
+                </swiper>
                 </div>
                 <div class="product">
                     <div class="info">
@@ -25,12 +33,8 @@
                             <div class="progress" :style="{width:(shopAdvt.sale/shopAdvt.library*100)+ '%'}"></div>
                             <p class="sale">已售 {{shopAdvt.sale}} 张</p>
                         </div>
-                        <div class="time">
-                            <last-time 
-                                :endTime="shopAdvt.ruler.effective_time"
-                                @endback="stopActivity(shopAdvt)"
-                            ></last-time>
-                        </div>
+                        
+                        <div class="time">剩余 {{shopAdvt.library - shopAdvt.sale}} 张</div>
                     </div>
                 </div>
             </div>
@@ -95,7 +99,9 @@
             </div>
         </li>
         <li class="item">
-            <div class="go" @click="jumpItemPage(shopAdvt)">马上抢</div>
+            <div class="go gray" v-if="shopAdvt.stopActivity">已结束</div>
+            <div class="go gray" v-else-if="shopAdvt.sale>=shopAdvt.library">已售罄</div>
+            <div class="go" v-else @click="jumpItemPage(shopAdvt)">马上抢</div>
         </li>
     </ul>
 </div>
@@ -103,7 +109,6 @@
 </template>
 
 <script>
-import LastTime from "@c/shop/LastTime.vue";
 import ImageView from '@c/layouts/ImageView.vue'
 import { apiGiveDetail } from "@/api/api";
 import { WAPHOST, shopType } from "@/config/base";
@@ -122,7 +127,6 @@ export default {
     },
     components: {
         ImageView,
-        LastTime
     },        
     computed: {
         ...mapState('user', [
@@ -187,6 +191,7 @@ export default {
         &::before{
             content: "￥";
             font-size: 15px;
+            margin-right: -4rpx;
         }
         font-size: 25px;
         color: #fff;
@@ -316,6 +321,7 @@ export default {
                 margin-top: 10rpx;
             }
             .consume{
+                font-size: 12px;
                 margin-left: 20rpx;
                 background: #fff;
                 height: 40rpx;
@@ -323,7 +329,7 @@ export default {
                 border-radius: 40rpx;
                 text-align: center;
                 color: #ff2d00;
-                padding: 0 24rpx;
+                padding: 0 16rpx;
                 min-width: 200rpx;
                 font-weight: 400;
             }
@@ -347,7 +353,7 @@ export default {
                 }
                 .library{
                     font-size: 10px;
-                    min-width: 130rpx;
+                    min-width: 110rpx;
                     padding: 0 24rpx;
                     margin: 20rpx auto 10rpx;
                     height: 34rpx;
@@ -355,6 +361,7 @@ export default {
                     background: #ffb77c;
                     border-radius: 34rpx;
                     position: relative;
+                    overflow: hidden;
                     z-index: 3;
                     .progress{
                         position:absolute;
@@ -364,7 +371,6 @@ export default {
                         height: 34rpx;
                         z-index: 8;
                         background: #ffde00;
-                        border-radius: 34rpx;
                     }
                     .sale{
                         position: relative;
@@ -378,6 +384,7 @@ export default {
                     z-index: 4;
                     color: #ff2d00;
                     font-weight: 700;
+                    text-align: center;
                 }
             }
         }
@@ -484,6 +491,9 @@ export default {
         border-radius: 88rpx;
         text-align: center;
         margin-left: 60rpx;
+        &.gray{
+            -webkit-filter: grayscale(100%)
+        }
     }
 }
 </style>

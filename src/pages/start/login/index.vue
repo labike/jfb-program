@@ -19,10 +19,13 @@
             </div>
             <div class="bd">
                 <img class="smalltitle" src="/static/more/title.png" />
-                <button v-if="buttonLogin" open-type="getUserInfo"  @getuserinfo="bindGetUserInfo"
-                    class="confirm-btn" @click="getUserInfoClick">
-                    <span>微信登录</span>
-                </button>
+                <div class="confirm"  v-if="buttonLogin">
+                    <button class="home" @click="backHome">暂不登录</button>
+                    <button open-type="getUserInfo"  @getuserinfo="bindGetUserInfo"
+                    class="login" @click="getUserInfoClick">
+                        <span>微信登录</span>
+                    </button>
+                </div>
                 <button v-if="buttonBind" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber" class="confirm-btn">
                     <span>绑定手机号</span>
                 </button>
@@ -255,6 +258,12 @@ export default {
                 })
             })
         },
+        backHome() {
+            this.$router.push({
+                path: "/pages/index/main",
+                reLaunch: true
+            })
+        },
         jumpHistory() {
             let beforeUrl = mpvue.getStorageSync('loginBefore')
             if (beforeUrl === "") {
@@ -388,6 +397,37 @@ export default {
             margin: 60% 20% 20%;
             &:active {
                 opacity: .8;
+            }
+        }
+        .confirm{
+            margin: 60% 15% 15%;
+            display: flex;
+            font-size: 14px;
+            color: #fff;
+            text-align: center;
+            justify-content: space-between;
+            .home{
+                height: 85rpx;
+                line-height: 85rpx;
+                background: #f4f4f4;
+                color: #000;
+                border-radius: 100rpx;
+                padding: 0 12%;
+                width: 48%;
+                &::after {
+                    content: " ";
+                    border: 1px solid rgba(0,0,0,.2);
+                    border-radius: 100rpx;
+                }
+            }
+            .login{
+                height: 85rpx;
+                line-height: 85rpx;
+                background: #2a8cfa;
+                color: #fff;
+                padding: 0 12%;
+                border-radius: 100rpx;
+                width: 48%;
             }
         }
     }

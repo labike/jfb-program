@@ -5,13 +5,12 @@
  -->
 <template>
 <div class="container" v-if="detailed">
-
-    <!-- 店铺（买单） -->
-    <div class="model slf shop"  v-if="detailed.type==orderType.paying || detailed.type==orderType.goods" @click="jumpPage('shop',detailed.baseInfo.x_id)">
+    
+    <div class="model shop" v-if="detailed.baseInfo"  @click="jumpShop(detailed.baseInfo.x_id)">
         <div class="img-warp">
             <img :src="detailed.baseInfo.header_img" alt="">
         </div>
-        <div class="info-warp">
+        <div class="shop-warp">
             <div class="title">{{detailed.baseInfo.store_name}}</div>
             <ul class="score" :class="scoreName">
                 <li class="star"></li>
@@ -25,24 +24,11 @@
         </div>
     </div>
 
-    <!-- 商品信息 -->
-    <div class="model slf blurb" v-else  @click="jumpPage(modelClass,detailed.projects[0].product_id)">
-        <div class="img-warp">
-            <img :src="detailed.baseInfo.header_img" alt="">
-        </div>
-        <div class="info-warp">
-            <div class="title">{{detailed.projects[0].product_name}}</div>
-            <div class="refund" v-if="detailed.type==orderType.timesale">不可退</div>
-            <div class="refund" v-else>随时退</div>
-            <div class="price">{{detailed.projects[0].amount}}</div>
-        </div>
-    </div>
-
-    <!-- 券码,买单/购物车详情 -->
-    <div class="model"  :class="modelClass" >
-
+    <!-- 商品详情及券码 -->
+    <div class="model" :class="modelClass">
+        
         <div class="model-title"  v-if="detailed.type==orderType.vouchers ||detailed.type==orderType.combo ||detailed.type==orderType.timesale">
-            <i class="icon"></i>{{detailed.baseInfo.title}}
+            <i class="icon"></i>{{detailed.baseInfo.title}}({{detailed.projects[0].product_name}})
                 <div class="title">
                 <span>{{detailed.projects[0].num}}张</span>
                 <span>有效期：{{detailed.projects[0].pd_info.rulesData.periodOfValidity}}</span>
@@ -70,18 +56,7 @@
             </ul>
         </div>
 
-        <!-- 购物车 -->
-        <div class="model-content" v-if="detailed.type== orderType.goods">
-            <ul class="cell">
-                <li v-for="(goods,index) in detailed.projects" :key="index" >
-                    <span class="left">{{goods.product_name}}</span>
-                    <span class="middle">￥{{goods.amount}}</span>
-                    <span class="right">x{{goods.num}}</span>
-                </li>
-            </ul>
-        </div>
-
-        <!-- 券码 -->
+        
         <div class="model-content" v-if="detailed.baseInfo.is_pay_success==1">
             <ul class="cell" v-if="detailed.type==orderType.vouchers || detailed.type==orderType.combo || detailed.type==orderType.timesale">
                 <li v-for="(codes,index) in detailed.projects[0].consume_codes" :key="index"
@@ -100,25 +75,9 @@
                 </li>
             </ul>
         </div>
+
     </div>
     
-
-    <!-- 商家信息 -->
-    <div class="model shopinfo"  v-if="detailed.type==orderType.vouchers || detailed.type==orderType.combo ||detailed.type==orderType.timesale" @click="jumpPage('shop',detailed.baseInfo.x_id)">
-        <div class="model-title">
-            <i class="icon"></i>商家信息
-        </div>
-        <div class="model-content">
-            <div class="info">
-                <div class="title">{{detailed.baseInfo.store_name}}</div>
-                <div class="address">{{detailed.baseInfo.address}}</div>
-            </div>
-            <div class="tel"  @click.stop="getCallPhone(detailed.baseInfo.store_mobile)"></div>
-        </div>
-    </div>
-
-
-    <!-- 使用规则 -->
     <div class="model use-rule"  v-if="detailed.type==orderType.vouchers || detailed.type==orderType.combo ||detailed.type==orderType.timesale">
         <div class="model-title">
             <i class="icon"></i>使用规则
@@ -152,8 +111,6 @@
             </ul>
         </div>
     </div>
-
-    <!-- 订单信息 -->
     <div class="model order">
         <div class="model-title">
             <i class="icon"></i>订单信息
@@ -195,7 +152,7 @@
 </template>
 
 <script>
-import { formatTime,callPhone } from '@/utils/index'
+import { formatTime } from '@/utils/index'
 import { orderType } from "@/config/base";
 import { apiOrderDetails } from "@/api/api.js";
 export default {
@@ -246,44 +203,20 @@ export default {
     },
     methods: {
         
-        jumpPage(type,id) {
-            console.log(type);
-            let shop_id = this.detailed.baseInfo.x_id
-            let pageUrl = ''
-            switch (type) {
-            case 'shop':
-                pageUrl = '/pages/shop/index/main?shop_id=' + id
-                break;
-
-            case 'timesale':
-                pageUrl = '/pages/shop/saletime/main?gid=' + id
-                break;
-            
-            default:
-                pageUrl = `/pages/shop/item/main?shop_id=${shop_id}&title=${type}&item_id=${id}`
-                break;
-            }
-            if (pageUrl) {
-                this.$router.push({
-                    path: pageUrl
-                })
-            }
-            
-            
+        jumpShop(shop_id) {
+            mpvue.navigateTo({
+                url: '/pages/shop/index/main?shop_id=' + shop_id
+            })
         },
         jumpQrcode(order_id) {
-            this.$router.push({
-                path: `/pages/orders/qrcode/main?order_id=${order_id}`
-            })
+            mpvue.navigateTo({
+                url: `/pages/orders/qrcode/main?order_id=${order_id}`
+            }) 
         },
         getOrderDetails() {
             apiOrderDetails(this.order_id).then(res => {
                 this.detailed = res           
             })
-        },
-        
-        getCallPhone(phone) {
-            callPhone(phone)
         },
     }
 }
@@ -300,9 +233,18 @@ export default {
     overflow-x: hidden;
     overflow-y: auto;
 }
-.slf{
+.shop{
     display: flex;
     align-items: center;
+    &::after{
+        content: '';
+        width: 16rpx;
+        height: 28rpx;
+        background-image: url(~@/assets/img/right.png);
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
+    }
     .img-warp{
         width: 100rpx;
         height: 100rpx;
@@ -313,39 +255,13 @@ export default {
             height: 100rpx;
         }
     }
-    .info-warp{
+    .shop-warp{
         flex: 1;
         margin-right: 5rpx;
-    }
-}
-.blurb,
-.shop{
-    font-size: 26rpx;
-    &::after{
-        content: '';
-        width: 16rpx;
-        height: 28rpx;
-        background-image: url(~@/assets/img/right.png);
-        background-repeat: no-repeat;
-        background-size: contain;
-        background-position: center;
     }
     .title{
         color: #000;
         margin-bottom: 8rpx;
-    }
-    .refund{
-        font-size: 22rpx;
-        color: #818181;
-        margin-bottom: 8rpx;
-    }
-    .price{
-        color: #323232;
-        &::before{
-            content: '￥';
-            font-size: 24rpx;
-            margin-right: -4rpx;
-        }
     }
     .address{
         font-size: 22rpx;
@@ -356,7 +272,7 @@ export default {
         align-items: center;
         margin-bottom: 7rpx;
         .text{
-            color:#f50;
+            color:#818181;
             margin-left: 10rpx;
             font-size: 24rpx;
             line-height: 1;
@@ -400,48 +316,6 @@ export default {
         }
     }
 }
-.shopinfo{
-    position: relative;
-    z-index: 1;
-    &::after{
-        content: '';
-        position: absolute;
-        right: 24rpx;
-        top: 50rpx;
-        z-index: 10;
-        width: 16rpx;
-        height: 28rpx;
-        background-image: url(~@/assets/img/icon_click_right_list.png);
-        background-repeat: no-repeat;
-        background-size: contain;
-        background-position: center;
-    }
-    .title{
-        color: #000;
-        margin-bottom: 8rpx;
-    }
-    .address{
-        font-size: 22rpx;
-        color: #818181;
-    }
-    .model-content{
-        display: flex;
-        padding-top: 24rpx;
-        .info{
-            flex: 1;
-        }
-        .tel{
-            display: block;
-            width: 100rpx;
-            height: 18px;
-            background-image: url('~@/assets/img/tel1.png');
-            background-repeat: no-repeat;
-            background-size: auto 18px;
-            background-position: center;
-            margin: auto;
-        }
-    }
-}
 .model{
     background: #fff;
     padding: 24rpx;
@@ -452,6 +326,17 @@ export default {
         font-size: 14px;
         color: #323232;
         font-weight: 400;
+        .icon{
+            display: inline-block;
+            width: 17px;
+            height: 17px;
+            background-image: url(~@/assets/img/paying_1.png);
+            background-size: contain;
+            background-position: 0 0;
+            background-repeat: no-repeat;
+            vertical-align: middle;
+            margin-right: 20rpx;
+        }
         .title{
             display: flex;
             line-height: 1;
@@ -493,27 +378,9 @@ export default {
             }
         }
     }
-    .icon{
-        display: inline-block;
-        width: 15px;
-        height: 15px;
-        background-image: url(~@/assets/img/vouchers_1.png);
-        background-size: contain;
-        background-position: 0 0;
-        background-repeat: no-repeat;
-        vertical-align: middle;
-        margin-right: 20rpx;
-        position: relative;
-        top: -2px;
-    }
     &.paying{
         .icon{
             background-image: url(~@/assets/img/paying_1.png);
-        }
-    }
-    &.shopinfo{
-        .icon{
-            background-image: url(~@/assets/img/stores2.png);
         }
     }
     &.vouchers{
@@ -542,11 +409,6 @@ export default {
             .middle{
                 flex: 0;
             }
-        }
-    }
-    &.order{
-        .icon{
-            background-image: url(~@/assets/img/order.png);
         }
     }
     &.use-rule{
@@ -600,6 +462,19 @@ export default {
         }
     }
     
+    // .order{
+    //     .icon{
+    //         background-image: url(~@/assets/img/order.png);
+    //     }
+    //     .left {
+    //         min-width: 1.65rem;
+    //         padding-right: 20rpx;
+    //         color: #818181;
+    //     }
+    //     .right{
+    //         text-align: left;
+    //     }
+    // }
 }
         
 </style>

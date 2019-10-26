@@ -107,7 +107,20 @@ export default {
         getCallPhone(phone) {
             callPhone(phone)
         },
-        
+        openTxMap() {
+            let that = this;
+            let plugin = requirePlugin('routePlan');
+            let key = 'NW5BZ-Y2WKG-3T6QC-ISBMF-MTDQF-63BGJ'; //使用在腾讯位置服务申请的key
+            let referer = '减付宝'; //调用插件的app的名称
+            let endPoint = JSON.stringify({ //终点
+                'name': that.infoData.store_name,
+                'latitude': that.infoData.lat,
+                'longitude': that.infoData.lng
+            });
+            wx.navigateTo({
+                url: 'plugin://routePlan/index?key=' + key + '&referer=' + referer + '&endPoint=' + endPoint
+            });
+        }
     }
 };
 </script>

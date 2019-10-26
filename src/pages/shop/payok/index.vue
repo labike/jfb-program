@@ -42,23 +42,19 @@ export default {
     },
     onLoad (options) {
         this.order_id = options.order_id;
-        wx.showLoading()
+        mpvue.showLoading()
         if (!this.createOrderReturn) {
             this.updateOrderReturn(this.order_id)
         }
         apiPayStatus(this.order_id).then(res => {
             if (res.is_pay_success === payIsSuccess.OK) {
-                wx.hideLoading();
+                mpvue.hideLoading();
                 this.showPayOk = true
                 this.shareStoreId = res.store_id 
             }
         }).catch(err => {
-            wx.hideLoading();
-            wx.showToast({
-                title: err.data.msg,
-                icon: 'none',
-                duration: 2000
-            })
+            console.log(err);
+            mpvue.hideLoading();
         })
     },
     computed: {
@@ -67,9 +63,14 @@ export default {
     methods: {
         ...mapActions(['updateOrderReturn']),
         jumpMy() {
-            mpvue.switchTab({
-                url: `/pages/orders/list/main`
-            }) 
+            // mpvue.switchTab({
+            //     url: `/pages/orders/list/main`
+            // })
+            
+            this.$router.push({
+                path: "/pages/orders/list/main",
+                reLaunch: true
+            })
         },
     },
     onShareAppMessage (options) {

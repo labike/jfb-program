@@ -14,7 +14,7 @@
                 <div class="name">{{shop.store_name}}</div>
             </div>
             <div class="score">
-                <span class="num">{{shop.score}}</span>分
+                <span class="num">{{score}}</span>分
             </div>
             <div class="address">{{shop.address}}</div>
         </div>
@@ -39,12 +39,7 @@
                             <div class="progress" :style="{width:(shop.giveInfo.sale/shop.giveInfo.library*100)+ '%'}"></div>
                             <p class="sale">已售 {{shop.giveInfo.sale}} 张</p>
                         </div>
-                        <div class="time">
-                            <last-time 
-                                :endTime="shop.giveInfo.ruler.effective_time"
-                                @endback="stopActivity"
-                            ></last-time>
-                        </div>
+                        <div class="time">剩余 {{shop.giveInfo.library - shop.giveInfo.sale}} 张</div>
                     </div>
                 </div>
             </div>
@@ -57,7 +52,7 @@
                         <li class="star"></li>
                         <li class="star"></li>
                         <li class="star"></li>
-                        <li class="text">{{shop.star}}</li>
+                        <li class="text">{{score}}</li>
                     </ul>
                     <div class="location">
                         <span class="address">{{shop.address}}</span>
@@ -66,7 +61,9 @@
                 </div>
                 <div class="handle">
                     <div class="price">{{shop.giveInfo.sale_price}}</div>
-                    <div class="go"   @click.stop="jumpItemPage(shop.giveInfo, 'timesale')">马上抢</div>
+                    <div class="go gray" v-if="shop.giveInfo.sale>=shop.giveInfo.library">已售罄</div>
+                    <div class="go" v-else @click.stop="jumpItemPage(shop.giveInfo, 'timesale')">马上抢</div>
+                    
                 </div>
             </div>
         </div>
@@ -86,7 +83,7 @@
                     <div class="desc">
                         <ul class="score score1">
                             <li class="star"></li>
-                            <li class="text">{{shop.star}}</li>
+                            <li class="text">{{score}}</li>
                         </ul>
                         <div class="location">
                             <span class="address">{{shop.address}}</span>
@@ -117,7 +114,6 @@
                 </ul>
             </div>
         </div>
-
     </div>
 </div>
 </template>
@@ -146,12 +142,20 @@ export default {
     },
     onLoad() {
         this.shop = this.shopInfo
+        
     },
     computed: {
         ...mapState('user', [
             'lat',
             'lng',
         ]),
+        score() {
+            let score = parseFloat(this.shop.star)
+            if (score !== 0) {
+                score = score.toFixed(1);
+            }
+            return score;
+        },
         scoreName() {
             if (!this.shop.star) {
                 return ''
@@ -186,9 +190,6 @@ export default {
     },
     methods: {
         jumpShop(shop) {
-            if (this.Activity) {
-                return
-            } 
             if (shop.giveInfo) {
                 this.$router.push({
                     path: '/pages/shop/saletime/main?gid=' + shop.giveInfo.gid
@@ -207,12 +208,17 @@ export default {
                 pathUrl = `/pages/shop/item/main?shop_id=${item.x_id}&title=${title}&item_id=${item.id}`
                 break;
             case 'timesale':
-                pathUrl = `/pages/orders/confirm/main?shop_id=${item.x_id}&title=${title}&item_id=${item.gid}`
+                if (!this.Activity) {
+                    pathUrl = `/pages/orders/confirm/main?shop_id=${item.x_id}&title=${title}&item_id=${item.gid}`
+                }
                 break;
             }
-            this.$router.push({
-                path: pathUrl
-            })
+            if (pathUrl !== '') {
+                this.$router.push({
+                    path: pathUrl
+                })
+            }
+            
         },
         stopActivity() {
             this.Activity = true
@@ -328,7 +334,7 @@ export default {
     }
     
     .location{
-        font-size: 11px;
+        font-size: 12px;
         color: #818181;
         display: flex;
         .address{
@@ -392,6 +398,9 @@ export default {
             margin-top: 10px;
             padding: 0 24rpx;
             text-align: center;
+            &.gray{
+                -webkit-filter: grayscale(100%)
+            }
         }
     }
     .product{
@@ -442,7 +451,7 @@ export default {
             }
             .library{
                 font-size: 10px;
-                min-width: 130rpx;
+                min-width: 100rpx;
                 padding: 0 24rpx;
                 margin: 20rpx auto 10rpx;
                 height: 30rpx;
@@ -450,6 +459,7 @@ export default {
                 background: #fde7d8;
                 border-radius: 30rpx;
                 position: relative;
+                overflow: hidden;
                 z-index: 3;
                 .progress{
                     position:absolute;
@@ -459,7 +469,6 @@ export default {
                     height: 30rpx;
                     z-index: 8;
                     background: #ffde00;
-                    border-radius: 30rpx;
                 }
                 .sale{
                     position: relative;
@@ -471,6 +480,7 @@ export default {
             .time{
                 position: relative;
                 z-index: 4;
+                text-align: center;
             }
         }
     }

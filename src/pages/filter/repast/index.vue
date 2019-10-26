@@ -42,6 +42,8 @@
                     @click.stop="jumpListPages(nav)"
                 >
                     <ImageView :src="nav.img" width='220rpx' height='165rpx'></ImageView>
+                    <div class="name">商家<span>{{nav.gc_name}}</span></div>
+                    <div class="desc" v-if="nav.gcNumber">{{nav.gcNumber}}家老板</div>
                 </li>
             </ul>
         </scroll-view>
@@ -139,15 +141,19 @@ export default {
     },
     onLoad (options) {
         const that = this
-        const repast = shopType.repast
+        const industry = shopType.repast
         apiGetAdvert({
-            city_id: this.appData.currentCity.code,
+            city_id: that.appData.currentCity.code,
             position: 1,
-            industry: repast
+            industry: industry
         }).then(advers => {
             this.advertList = advers.advert
         })
-        apiSalesType(repast).then(carry => {
+        apiSalesType({
+            lng: that.appData.currentLocation.lng,
+            lat: that.appData.currentLocation.lat,
+            industry_id: industry
+        }).then(carry => {
             console.log(carry);
             this.carry = carry
         })
@@ -239,13 +245,21 @@ export default {
             margin-right: 8rpx;
             display: inline-block;
             text-align: center;
+            position: relative;
             .name{
                 font-size: 16px;
                 font-weight: 700;
+                position: absolute;
+                left: 30rpx;
+                top: 10rpx;
+                span{
+                    color: #f00;
+                }
             }
             .desc{
-                margin-top: 10rpx;
-                padding: 0 24rpx;
+                position: absolute;
+                left: 30rpx;
+                top: 60rpx;
                 font-size: 11px;
                 font-weight: 400;
                 color: #818181;

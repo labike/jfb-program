@@ -14,12 +14,6 @@
                     </div>
                 </div>
             </div>
-            <div class="time">
-                <last-time 
-                    :endTime="infoData.ruler.effective_time"
-                    @endback="stopActivity"
-                ></last-time>
-            </div>
         </div>
         <div class="bottom">
             <div class="product">
@@ -33,11 +27,15 @@
                 <div class="price">{{infoData.sale_price}}</div>
             </div>
             <div class="handle">
-                <div class="go" @click.stop='jumpItemPage(infoData)'>马上抢</div>
-                <div class="library">
+                <div class="go gray" v-if="infoData.sale>=infoData.library">已售罄</div>
+                <div class="go" v-else @click.stop='jumpItemPage(infoData)'>马上抢</div>
+                <div class="library-warp">
                     <p class="sale">已售{{infoData.sale}} </p>
-                    <div class="progress" :style="{width:(infoData.sale/infoData.library*100)+ '%'}"></div>
+                    <div class="library">
+                        <div class="progress" :style="{width:(infoData.sale/infoData.library*100)+ '%'}"></div>
+                    </div>
                 </div>
+                
             </div>
         </div>
     </div>
@@ -62,21 +60,6 @@ export default {
     onLoad() {
         // console.log(this.infoData.sale = 10);
         
-    },
-    computed: {
-        ...mapState('user', [
-            'lat',
-            'lng',
-        ]),
-        // distance() {
-        //     const _this = this
-        //     let num = _this.shop.distance
-        //     if (num > 1000) {
-        //         return (num / 1000).toFixed(1) + 'km'
-        //     } else {
-        //         return num + 'm'
-        //     }
-        // },
     },
     methods: {
         jumpPage(shop) {
@@ -180,28 +163,14 @@ export default {
             line-height: 70rpx;
             border-radius: 10rpx;
             text-align: center;
-        }
-        
-        .library{
-            font-size: 10px;
-            height: 16rpx;
-            line-height: 16rpx;
-            background: #fff;
-            border: 1rpx solid #ff5100;
-            border-radius: 16rpx;
-            position: relative;
-            z-index: 3;
-            top: 40rpx;
-            .progress{
-                position:absolute;
-                left: 0;
-                top: 0;
-                width: 0;
-                height: 14rpx;
-                z-index: 8;
-                background: #ffa57b;
-                border-radius: 14rpx 0 0 14rpx;
+            &.gray{
+                -webkit-filter: grayscale(100%)
             }
+        }
+        .library-warp{
+            font-size: 10px;
+            position: relative;
+            margin-top: 40rpx;
             .sale{
                 position: absolute;
                 right: 100%;
@@ -211,6 +180,26 @@ export default {
                 color: #818181;
                 width: 100%;
                 padding-right: 15rpx;
+            }
+        }
+        .library{
+            height: 16rpx;
+            line-height: 16rpx;
+            background: #fff;
+            border: 1rpx solid #ff5100;
+            overflow: hidden;
+            position: relative;
+            z-index: 4;
+            border-radius: 16rpx;
+            .progress{
+                position:absolute;
+                left: 0;
+                top: 0;
+                width: 0;
+                height: 16rpx;
+                z-index: 8;
+                background: #ffa57b;
+                border-radius: 16rpx 0 0 16rpx;
             }
         }
     }

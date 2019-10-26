@@ -1,11 +1,16 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-22 11:47:56
+ * @Description: file content
+ -->
 <template>
 <div class="container">
-    <div class="orders-nav">
+    <header class="orders-nav">
         <ul class="nav-bar">
-            <li v-for="(nav,index) of tabs" :key="index"
-                :data-current="index" class="nav"
-                :class="{active:activeTab===index}"
-                @click.stop="activeTab=index"
+            <li v-for="(nav, idx1) of navList" :key="idx1"
+                :data-current="nav.id" class="nav"
+                :class="{active:activeTab===nav.id}"
+                @click.stop="activeTab=nav.id"
             >
                 {{nav.name}}
             </li>
@@ -13,24 +18,22 @@
         <div class="under-line" :class="{withAnimate:!stv.tStart}"
             :style="'width:'+stv.lineWidth+'px; left: '+stv.offset+'px'"
         ></div>
-    </div>
+    </header>
 
     <div class="scroll-view">
         <swiper class="orderListSwiper" style="width: 100%; height: 100%; overflow: visible;"
             :current='activeTab'
-            @change="swiperchange($event)"
+            @change="swiperchange"
         >
-            <div v-for="(item,index) of tabs" :key="item.type" >
+            <block  v-for="(orderData,idx2) of navList" :key="idx2" >
                 <swiper-item style="overflow: visible;border-radius: 50%;" class="one-scene">
-                    <scroll-view style="height:100%" scroll-y v-if="item.orderList"
-                        :data-item='index'
+                    <scroll-view style="height:100%" scroll-y v-if="orderData.loading"
                         @scrolltolower="LoadMore"
                     > 
-                        <div v-if="item.orderList.length" class="order-list">
-                             <order-card :orderInfo='order' 
-                                v-for="(order,oinx) of item.orderList" :key="order.order_id"
-                                @cancel='cancelOrder(index, oinx)'
-                            ></order-card>
+                        <div v-if="orderData.orderList.length" class="order-list">
+                            <block v-for="order of orderData.orderList" :key="order.order_id">
+                                <order-card :orderInfo='order' @cancel='cancelOrder(order.order_id)'></order-card>
+                            </block>
                         </div>
                         <div v-else class="no-order">
                             <img class="icon" src="/static/img/no_rate.png" mode="widthFix">
@@ -38,7 +41,7 @@
                         </div>
                     </scroll-view>
                 </swiper-item>
-            </div>
+            </block>
         </swiper>
     </div>
 
@@ -51,26 +54,36 @@ import { apiOrderList } from "@/api/api";
 export default {
     data() {
         return {
-            tabs: [{
+            navList: [{
+                id: 0,
                 type: 'all',
                 name: "全部订单",
-                orderList: null
+                loading: false,
+                orderList: []
             }, {
+                id: 1,
                 type: 0,
                 name: "待付款",
-                orderList: null
+                loading: false,
+                orderList: []
             }, {
+                id: 2,
                 type: 1,
                 name: "可使用",
-                orderList: null
+                loading: false,
+                orderList: []
             }, {
+                id: 3,
                 type: 2,
                 name: "待评价",
-                orderList: null
+                loading: false,
+                orderList: []
             }, {
+                id: 4,
                 type: 3,
                 name: "退款/售后",
-                orderList: null
+                loading: false,
+                orderList: []
             }],
             stv: {
                 windowWidth: 0,
@@ -80,17 +93,18 @@ export default {
             },
             orderListLength: 5,
             activeTab: 0,
-            loadingStatus: false,
-            
         }
     },
     onLoad() {
         var res = wx.getSystemInfoSync()
-        this.stv.lineWidth = res.windowWidth / this.tabs.length;
+        this.stv.lineWidth = res.windowWidth / this.navList.length;
         this.stv.windowWidth = res.windowWidth;
     },
     onShow() {
-        this.updataOrderList(this.activeTab)
+        this.navList.forEach(nav => {
+            nav.orderList = []
+        })
+        this.updataOrderList(1)
     },
     components: {
         OrderCard
@@ -100,22 +114,54 @@ export default {
             if (e.type !== 'change') {
                 return
             }
+            const that = this
             let offset = 0;
             let oIndex = e.mp.detail.current;
-            this.stv.offset = this.stv.lineWidth * oIndex
-            this.activeTab = oIndex;
-            this.updataOrderList(oIndex)
+            that.stv.offset = that.stv.lineWidth * oIndex
+            that.activeTab = oIndex
+            const orderList = that.navList[oIndex].orderList
+            that.updataOrderList(1)
+            
         },
-        updataOrderList(index, page) {
-            const that = this
-            const _current = this.tabs[index]
-            if (!page) {
-                _current.orderList = []
-                _current.page = 1
-                _current.loadMore = true
-            } else {
+        
+        updataOrderList(page) {
+            return new Promise((resolve,reject) => {
+                const that = this
+                let _current = that.navList[that.activeTab]
                 _current.page = page
-            }
+                if (page === 1) {
+                    _current.loadMore = true
+                    _current.orderList = []
+                }
+                apiOrderList({
+                    limit: that.orderListLength,
+                    nav_type: _current.type,
+                    page: _current.page,
+                }).then(res => {
+                    let orderList = _current.orderList
+                    _current.orderList = []
+                    if (that.orderListLength > res.list.length) {
+                        _current.loadMore = false
+                    }
+                    res.list.forEach(element => {
+                        if (element.x_id && element.order_id) {
+                            orderList.push(element)
+                        }
+                    });
+                    _current.orderList = orderList
+                    _current.loading = true
+                    resolve(res.list.length)
+                }) 
+
+            })
+            
+        },
+        cancelOrder() {
+            this.updataOrderList(1)
+        },
+        LoadMore(e) {
+            const that = this
+            let _current = that.navList[that.activeTab]
             if (!_current.loadMore) {
                 _current.loadMore = false
                 wx.showToast({
@@ -125,32 +171,8 @@ export default {
                 })
                 return
             }
-            apiOrderList({
-                limit: that.orderListLength,
-                nav_type: _current.type,
-                page: _current.page,
-            }).then(res => {
-                const orderList = res.list
-                if (that.orderListLength > res.list.length) {
-                    _current.loadMore = false
-                }
-                orderList.forEach(element => {
-                    if (element.x_id && element.order_id) {
-                        _current.orderList.push(element)
-                    }
-                });
-            })
-        },
-        cancelOrder(index, oinx) {
-            let _current = this.tabs[index]
-            _current.orderList.splice(oinx, 1);
-               
-        },
-        LoadMore(e) {
-            const _item = e.mp.currentTarget.dataset.item
-            let _current = this.tabs[_item]
             console.log('LoadMore',_current);
-            this.updataOrderList(_item, _current.page + 1)
+            that.updataOrderList(_current.page + 1)
         }
     }
 }
@@ -164,14 +186,20 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
+    z-index: 1;
 }
 .orders-nav {
-    position: relative;
     height: 90rpx;
     line-height: 90rpx;
     background-color: #fff;
     font-size: 26rpx;
     color: #353535;
+    box-shadow: 0 0 5px #333;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 10;
     .nav-bar {
         display: flex;
         justify-content: space-between;
@@ -221,8 +249,9 @@ export default {
 
 .scroll-view {
     position: relative;
+    z-index: 2;
     width: 100%;
-    height: 93%;
+    height: 100%;
     background: #f2f2f2;
     .scroll-view-wrapper {
         position: absolute;
@@ -250,6 +279,7 @@ export default {
 .order-list {
     width: 100%;
     padding-bottom: 24rpx;
+    padding-top: 90rpx;
 }
 
 </style>

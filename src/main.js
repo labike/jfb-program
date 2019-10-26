@@ -11,8 +11,9 @@ import './assets/styles/base.scss';
 import MpvueRouterPatch from 'mpvue-router-patch'
 Vue.use(MpvueRouterPatch)
 
-Vue.config.productionTip = false;
-App.mpType = 'app';
+// Vue.config._mpTrace = true
+Vue.config.productionTip = false
+App.mpType = 'app'
 
 Vue.prototype.$store = store;
 const app = new Vue(App);

@@ -38,7 +38,8 @@
                         <swiper-item>
                             <scroll-view scroll-x="true" class="tabs-bar">
                                 <ul class="tabs">
-                                    <li class="tab" :class="swi.sort_one? '': 'active'"
+                                    <li class="tab"
+                                        :class="{active: swi.sort_one === ''|| !swi.sort_one}"
                                         @click="getNearbys()"
                                     >全部</li>
                                     <li v-for="(tab,tabIndex) of swi.sortList" :key="tabIndex"
@@ -50,14 +51,19 @@
                                     </li>
                                 </ul>
                             </scroll-view>
-                            <scroll-view scroll-y 
+                            
+                            <section class="empty" v-if="swi.empty">
+                                <ImageView src="/static/img/null_bg.png" width='160rpx'></ImageView>
+                                <div class="text">暂无相关商铺！</div>
+                            </section>
+                            <scroll-view scroll-y v-else
                                 @scrolltolower="LoadMore"
                                 class="content"
                                 :item="currentTab"
                                 :class="{scroll: listScroll}"
                             >
                                 <div class="shop-inner">
-                                    <block v-for="shop in swi.shopList" :key="shop.x_id">
+                                    <block v-for="shop in swi.shopList" :key="shop.s_id">
                                         <shop-card :shopInfo='shop'></shop-card>
                                     </block>
                                 </div>
@@ -120,7 +126,7 @@ export default {
             currentTab: 0, //选项卡及swiper位置
             scrollleft: 0, //scroll-view 横向滚动条位置
             windowWidth: 0, //窗口宽度
-            swiperHeight: 1000, //此处为swiper高度
+            swiperHeight: 600, //此处为swiper高度
             listScroll: false, //列表是否滚动
             listScrollHeigth: 0, //滚动界限
             listScrollTop: 0, //滚动界限
@@ -145,6 +151,7 @@ export default {
         let that = this;
         let system = wx.getSystemInfoSync();
         that.windowWidth = system.windowWidth;
+        that.swiperHeight = system.windowHeight;        
         apiGetAdvert({
             city_id: that.appData.currentCity.code,
             position: 4,
@@ -170,6 +177,11 @@ export default {
             })
         })
     },
+    onUnload() {        
+        const self = this;
+        self.fixtop = false;
+        self.listScroll = false;
+    },
     methods: {
         swiperChange(e) {
             if (e.type !== 'change') {
@@ -180,7 +192,7 @@ export default {
             that.currentTab = e.mp.detail.current;
             query.select("#navitem" + that.currentTab).boundingClientRect();
             query.exec(function(res) {
-                console.log(res);
+                that.listScroll = false;
                 if (res[0].right > that.windowWidth) {
                     that.scrollleft = res[0].right;
                 } else if (res[0].left < 0) {
@@ -192,6 +204,7 @@ export default {
                     })
                 }, 20)
             });
+            
             const shopList = that.navList[that.currentTab].shopList
             if (!shopList || !shopList.length) {
                 that.updataShopList(that.currentTab)
@@ -202,6 +215,7 @@ export default {
             return new Promise((resolve,reject) => {
                 const _this = this
                 const _current = _this.navList[index]
+                _current.empty = false
                 if (!page) {
                     _current.shopList = []
                     _current.page = 1
@@ -218,23 +232,34 @@ export default {
                     })
                     return
                 }
-                apiGetNearbys({
+                let params = {
                     lng: _this.appData.currentLocation.lng,
                     lat: _this.appData.currentLocation.lat,
                     top_sort: _current.id, 
                     page: _current.page,
                     limit: _this.shopListLength,
-                }).then(res => {
-                    const shopList = res.list
-                    if (_this.shopListLength > shopList.length) {
+                }
+                if (_current.sort_one) {
+                    params.sort_one = _current.sort_one
+                } else {
+                    params.sort_one = ''
+                }
+                apiGetNearbys(params).then(res => {
+                    const shopList = _current.shopList.slice(0)
+                    _current.shopList = []
+                    if (_this.shopListLength > res.list.length) {
                         _current.loadMore = false
                     }
-                    shopList.forEach(element => {
+                    res.list.forEach(element => {
                         if (element.s_id) {
-                            _current.shopList.push(element)
+                            shopList.push(element)
                         }
                     });
-                    resolve(shopList.length)
+                    _current.shopList = shopList
+                    if (!_current.shopList.length) {
+                        _current.empty = true
+                    }
+                    resolve(res.list.length)
                 }) 
 
             })
@@ -262,11 +287,7 @@ export default {
         },
         getNearbys(sort_one) {
             const that = this
-            const current = that.navList[that.currentTab]
-            current.shopList = []
-            if (sort_one) {
-                current.sort_one = sort_one
-            }
+            let current = that.navList[that.currentTab]
             let params = {
                 lng: that.appData.currentLocation.lng,
                 lat: that.appData.currentLocation.lat,
@@ -276,13 +297,17 @@ export default {
             }
             if (sort_one) {
                 params.sort_one = sort_one
+                current.sort_one = sort_one
+            } else {
+                params.sort_one = ''
+                current.sort_one = ''
             }
             apiGetNearbys(params).then(res => {
-                const shopList = res.list
-                if (that.shopListLength > shopList.length) {
+                current.shopList = []
+                if (that.shopListLength > res.list.length) {
                     current.loadMore = false
                 }
-                shopList.forEach(element => {
+                res.list.forEach(element => {
                     if (element.s_id) {
                         current.shopList.push(element)
                     }
@@ -292,7 +317,6 @@ export default {
     },
     onPageScroll: function(e) {
         // console.log(e.scrollTop);
-        
         const that = this;
         if (that.top === 0) {
             return
@@ -306,6 +330,7 @@ export default {
             }
         } else {
             that.fixtop = false;
+            that.listScroll = false;
         }
     }
 };
@@ -338,7 +363,7 @@ export default {
             display: inline-block;
             text-align: center;
             .name{
-                font-size: 12px;
+                font-size: 13px;
             }
         }
         .cur{
@@ -347,11 +372,11 @@ export default {
             &::after{
                 content: '';
                 position: absolute;
-                bottom: 0;
+                bottom: 10rpx;
                 left: 34rpx;
                 right: 34rpx;
-                height: 4rpx;
-                border-radius: 4rpx;
+                height: 5rpx;
+                border-radius: 5rpx;
                 background: #2a8cfa;
             }
             .name{
@@ -378,7 +403,7 @@ export default {
     padding: 10rpx 0;
     .tabs{
         display: flex;
-        color: #323232;
+        color: #000;
         .tab{
             margin-left: 24rpx;
             white-space: nowrap;
@@ -412,13 +437,23 @@ export default {
 	left: 0;
 	width: 100%;
 	z-index: 999;
-	animation: move 0.2s linear;
+	animation: move 0.1s linear;
     box-shadow: 0 0 5px #333;
     .navs{
         padding: 0;
     }
 }
 
+.empty{
+    text-align: center;
+    padding-top: 160rpx;
+    .text{
+        margin-top: 15rpx;
+        font-size: 24rpx;
+        color: #818181;
+        text-shadow: 1px 1px 1px #e8e8e8;
+    }
+}
 @keyframes move {
 	from {
 		opacity: 0.7;

@@ -50,7 +50,7 @@ export default {
         return {
             priceData: [{
                 name: '30元',
-                value: 0.1
+                value: 30
             },{
                 name: '50元',
                 value: 50
@@ -101,7 +101,7 @@ export default {
                     success: function (res) {
                         console.log(res)
                         if (res.confirm) {
-                            if (_this.balance < 0.01) {
+                            if (_this.balance < 1) {
                                 wx.showToast({
                                     title: `${payType}提现金额必须大于1`,
                                     icon: 'none',

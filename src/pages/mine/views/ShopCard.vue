@@ -99,17 +99,22 @@ export default {
                 s_id,
                 type: 'attend'
             }).then(res => {
-                wx.showToast({
-                    title: res.message,
-                    icon: 'success',
-                    duration: 1000
+                mpvue.showModal({
+                    content: res.message,
+                    showCancel: false,
+                    confirmText: '确定',
+                    confirmColor: '#333',
+                    success: function(res) {
+                        if (res.confirm) {
+                            that.$emit('refresh')
+                        }
+                    },
                 })
-                that.$emit('refresh')
             })
         },
         cancelShare(s_id) {
             const that = this
-            wx.showModal({
+            mpvue.showModal({
                 title: '是否取消分享店铺',
                 content: '取消了就不能获得这家店铺的返佣了，您确定要取消吗？',
                 success: function (result) {
@@ -118,7 +123,7 @@ export default {
                             s_ids: s_id,
                             type: 'attend'
                         }).then(res => {
-                            wx.showToast({
+                            mpvue.showToast({
                                 title: '已取消该分享店铺',
                                 icon: 'success',
                                 duration: 1000
@@ -143,15 +148,35 @@ export default {
                             address: result.storeInfo.address,
                             mobile: result.storeInfo.store_mobile,
                         }
-                        this.$emit('share', cardInfo)
+                        that.$emit('share', cardInfo)
                     } else {
                         wx.showModal({
-                            content: '您分享的店铺已到达上限',
+                            content: '您已加入的分享好店到达50家上限，请您先删除不需要的分享店铺',
                             showCancel: false,
                             // confirmText: '好的',
                             confirmColor: '#333',
                         })
                     }
+                } else {
+                    wx.showModal({
+                        content: '您分享的店铺暂已关闭分享返佣，是否继续分享',
+                        // confirmText: '好的',
+                        confirmColor: '#333',
+                        success: function (res) {
+                            console.log(res)
+                            if (res.confirm) {
+                                const cardInfo = {
+                                    code: result.shareUrl,
+                                    title: result.storeInfo.store_name,
+                                    qrCode: result.shareQrImg,
+                                    imageUrl: result.storeInfo.header_img,
+                                    address: result.storeInfo.address,
+                                    mobile: result.storeInfo.store_mobile,
+                                }
+                                that.$emit('share', cardInfo)
+                            }
+                        }
+                    })
                 }
             })
             

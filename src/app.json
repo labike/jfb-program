@@ -19,11 +19,6 @@
         "pages/mine/message/main",
         "pages/mine/evaluate/main",
         "pages/mine/about/main",
-        "pages/money/index/main",
-        "pages/money/withdraw/main",
-        "pages/money/list/main",
-        "pages/money/alipay/main",
-        "pages/money/ok/main",
         "pages/filter/near/main",
         "pages/filter/repast/main",
         "pages/filter/hotel/main",
@@ -33,16 +28,31 @@
         "pages/filter/education/main",
         "pages/filter/fransnana/main",
         "pages/filter/all/main",
-        "pages/filter/category/main",
-        "pages/shop/index/main",
-        "pages/shop/paythebill/main",
-        "pages/shop/photos/main",
-        "pages/shop/item/main",
-        "pages/shop/pay/main",
-        "pages/shop/payok/main",
-        "pages/shop/salelist/main",
-        "pages/shop/saletime/main"
-        
+        "pages/filter/category/main"
+    ],
+    "subPackages": [
+        {
+            "root": "pages/money/",
+            "pages": [
+                "index/main",
+                "withdraw/main",
+                "list/main",
+                "alipay/main",
+                "ok/main"
+            ]
+        }, {
+            "root": "pages/shop/",
+            "pages": [
+                "index/main",
+                "paythebill/main",
+                "photos/main",
+                "item/main",
+                "pay/main",
+                "payok/main",
+                "salelist/main",
+                "saletime/main"
+            ]
+        }
     ],
     "window": {
         "backgroundTextStyle": "light",
@@ -99,6 +109,12 @@
             "activeIcon": "static/tabs/mine-active.png"
         }],
         "position": "bottom"
+    },
+    "plugins": {
+        "routePlan": {
+        "version": "1.0.1",
+        "provider": "wx50b5593e81dd937a"
+        }
     },
     "permission": {
         "scope.userLocation": {

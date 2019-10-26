@@ -14,7 +14,7 @@
         </div>
         <div class="submit" @click="getSearchList">搜索</div>
     </div>
-    <div class="search-key" v-if="keywords==''">
+    <div class="search-key" v-if="!searchList.length">
         <div class="hot">
             <div class="title">热门搜索</div>
             <ul class="list">
@@ -75,7 +75,10 @@ export default {
     computed: {
         ...mapGetters([
             'searchHistory'
-        ])
+        ]),
+        appData() {
+            return mpvue.getStorageSync('appData');
+        }
     },
     methods: {
         ...mapActions([
@@ -83,7 +86,8 @@ export default {
             'clearSearchHistory'
         ]),
         getHotWords() {
-            apiGetHotWords(2809).then(res => {
+            const _this = this
+            apiGetHotWords(_this.appData.currentCity.code).then(res => {
                 console.log(res);
                 this.hotList = res.list
             })
@@ -93,7 +97,9 @@ export default {
             _this.saveSearchHistory(_this.keywords)
             _this.searchList = []
             apiSearch({
-                city_id: 2809,
+                city_id: _this.appData.currentCity.code,
+                lng: _this.appData.currentLocation.lng,
+                lat: _this.appData.currentLocation.lat,
                 page: _this.page,
                 keywords: _this.keywords
             }).then(res => {

@@ -67,7 +67,17 @@ export function getLocation (onSuccess) {
         },
         fail(err) {
             console.log(err);
-            again_getLocation(onSuccess)
+            wx.showModal({
+                content: '定位失败，请检查网络环境或手机定位权限设置',
+                showCancel: false,
+                confirmText: '重新定位',
+                confirmColor: '#333',
+                success: function(res) {
+                    if (res.confirm) {
+                        again_getLocation(onSuccess)
+                    }
+                },
+            })
         }
     })
 }

@@ -4,7 +4,7 @@
  * @Description: file content
  -->
 <template>
-<div class="container">
+<div class="container" v-if="params">
     <div class="tabs-bar">
         <scroll-view scroll-x="true" class="menu-warp" 
             :scroll-into-view="menuId"
@@ -29,7 +29,7 @@
         </scroll-view>
         <div class="toggle-show" @click="toggleShow"></div>
     </div>
-    <div class="mask-warp" v-if="showBottom" :style="{height: windowHeight}">
+    <div class="mask-warp" v-if="showBottom" :style="{height: windowHeight + 'px'}">
         <div class="mask" @click="closeMask"></div>
         <div class="mask-inner content">
             <ul class="menu" v-if="params.length">
@@ -69,6 +69,7 @@ export default {
         params: Array,
     },
     onLoad (options) {
+        console.log(this.params);
         this.showBottom = false
         this.active = options.sort_two
         if (!options.sort_two) {
@@ -79,7 +80,7 @@ export default {
         console.log(this.menuId);
         
         let system = wx.getSystemInfoSync();
-        this.windowHeight = system.windowHeight + 'px';
+        this.windowHeight = system.windowHeight;
     },
     onUnload() {        
         this.closeMask()
@@ -89,7 +90,9 @@ export default {
     },
     methods: {
         jumpPages(item) {
-            console.log(item);
+            if (!item) {
+                item = {id: ''}
+            }
             item.type = 0
             this.$emit('change', item)
             this.active = item.id
@@ -99,16 +102,6 @@ export default {
                 this.menuId = 'menu_' + item.id
             }
             this.closeMask()
-            // if (!pageUrl) {
-            //     pageUrl = getCurrentPageUrlWithArgs()
-            //     const last = pageUrl.indexOf("&sort_two")
-            //     if (last > -1) {
-            //         pageUrl = pageUrl.substring(0,last)
-            //     }
-            // }
-            // mpvue.redirectTo({
-            //     url: pageUrl
-            // })
         },
         closeMask() {
             this.showBottom = false

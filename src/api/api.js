@@ -916,10 +916,12 @@ export const apiGetRecommends = params => {
 /**
 * 美食点击进去【活动分类列表】
 * @method GET  https://clients.qmw111.com/v2/category/range
-* @params  industry_id: 每页显示条数
+* @params lng: 经度 
+* @params lat: 纬度
+* @params industry_id: 行业id
 */
-export const apiSalesType = type => {
-    return get2('category/range', {industry_id: type}).then(res => {
+export const apiSalesType = params => {
+    return post2('category/range', params).then(res => {
         return Promise.resolve(res.data); 
     }).catch(err => {
         throw err;

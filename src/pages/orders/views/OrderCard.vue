@@ -1,5 +1,10 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-06 08:50:17
+ * @Description: file content
+ -->
 <template>
-<div class="order-card" v-if="order" @click="jumpOrderPages('details',order)">
+<div class="order-card" v-if="order.order_id" @click="jumpOrderPages('details',order)">
    <div class="card-warp">
        <div class="card-hd">
            <div class="title">{{order.store_name}}</div>
@@ -149,7 +154,6 @@ export default {
             })
         },
         payOrder(order) {
-            console.log(order);
             
             const deadlinetime = Number(order.create_time) + 60 * 60 * 24
             this.SET_ORDER_RETURN({

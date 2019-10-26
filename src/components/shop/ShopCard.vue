@@ -27,7 +27,7 @@
                 <li class="star"></li>
                 <li class="star"></li>
                 <li class="star"></li>
-                <li class="text">{{shop.score}}</li>
+                <li class="text">{{score}}</li>
             </ul>
             <div class="record" v-if="shop.msgData">
                 <rollnotice autoplay="2000" :rollData='shop.msgData'>
@@ -96,6 +96,13 @@ export default {
         this.shop = this.shopInfo
     },
     computed: {
+        score() {
+            let score = parseFloat(this.shop.score)
+            if (score === 0) {
+                return 0;
+            }
+            return score.toFixed(1);
+        },
         scoreName() {
             if (!this.shop.score) {
                 return ''
@@ -284,10 +291,10 @@ export default {
                 width: 50%;
                 height: 100%;
                 vertical-align: bottom;
-                background-size: 25rpx 25rpx;
+                background-size: 28rpx 28rpx;
                 background-position: 0 0;
                 background-repeat: no-repeat;
-                background-image: url('~@/assets/img/icon_rating_bar_progress.png');
+                background-image: url('~@/assets/img/starSelect.png');
             }
             
         }
@@ -330,7 +337,8 @@ export default {
         }
         .address{
             overflow: hidden;
-            width: 200rpx;
+            max-width: 200rpx;
+            min-width: 50rpx;
             word-wrap: normal;
             text-overflow: ellipsis;
             white-space: nowrap;

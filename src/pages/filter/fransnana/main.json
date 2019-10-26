@@ -3,5 +3,6 @@
   "enablePullDownRefresh": true,
   "backgroundTextStyle":"dark",
   "onReachBottomDistance":50,
-  "navigationBarBackgroundColor": "#ff4b62"
+  "navigationBarBackgroundColor": "#ff4b62",
+  "backgroundColor": "#ff4b62"
 }

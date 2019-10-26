@@ -70,7 +70,7 @@
                     </div>
                     <div class="food-handle">
                         <div class="btn" @click.stop="jumpConfirm('combo',combo.id)">购 买</div>
-                        <!-- <p>已售 {{ combo.sale_num }} 份</p> -->
+                        <p v-if="combo.sale_num > 0">已售 {{ combo.sale_num }} 份</p>
                     </div>
                 </div>
             </li>

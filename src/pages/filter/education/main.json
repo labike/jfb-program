@@ -4,5 +4,6 @@
   "backgroundTextStyle":"dark",
   "onReachBottomDistance":50,
   "navigationBarTextStyle": "black",
-  "navigationBarBackgroundColor": "#21dfa8"
+  "navigationBarBackgroundColor": "#21dfa8",
+  "backgroundColor": "#21dfa8"
 }

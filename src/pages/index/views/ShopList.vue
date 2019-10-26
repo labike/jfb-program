@@ -30,7 +30,12 @@
 			@change="swiperChange">
 			<block v-for="(swi,s) in navList" :key="s">
 				<swiper-item>
-					<scroll-view scroll-y 
+                    <section class="empty" v-if="swi.empty">
+                        <ImageView src="/static/img/null_bg.png" width='160rpx'></ImageView>
+                        <div class="text">暂无相关商铺！</div>
+                    </section>
+
+					<scroll-view scroll-y v-else
                         @scrolltolower="LoadMore"
                         class="content"
                         :item="currentTab"
@@ -49,27 +54,30 @@
 
 <script>
 import ShopCard from "./ShopCard.vue";
+import ImageView from '@c/layouts/ImageView.vue'
 import { apiGetRecommends } from "@/api/api";
 export default {
-    components: { ShopCard },  
+    components: {
+        ShopCard,
+        ImageView
+    },  
     data() {
         return {
-            
             navList: [{
                 type: 1,
                 name: '美食',
                 desc: '吃遍美食',
                 shopList: []
             }, {
-                type: 3,
-                name: '休闲',
-                desc: '潮玩享乐',
-                shopList: []
-            }, {
                 type: 4,
                 name: '爱车',
                 desc: '汽车服务',
                 shopList: []
+            }, {
+                type: 3,
+                name: '休闲',
+                desc: '潮玩享乐',
+                shopList: null
             }, {
                 type: 5,
                 name: '健康',
@@ -136,6 +144,7 @@ export default {
             return new Promise((resolve,reject) => {
                 const _this = this
                 const _current = _this.navList[index]
+                _current.empty = false
                 if (!page) {
                     _current.shopList = []
                     _current.page = 1
@@ -159,16 +168,22 @@ export default {
                     page: _current.page,
                     limit: _this.shopListLength,
                 }).then(res => {
-                    const shopList = res.data
-                    if (_this.shopListLength > shopList.length) {
+                    const shopList = _current.shopList.slice(0)
+                    _current.shopList = []
+                    if (_this.shopListLength > res.data.length) {
                         _current.loadMore = false
                     }
-                    shopList.forEach(element => {
-                        if (element.x_id && (element.giveInfo || element.groupInfo)) {
-                            _current.shopList.push(element)
+                    res.data.forEach(element => {
+                        if (element.x_id) {
+                            shopList.push(element)
                         }
                     });
-                    resolve(shopList.length)
+                    _current.shopList = shopList
+                    if (!_current.shopList.length) {
+                        _current.empty = true
+                    }
+                    _current.loading = true
+                    resolve(res.data.length)
                 }) 
 
             })
@@ -202,11 +217,17 @@ export default {
         })
         
     },
+    onUnload() {        
+        const self = this;
+        self.fixtop = false;
+        self.listScroll = false;
+    },
     onPageScroll: function(e) {
         // console.log(e.scrollTop);
         
         const that = this;
         if (that.top === 0) {
+            that.fixtop = false;
             return
         }
         if (e.scrollTop >= that.top) {
@@ -283,13 +304,23 @@ export default {
     }
 }
 
+.empty{
+    text-align: center;
+    padding-top: 160rpx;
+    .text{
+        margin-top: 15rpx;
+        font-size: 24rpx;
+        color: #818181;
+        text-shadow: 1px 1px 1px #e8e8e8;
+    }
+}
 .fix {
 	position: fixed;
 	top: 80rpx;
 	left: 0;
 	width: 100%;
 	z-index: 999;
-	animation: move 0.2s linear;
+	animation: move 0.1s linear;
     box-shadow: 0 0 5px #666;
     .navs{
         .nav{
@@ -306,8 +337,8 @@ export default {
                 bottom: 10rpx;
                 left: 40rpx;
                 right: 40rpx;
-                height: 4rpx;
-                border-radius: 4rpx;
+                height: 5rpx;
+                border-radius: 5rpx;
                 background: #ff5100;
             }
             .name{

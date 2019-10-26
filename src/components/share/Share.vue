@@ -7,24 +7,24 @@
 <div class="share_container">
 
 	<div class="mask-warp" v-if="showShowShare">
-		<div class="mask" @click="showShowShare=false"
+		<div class="mask" @click="closeShowShare"
             :class="{orange: showWxShare}"
         ></div>
 		<div class="mask-inner" >
             <div class="card-share" v-if="showWxShare" >
                 <header class="base-info">
-                    <div class="avater">
-                        <ImageView :src="userInfo.headimgurl" mode="aspectFit" ></ImageView>
+                    <div class="avater" v-if="userInfo.headimgurl">
+                        <ImageView :src="userInfo.headimgurl" mode='scaleToFill' height="120rpx" width="120rpx" ></ImageView>
                     </div>
-                    <div class="nickname">{{userInfo.nickname}}</div>
-                    <div class="close" @click="showShowShare=false"></div>
+                    <div class="nickname"  v-if="userInfo.nickname">{{userInfo.nickname}}</div>
+                    <div class="close" @click="closeShowShare"></div>
                 </header>
 			    <app-share :cardInfo='cardInfo'></app-share>
             </div>
 			<div class="content" v-else>
 				<div class="hd border-bottom" v-if="storeInfo">
 					<div class="img-warp">
-                        <ImageView :src="storeInfo.header_img" mode="aspectFit" ></ImageView>
+                        <ImageView :src="storeInfo.header_img" mode='scaleToFill' height="140rpx" width="140rpx" ></ImageView>
 					</div>
 					<div class="info">
 						<div class="name">{{storeInfo.store_name}}</div>
@@ -55,7 +55,7 @@
 						</ul>
 					</div>
 				</div>
-				<div  class="share-btn" @tap="showWxShare=true">立即分享</div>
+				<div  class="share-btn" @click="openShowShare">立即分享</div>
 			</div>
 			
 		</div>
@@ -149,7 +149,24 @@ export default {
     methods: {
         closeShowShare() {
             this.showShowShare = false;
+            mpvue.setNavigationBarTitle({
+                title: '支付成功',
+            })
+            mpvue.setNavigationBarColor({
+                frontColor: '#ffffff',
+                backgroundColor: '#2a8cfa'
+            })
         },
+        openShowShare() {
+            this.showWxShare = true;
+            mpvue.setNavigationBarTitle({
+                title: '立即分享',
+            })
+            mpvue.setNavigationBarColor({
+                frontColor: '#ffffff',
+                backgroundColor: '#ff8b28'
+            })
+        }
     }
 }
 </script>
@@ -288,7 +305,6 @@ export default {
         }
     }
     .base-info{
-        height: 85px;
         position: relative;
         .avater{
             margin: auto;

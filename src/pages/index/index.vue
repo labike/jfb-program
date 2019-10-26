@@ -130,22 +130,6 @@ export default {
             })
         },
     },
-    // onPullDownRefresh () {
-    //     this.getIndex()
-    //     this.page = 1
-    //     this.remainListsLength = 5
-    //     mpvue.stopPullDownRefresh()
-    // },
-    // onReachBottom () {
-    //     if (this.remainListsLength === 5) {
-    //         this.page++
-    //         this.getShopload()
-    //         this.scrollStatus = true
-    //     } else {
-    //         Toast("没有更多数据了！");
-    //         this.scrollStatus = false
-    //     }
-    // },
     onShareAppMessage (options) {
         if (options.from === "menu") {
             return {

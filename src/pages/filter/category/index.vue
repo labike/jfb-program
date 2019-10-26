@@ -9,7 +9,7 @@
         <div class="search">
             <lay-header></lay-header>
         </div>
-        <menus v-if="barParams.list &&barParams.list.length" 
+        <menus v-if="categoryStatus" 
             :name="navName"
             :params='barParams.list'
             @change="updataParam"
@@ -33,7 +33,7 @@
 
             <section class="empty" v-else>
                 <div class="loading" v-if="listLoading"></div>
-                <ImageView src="/static/img/null_bg.png" width='300rpx'></ImageView>
+                <ImageView src="/static/img/null_bg.png" width='160rpx'></ImageView>
                 <div class="text">暂无相关商铺！</div>
             </section>
         </div>
@@ -117,7 +117,6 @@ export default {
                 query.select(".header-warp").boundingClientRect();
                 query.exec(function(rect) {  
                     that.scrollTop = rect[0].height
-                    
                 });
             }, 500)
         })
@@ -151,16 +150,16 @@ export default {
             switch (item.type) {
             case 0:
                 _this.params.sort_two = item.id
-                _this.selectNavList[0] = item.sort_name
+                _this.selectNavList[0] = item.sort_name || '全部'
                 break;
             case 1:
                 _this.params.lng = item.lng
                 _this.params.lat = item.lat
-                _this.selectNavList[1] = item.areaName
+                _this.selectNavList[1] = item.areaName || '附近'
                 break;
             case 2:
                 _this.params.sort_type = item.id
-                _this.selectNavList[2] = item.name
+                _this.selectNavList[2] = item.name || '智能排序'
                 break;
             }
             _this.shopList = []
@@ -203,6 +202,7 @@ export default {
     onPullDownRefresh () {
         this.page = 1
         this.remainListsLength = 10
+        this.getSortShop()
         mpvue.stopPullDownRefresh()
     },
     onReachBottom () {
@@ -280,11 +280,7 @@ export default {
 }
 .empty{
     text-align: center;
-    img{
-        width: 300rpx;
-        height: 300rpx;
-        margin-top: 100rpx;
-    }
+    padding-top: 160rpx;
     .text{
         margin-top: 15rpx;
         font-size: 24rpx;

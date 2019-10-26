@@ -28,15 +28,10 @@
                                 </div>
                                 <div class="linetime">
                                     <div class="library">
-                                        <div class="progress" :style="{width:(shop.give.sale/shop.give.library*100)+ '%'}"></div>
-                                        <p class="sale">已售 {{shop.give.sale}} 张</p>
+                                        <div class="progress" :style="{width:(shop.sale/shop.give.library*100)+ '%'}"></div>
+                                        <p class="sale">已售 {{shop.sale}} 张</p>
                                     </div>
-                                    <div class="time">
-                                        <last-time 
-                                            :endTime="shop.give.ruler.effective_time"
-                                            @endback="stopActivity(shop)"
-                                        ></last-time>
-                                    </div>
+                                    <div class="time">剩余 {{shop.give.library - shop.sale}} 张</div>
                                 </div>
                             </div>
                         </div>
@@ -52,18 +47,25 @@
                                     <li class="text">{{shop.storeInfo.star}}</li>
                                 </ul>
                                 <div class="location">
-                                    <span class="address">长虹国际A座</span>
+                                    <span class="address">{{shop.storeInfo.address}}</span>
                                     <span class="number">{{shop.distance}}</span>
                                 </div>
                             </div>
                             <div class="handle">
                                 <div class="price">{{shop.give.sale_price}}</div>
-                                <div class="go" @click.stop="jumpItemPage(shop)">马上抢</div>
+                                <div class="go gray" v-if="shop.sale>=shop.give.library">已售罄</div>
+                                <div class="go" v-else @click.stop="jumpItemPage(shop)">马上抢</div>
                             </div>
                         </div>
                     </div>
                 </li>
             </ul>
+
+            
+            <div class="empty" v-if="emptyList">
+                <ImageView src="/static/img/null_bg.png" width='160rpx'></ImageView>
+                <div class="text">暂时未添加相关活动~</div>
+            </div>
         </div>
     </div>
 </div>
@@ -82,6 +84,7 @@ export default {
         return {
             params: {},
             scrollTop: 0,
+            emptyList: false,
             scrollStatus: true,
             remainListsLength: 5,
             shopList: []
@@ -96,21 +99,23 @@ export default {
             'lat',
             'lng',
         ]),
-        distance() {
-            const _this = this
-            
-        },
     },
     onLoad (options) {
         const that = this
         that.params = {
-            lng: that.lat,
+            lng: that.lng,
             lat: that.lat,
             give_category: options.gcid, 
             page: 1,
             industry_id: options.industry
         }
+        that.shopList = []
         that.pullDownData()    
+    },
+    onUnload() {        
+        const self = this;
+        self.scrollStatus = true
+        self.emptyList = false
     },
     methods: {
         setShopPageLength(length) {
@@ -150,6 +155,9 @@ export default {
                 } else {
                     _this.scrollStatus = false
                 }
+                if (_this.params.page === 1 && _this.shopList.length === 0) {
+                    _this.emptyList = true
+                }
             })
         },
         formartShop(shop) {
@@ -162,6 +170,7 @@ export default {
                         scoreName = scoreName + ' dot'
                     }
                 }
+                shop.storeInfo.star = parseFloat(shop.storeInfo.star).toFixed(1);
                 shop.storeInfo.scoreName = scoreName
             }
             if (shop.distance) {
@@ -177,6 +186,8 @@ export default {
     },
     onPullDownRefresh () {
         this.params.page = 1
+        this.shopList = []
+        this.pullDownData()  
         mpvue.stopPullDownRefresh()
     },
     onReachBottom () {
@@ -277,6 +288,7 @@ export default {
         background: #fff;
         box-shadow: 1px 1px 10px #efefef;
         border-radius: 10rpx;
+        overflow: hidden;
         margin-bottom: 30rpx;
         &.gray{
             -webkit-filter: grayscale(100%)
@@ -327,6 +339,9 @@ export default {
                 margin-top: 10px;
                 padding: 0 24rpx;
                 text-align: center;
+                &.gray{
+                    -webkit-filter: grayscale(100%)
+                }
             }
         }
         .product{
@@ -377,7 +392,7 @@ export default {
                 }
                 .library{
                     font-size: 10px;
-                    min-width: 130rpx;
+                    min-width: 100rpx;
                     padding: 0 24rpx;
                     margin: 20rpx auto 10rpx;
                     height: 30rpx;
@@ -385,6 +400,7 @@ export default {
                     background: #fde7d8;
                     border-radius: 30rpx;
                     position: relative;
+                    overflow: hidden;
                     z-index: 3;
                     .progress{
                         position:absolute;
@@ -394,7 +410,6 @@ export default {
                         height: 30rpx;
                         z-index: 8;
                         background: #ffde00;
-                        border-radius: 30rpx;
                     }
                     .sale{
                         position: relative;
@@ -406,9 +421,17 @@ export default {
                 .time{
                     position: relative;
                     z-index: 4;
+                    text-align: center;
                 }
             }
         }
+    }
+    .empty{
+        text-align: center;
+        position: relative;
+        z-index: 20;
+        padding-top: 240rpx;
+        color: #818181;
     }
 }
 </style>
