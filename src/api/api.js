@@ -968,6 +968,19 @@ export const apiSuperStores = () => {
 };
 
 /**
+* 优惠专区【首页】
+* @method GET  http://clients.qmw111.com/v2/index/discount
+* @params  path: index(首页index,)
+*/
+export const apiSuperDiscount = () => {
+    return get2('index/discount').then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        throw err;
+    });
+};
+
+/**
  * 活动列表页
  * @method GET https://clients.qmw111.com/v2/give/list
  * @params industry_id: 1 

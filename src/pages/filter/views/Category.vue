@@ -99,6 +99,7 @@ export default {
     onUnload() {        
         const self = this;
         self.scrollBox = 'auto'
+        self.fixtop = false
         self.modelStatus = false
         self.selectNav = ''
         self.barParams = {}
@@ -244,7 +245,7 @@ export default {
         left: 0;
         width: 100%;
         z-index: 999;
-        animation: move 0.2s linear;
+        animation: move 0.1s linear;
         box-shadow: 0 0 5px #333;
     }
 }

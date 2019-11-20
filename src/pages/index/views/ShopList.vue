@@ -212,8 +212,9 @@ export default {
                     let sollHeight = rect[0].height + rect[1].height - rect[2].height - rect[3].height
                     that.top = sollHeight - that.swiperHeight 
                     that.listScrollHeigth = sollHeight - system.windowHeight;
+                    // console.log(that.top);
                 });
-            }, 500)
+            }, 800)
         })
         
     },

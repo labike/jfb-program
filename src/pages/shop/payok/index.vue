@@ -78,7 +78,7 @@ export default {
             return {
                 title: '我发现了一款省钱的小程序',
                 path: '/pages/index/main',
-                imageUrl: WAPHOST + 'logo.png',
+                imageUrl: WAPHOST + 'shareImg.png',
             }
         }
         console.log(options);

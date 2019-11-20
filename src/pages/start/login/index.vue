@@ -27,7 +27,7 @@
                     </button>
                 </div>
                 <button v-if="buttonBind" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber" class="confirm-btn">
-                    <span>绑定手机号</span>
+                    <span>发送验证码</span>
                 </button>
             </div>
         </div>
@@ -187,6 +187,7 @@ export default {
                     content: '亲，拒绝授权将无法登陆，您确定要这么做吗？',
                     showCancel: false,
                     confirmText: '确定'
+                    
                 })
             }
         },
@@ -220,14 +221,18 @@ export default {
         },
         getPhoneNumber: function(e) {
             const self = this  
-            if (e.mp.detail.errMsg === 'getPhoneNumber:user deny') {  
-                mpvue.showModal({  
-                    title: '提示',  
-                    showCancel: false,  
-                    content: '未授权',  
-                    success: function (res) { }  
-                })  
+            if (e.mp.detail.errMsg === 'getPhoneNumber:fail user deny') {  
+                mpvue.showModal({
+                    title: '温馨提示',
+                    content: '亲，拒绝验证身份将无法正常购买，您确定要这么做吗？',
+                    showCancel: false,
+                    confirmText: '确定',
+                    success: function (res) {
+                        self.backHome()
+                    }
+                }) 
             } else {
+                debugger
                 apiGetMobileByWx({
                     session_key: self.session_key,
                     iv: e.mp.detail.iv,
@@ -412,12 +417,19 @@ export default {
                 background: #f4f4f4;
                 color: #000;
                 border-radius: 100rpx;
-                padding: 0 12%;
                 width: 48%;
+                position: relative;
                 &::after {
                     content: " ";
+                    box-sizing: border-box;
+                    position: absolute;
+                    border-radius: 85rpx;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
                     border: 1px solid rgba(0,0,0,.2);
-                    border-radius: 100rpx;
+
                 }
             }
             .login{
@@ -425,7 +437,6 @@ export default {
                 line-height: 85rpx;
                 background: #2a8cfa;
                 color: #fff;
-                padding: 0 12%;
                 border-radius: 100rpx;
                 width: 48%;
             }

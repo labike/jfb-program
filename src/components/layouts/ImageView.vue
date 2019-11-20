@@ -20,7 +20,7 @@
             :class="round ? 'round image' : 'image'"
         >
 		    <img 
-                src="/static/img/logo.png"
+                :src="picture"
                 :mode="mode"
                 :lazy-load="lazyLoad"
 			    :style="{ height, width }"
@@ -52,7 +52,11 @@ export default {
             type: String,
             default: "auto"
         },
-        width: String
+        width: String,
+        picture: {
+            type: String,
+            default: "/static/img/logo.png"
+        }
     },
     data() {
         return {

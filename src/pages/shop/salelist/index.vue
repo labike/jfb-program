@@ -22,7 +22,7 @@
                             <div class="product">
                                 <div class="icon"></div>
                                 <div class="disc">
-                                    <p>价值{{shop.give.buyer}}元{{shop.give.product_name}}
+                                    <p>价值{{shop.give.buyer}}元{{shop.give.pro_name}}
                                         <span>{{shop.give.number}} {{shop.give.unit}}</span>
                                     </p>
                                 </div>
@@ -181,6 +181,10 @@ export default {
                     shop.distance = num + 'm'
                 }
             }
+            if (shop.give) {
+                shop.give.library = parseInt(shop.give.library)
+                shop.sale = parseInt(shop.sale)
+            }
             return shop;
         }
     },
@@ -191,8 +195,7 @@ export default {
         mpvue.stopPullDownRefresh()
     },
     onReachBottom () {
-        console.log(12);
-        
+        // console.log(12);
         if (this.scrollStatus) {
             this.pullDownData()
         } else {

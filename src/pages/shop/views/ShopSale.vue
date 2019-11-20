@@ -27,7 +27,7 @@
                 <div class="price">{{infoData.sale_price}}</div>
             </div>
             <div class="handle">
-                <div class="go gray" v-if="infoData.sale>=infoData.library">已售罄</div>
+                <div class="go gray" v-if="sale>=library">已售罄</div>
                 <div class="go" v-else @click.stop='jumpItemPage(infoData)'>马上抢</div>
                 <div class="library-warp">
                     <p class="sale">已售{{infoData.sale}} </p>
@@ -57,9 +57,20 @@ export default {
     props: {
         infoData: Object
     },
-    onLoad() {
-        // console.log(this.infoData.sale = 10);
+    computed: {
         
+        library() {
+            if (this.infoData && this.infoData.library) {
+                return parseFloat(this.infoData.library)
+            }
+            return 0
+        },
+        sale() {
+            if (this.infoData && this.infoData.sale) {
+                return parseFloat(this.infoData.sale)
+            }
+            return 0
+        },
     },
     methods: {
         jumpPage(shop) {

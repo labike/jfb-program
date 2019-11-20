@@ -21,11 +21,10 @@
     </div>
 
     <div class="card other" v-else>
-        <div class="activity"   :class="{gray: Activity}"
-             v-if="shop.giveInfo">
+        <div class="activity"   :class="{gray: Activity}" v-if="shop.giveInfo">
             <div class="top">
                 <div class="img-warp">
-                    <ImageView :src="shop.giveInfo.img" mode='scaleToFill' height="400rpx" width="690rpx"></ImageView>
+                    <ImageView :src="shop.giveInfo.img" mode='aspectFill' height="350rpx" width="690rpx"></ImageView>
                 </div>
                 <div class="product">
                     <div class="icon"></div>
@@ -39,28 +38,23 @@
                             <div class="progress" :style="{width:(shop.giveInfo.sale/shop.giveInfo.library*100)+ '%'}"></div>
                             <p class="sale">已售 {{shop.giveInfo.sale}} 张</p>
                         </div>
-                        <div class="time">剩余 {{shop.giveInfo.library - shop.giveInfo.sale}} 张</div>
+                        <div class="time">剩余 : {{shop.giveInfo.library - shop.giveInfo.sale}}</div>
                     </div>
                 </div>
             </div>
             <div class="bottom">
                 <div class="info">
                     <div class="name">{{shop.store_name}}</div>
-                    <ul class="score" :class="scoreName">
-                        <li class="star"></li>
-                        <li class="star"></li>
-                        <li class="star"></li>
-                        <li class="star"></li>
-                        <li class="star"></li>
-                        <li class="text">{{score}}</li>
-                    </ul>
                     <div class="location">
-                        <span class="address">{{shop.address}}</span>
                         <span class="number">{{distance}}</span>
                     </div>
+                    <div class="description">{{shop.giveInfo.description}}</div>
                 </div>
                 <div class="handle">
-                    <div class="price">{{shop.giveInfo.sale_price}}</div>
+                    <div class="price-group" >
+                        <span>预售价 : </span>
+                        <span class="price">{{shop.giveInfo.sale_price}}</span>
+                    </div>
                     <div class="go gray" v-if="shop.giveInfo.sale>=shop.giveInfo.library">已售罄</div>
                     <div class="go" v-else @click.stop="jumpItemPage(shop.giveInfo, 'timesale')">马上抢</div>
                     
@@ -141,8 +135,7 @@ export default {
         shopInfo: Object
     },
     onLoad() {
-        this.shop = this.shopInfo
-        
+        this.shop = this.formatShop(this.shopInfo)
     },
     computed: {
         ...mapState('user', [
@@ -150,7 +143,7 @@ export default {
             'lng',
         ]),
         score() {
-            let score = parseFloat(this.shop.star)
+            let score = this.shop.star
             if (score !== 0) {
                 score = score.toFixed(1);
             }
@@ -189,6 +182,15 @@ export default {
         },
     },
     methods: {
+        formatShop(shop) {
+            let newShop = JSON.parse(JSON.stringify(shop))
+            newShop.star = parseFloat(newShop.star)
+            if (newShop.giveInfo) {
+                newShop.giveInfo.library = parseInt(newShop.giveInfo.library);
+                newShop.giveInfo.sale = parseInt(newShop.giveInfo.sale);
+            }
+            return newShop
+        },
         jumpShop(shop) {
             if (shop.giveInfo) {
                 this.$router.push({
@@ -355,51 +357,72 @@ export default {
 }
 .activity{
     &.gray{
-        -webkit-filter: grayscale(100%)
+        filter: grayscale(100%);
+        -webkit-filter: grayscale(100%);
     }
     .top{
         position: relative;
     }
     .bottom{
         padding: 30rpx;
-        display: flex;
         line-height: 1;
         .info{
-            flex: 1;
+            position: relative;
         }
         .name{
             font-size: 16px;
             color: #000;
             font-weight: 700;
             margin-bottom: 20rpx;
+            margin-right: 200rpx;
         }
         .location{
-            margin-top: 30rpx;
+            position: absolute;
+            right: 0;
+            top: 10rpx;
+            font-size: 11px;
+        }
+        .description{
+            font-size: 11px;
+            line-height: 1.6;
+            color: #818181;
+            font-weight: 400;
+        }
+        .handle{
+            margin-top: 10rpx;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .price-group{
+            color: #323232;
+            font-size: 12px;
         }
         .price{
+            font-size: 21px;
+            color: #ff4400;
+            font-weight: 400;
+            text-align: center;
             &::before{
                 content: "￥";
-                font-size: 16px;
+                font-size: 12px;
+                font-weight: 400;
             }
-            font-size: 27px;
-            color: #323232;
-            font-weight: 700;
-            text-align: center;
         }
         .go{
-            background: #ff1800;
+            background: #ff4400;
             color: #fff;
-            font-size: 14px;
-            font-weight: 700;
+            font-size: 12px;
+            font-weight: 400;
             height: 60rpx;
-            min-width: 88rpx;
+            min-width: 132rpx;
             line-height: 60rpx;
             border-radius: 60rpx;
-            margin-top: 10px;
             padding: 0 24rpx;
             text-align: center;
             &.gray{
-                -webkit-filter: grayscale(100%)
+                filter: grayscale(100%);
+                -webkit-filter: grayscale(100%);
             }
         }
     }

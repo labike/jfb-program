@@ -5,6 +5,34 @@
  -->
 <template>
 <div class="advertise">
+
+    
+    
+    <div class="menu-mode"  v-if="menuMode.length">
+        <div class="ad">
+            <div class="ad-item"  v-for="(item,aindex) of menuMode" :key="aindex">
+                <div class="img-warp"
+                    @click="jumpAD(item)"
+                >
+                    <ImageView :src="item.img_url" height="100%"></ImageView>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="live-mode" v-if="liveMode.length">
+        <div class="title">
+            <span class="name">优惠专区</span>品质生活上减付宝
+        </div>
+        <div class="ad">
+            <div class="ad-item"  v-for="(item,cindex) of liveMode" :key="cindex">
+                <div class="img-warp" @click="jumpAD(item)">
+                    <ImageView :src="item.img" height="100%"></ImageView>
+                </div>
+            </div>
+        </div>
+    </div>
+
     
     <div class="merit-mode"  v-if="meritMode.length">
         <div class="title">
@@ -24,19 +52,6 @@
             </div>
         </div>
     </div>
-    
-    <div class="live-mode" v-if="liveMode.length">
-        <div class="title">
-            <span class="name">友减生活</span>品质生活上减付宝
-        </div>
-        <div class="ad">
-            <div class="ad-item"  v-for="(item,aindex) of liveMode" :key="aindex">
-                <div class="img-warp" @click="jumpAD(item)">
-                    <ImageView :src="item.img_url" height="100%"></ImageView>
-                </div>
-            </div>
-        </div>
-    </div>
 
 </div>
 </template>
@@ -44,14 +59,14 @@
 <script>
 import ImageView from '@c/layouts/ImageView.vue'
 import { adFeature, WAPHOST } from "@/config/base";
-import { apiSuperStores } from "@/api/api";
+import { apiSuperStores,apiSuperDiscount } from "@/api/api";
 
 export default {
     name: "Advertise",
     components: { ImageView },
     data() {
         return {
-            liveMode: [{
+            menuMode: [{
                 href: "reshop",
                 img_url: WAPHOST + "static/advert/my_reshop.png",
                 type: "action"
@@ -61,11 +76,18 @@ export default {
                 type: "action"
             }],
             meritMode: [],
+            liveMode: []
         }
     },
     onLoad() {
         apiSuperStores().then(mList => {
             this.meritMode = mList.map(item => {
+                item.type = 'shop'
+                return item
+            })
+        })
+        apiSuperDiscount().then(mList => {
+            this.liveMode = mList.map(item => {
                 item.type = 'shop'
                 return item
             })
@@ -130,10 +152,16 @@ export default {
             height: 100%;
         }
     }
+    .menu-mode{
+        .ad-item{
+            width: 340rpx;
+            min-height: 130rpx;
+        }
+    }
     .live-mode{
         .ad-item{
             width: 340rpx;
-            height: 200rpx;
+            min-height: 216rpx;
         }
     }
     .merit-mode{

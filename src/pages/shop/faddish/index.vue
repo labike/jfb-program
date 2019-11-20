@@ -18,9 +18,8 @@
                         <swiper-item>
                             <ImageView :src="shopAdvt.proImg" mode='aspectFill' height="400rpx" width="750rpx"></ImageView>
                         </swiper-item>
-                    </swiper>
+                </swiper>
                 </div>
-
                 <div class="product">
                     <div class="info">
                         <div class="disc">
@@ -31,9 +30,7 @@
                         <div class="consume">最低消费{{shopAdvt.min_consume}}元</div>
                     </div>
                 </div>
-
             </div>
-
             <div class="bottom">
                 <div class="title">
                     <i class="icon"></i>价值{{shopAdvt.buyer}}元{{shopAdvt.pro_name}}

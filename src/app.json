@@ -50,7 +50,8 @@
                 "pay/main",
                 "payok/main",
                 "salelist/main",
-                "saletime/main"
+                "saletime/main",
+                "faddish/main"
             ]
         }
     ],

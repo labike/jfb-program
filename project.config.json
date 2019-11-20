@@ -1,7 +1,7 @@
 {
 	"description": "项目配置文件。",
 	"setting": {
-		"urlCheck": true,
+		"urlCheck": false,
 		"es6": false,
 		"enhance": false,
 		"postcss": false,
@@ -26,7 +26,7 @@
 	"projectname": "mpvue-jfb",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
-	"libVersion": "2.8.3",
+	"libVersion": "2.8.1",
 	"condition": {
 		"search": {
 			"current": -1,
@@ -49,7 +49,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 21,
+			"current": 33,
 			"list": [
 				{
 					"id": -1,
@@ -200,9 +200,9 @@
 				},
 				{
 					"id": 21,
-					"name": "payok",
+					"name": "pages/shop/payok/main",
 					"pathName": "pages/shop/payok/main",
-					"query": "order_id=201910111638135259672126",
+					"query": "order_id=201910281132349963785115",
 					"scene": null
 				},
 				{
@@ -262,10 +262,10 @@
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 30,
 					"name": "pages/shop/saletime/main",
 					"pathName": "pages/shop/saletime/main",
-					"query": "gid=67",
+					"query": "gid=183",
 					"scene": null
 				},
 				{
@@ -280,6 +280,13 @@
 					"name": "pages/filter/near/main",
 					"pathName": "pages/filter/near/main",
 					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/shop/faddish/main",
+					"pathName": "pages/shop/faddish/main",
+					"query": "shop_id=154&title=combo&item_id=185",
 					"scene": null
 				}
 			]

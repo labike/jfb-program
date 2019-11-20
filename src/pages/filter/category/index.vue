@@ -128,6 +128,9 @@ export default {
         self.selectNav = ''
         self.barParams = {}
         self.categoryStatus = false
+        self.shopList = []
+        self.remainListsLength = 5
+        self.page = 1
         self.selectNavList = ['全部', '附近', '智能排序']
     },
     methods: {
