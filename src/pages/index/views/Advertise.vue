@@ -20,18 +20,7 @@
         </div>
     </div>
     
-    <div class="live-mode" v-if="liveMode.length">
-        <div class="title">
-            <span class="name">优惠专区</span>品质生活上减付宝
-        </div>
-        <div class="ad">
-            <div class="ad-item"  v-for="(item,cindex) of liveMode" :key="cindex">
-                <div class="img-warp" @click="jumpAD(item)">
-                    <ImageView :src="item.img" height="100%"></ImageView>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     
     <div class="merit-mode"  v-if="meritMode.length">
@@ -59,7 +48,7 @@
 <script>
 import ImageView from '@c/layouts/ImageView.vue'
 import { adFeature, WAPHOST } from "@/config/base";
-import { apiSuperStores,apiSuperDiscount } from "@/api/api";
+import { apiSuperStores } from "@/api/api";
 
 export default {
     name: "Advertise",
@@ -75,19 +64,12 @@ export default {
                 img_url: WAPHOST + "static/advert/my_money.png",
                 type: "action"
             }],
-            meritMode: [],
-            liveMode: []
+            meritMode: []
         }
     },
     onLoad() {
         apiSuperStores().then(mList => {
             this.meritMode = mList.map(item => {
-                item.type = 'shop'
-                return item
-            })
-        })
-        apiSuperDiscount().then(mList => {
-            this.liveMode = mList.map(item => {
                 item.type = 'shop'
                 return item
             })
@@ -120,7 +102,7 @@ export default {
 <style lang="scss" scoped>
 .advertise{
     background: #fff;
-    padding: 24rpx 30rpx 0 30rpx;
+    padding: 24rpx;
     overflow-y:scroll;
     > div{
         margin-bottom: 24rpx;
@@ -154,13 +136,13 @@ export default {
     }
     .menu-mode{
         .ad-item{
-            width: 340rpx;
+            width: 346rpx;
             min-height: 130rpx;
         }
     }
     .live-mode{
         .ad-item{
-            width: 340rpx;
+            width: 346rpx;
             min-height: 216rpx;
         }
     }
@@ -169,12 +151,12 @@ export default {
             flex-wrap: wrap;
         }
         .ad-item{
-            width: 165rpx;
-            height: 220rpx;
+            width: 168rpx;
+            height: 224rpx;
             margin-top: 10rpx;
             &.big{
-                width: 342rpx;
-                height: 270rpx;
+                width: 346rpx;
+                height: 274rpx;
             }
         }
     }

@@ -52,6 +52,11 @@ export default {
             this.showOrderVouchers = true
         }
     },
+    onUnload() {
+        const self = this;
+        self.orderNum = 1
+        self.showOrderVouchers = false
+    },
     computed: {
 
         orderData: function () {

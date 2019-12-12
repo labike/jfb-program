@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-05-27 09:48:57
+ * @Description: file content
+ -->
 <template>
     <div class="swiperview swiper-position">
       <swiper class="swiperitem" :autoplay="autoplay" :vertical="true" :circular="true">
@@ -31,7 +36,7 @@
 
 <style lang="scss" scoped>
 .swiper-position {
-  height: 30rpx;
+  height: 100%;
   width: 100%;
   overflow: hidden;
 }

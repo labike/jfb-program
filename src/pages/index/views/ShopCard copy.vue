@@ -1,97 +1,107 @@
 <!--
  * @Author: zhangHang
- * @Date: 2019-09-11 15:10:51
+ * @Date: 2019-05-16 16:04:59
  * @Description: file content
  -->
 <template>
-<div class="shop-card" v-if="shop && shop.s_id" @click="jumpShop(shop.s_id)">
-  
-    <div class="card hotel" v-if="shop.type=='2'">
-        <div class="hl-img">
-            <img :src="shop.headerImg[0].img_url" alt="">
-        </div>
-        <div class="hl-content">
-            <div class="title">
-                <div class="name">{{shop.store_name}}</div>
+<div class="shop-card" v-if="shop && shop.x_id" @click="jumpShop(shop)">
+    <div class="card other">
+        <div class="activity"   :class="{gray: Activity}" v-if="shop.giveInfo">
+            <div class="top">
+                <div class="img-warp">
+                    <ImageView :src="shop.giveInfo.img" mode='aspectFill' height="350rpx" width="690rpx"></ImageView>
+                </div>
+                <div class="time">剩余 {{shop.giveInfo.library - shop.giveInfo.sale}}</div>
             </div>
-            <div class="score">
-                <span class="num">{{shop.score}}</span>分
-            </div>
-            <div class="address">{{shop.address}}</div>
-        </div>
-    </div>
-    <div class="card other" v-else>
-        <div class="title">
-            <div class="name">{{shop.store_name}}</div>
-            <div class="discount" v-if="discount">
-                <p class="text">{{discount}}<span>折</span>买</p>
-            </div>
-        </div>
-        <div class="distance">
-            <ul class="score" :class="scoreName">
-                <li class="star"></li>
-                <li class="star"></li>
-                <li class="star"></li>
-                <li class="star"></li>
-                <li class="star"></li>
-                <li class="text">{{shop.score}} 分</li>
-            </ul>
-            <div class="location">
-                <span class="number">{{distance}}</span>
-                <span class="remark" v-if="shop.type == 1">自助点餐</span>
-                <span class="remark" v-if="shop.type == 3">到店消费</span>
-                <span class="remark" v-if="shop.type == 4">自助养车</span>
+            <div class="bottom">
+                <div class="info">
+                    <div class="name">
+                        <span class="icon">赠送</span>送价值{{shop.giveInfo.buyer}}元{{shop.giveInfo.pro_name}}
+                        <span>{{shop.giveInfo.number}} {{shop.giveInfo.unit}}</span>
+                    </div>
+                    <div class="location">
+                        <span class="number">{{distance}}</span>
+                    </div>
+                    <div class="description">{{shop.giveInfo.description}}</div>
+                </div>
+                <div class="handle">
+                    <div class="price-group" >
+                        <span>预定价 : </span>
+                        <span class="price">{{shop.giveInfo.sale_price}}</span>
+                    </div>
+                    <div class="go gray" v-if="shop.giveInfo.sale>=shop.giveInfo.library">已售罄</div>
+                    <div class="go" v-else @click.stop="jumpItemPage(shop.giveInfo, 'timesale')">预定</div>
+                    
+                </div>
             </div>
         </div>
-
-        <div class="record" v-if="shop.msgData">
-            <rollnotice autoplay="2000" :rollData='shop.msgData'>
-            </rollnotice>
-        </div>
-        <ul class="list-img">
-            <li class="img-warp" v-for="(imgItem, index) of shop.headerImg" :key="index">
-                <img :src="imgItem.img_url" />
-            </li>
-        </ul>
-        <div class="promotion vouchers" v-if="vouchers">{{vouchers}}</div>
-        <div class="promotion groupon" v-if="groupon">{{groupon}}</div>
-        <div class="handle">
-            <div class="handle-item" @click.stop="tapLike('like')">
-                <div class="icon like" v-if="!shop.user_is_like"></div>
-                <div class="icon like_1" v-else></div>
-                <div class="num">{{shop.like_num}}</div>
+        
+        <div class="default" v-else>
+            <div class="top">                
+                <div class="logo">
+                    <ImageView :src="shop.img_url" mode='scaleToFill' width='130rpx' height='130rpx'></ImageView>
+                </div>
+                <div class="title">
+                    <div class="name">
+                        <p>{{shop.store_name}}</p>
+                        <div class="discount" v-if="discount">
+                            <p class="text">{{discount}}<span>折</span>买</p>
+                        </div>
+                    </div>
+                    <div class="desc">
+                        <ul class="score score1">
+                            <li class="star"></li>
+                            <li class="text">{{score}}</li>
+                        </ul>
+                        <div class="location">
+                            <span class="address">{{shop.address}}</span>
+                            <span class="number">{{distance}}</span>
+                        </div>
+                    </div>
+                    <ul class="vouchers" v-if="shop.vouchers">
+                        <block v-for="(voucher, v_id) of shop.vouchers" :key="v_id" >
+                            <li class="voucher" >
+                                {{voucher.vouchers_name}}
+                            </li>
+                        </block>
+                    </ul>
+                </div>
             </div>
-            <div class="handle-item" v-if="!shop.user_is_collect" @click.stop="tapLike('collect')">
-                <div class="icon collect"></div>
-                <div class="num">{{shop.collect_num}}</div>
+            <div class="bottom">                
+                <ul class="groupon list-img">
+                    <block v-for="group of shop.groupInfo" :key="group.id">
+                        <li class="group-info"  @click.stop="jumpItemPage(group, 'combo')">
+                            <ImageView :src="group.img_url" mode='scaleToFill' height="200rpx" width="200rpx"></ImageView>
+                            <div class="name">{{group.group_name}}</div>
+                            <p class="price">
+                                <span class="new">{{group.group_price}}</span>
+                                <span class="old">{{group.price}}</span>
+                            </p>
+                        </li>
+                    </block>
+                </ul>
             </div>
-            <div class="handle-item" v-else @click.stop="cancelCollect">
-                <div class="icon collect_1" ></div>
-                <div class="num">{{shop.collect_num}}</div>
-            </div>
-            <div class="handle-item" @click.stop="jumpShop(shop.s_id, 'rate=1')">
-                <div class="icon rate"></div>
-                <div class="num">{{shop.comment_num}}</div>
-            </div>
-            <button class="handle-item"  open-type="share" :data-share="shop" @click.stop="tapShare">
-                <div class="icon share"></div>
-                <div class="num">{{shop.share_num}}</div>
-            </button>
         </div>
     </div>
 </div>
 </template>
 
 <script>
-import Rollnotice from "@c/rollnotice/Rollnotice.vue";
+import LastTime from "@c/shop/LastTime.vue";
+import ImageView from '@c/layouts/ImageView.vue'
 import { likeShare, unLikeShare, apiShareStore } from "@/api/api";
 import { getDistance } from '@/utils/index';
 import { mapState } from 'vuex';
 
 export default {
     name: 'ShopCard',
+    components: {
+        ImageView,
+        LastTime
+    },
     data() {
         return {
+            Activity: false,
             shop: {}
         }
     },
@@ -99,18 +109,25 @@ export default {
         shopInfo: Object
     },
     onLoad() {
-        this.shop = this.shopInfo
+        this.shop = this.formatShop(this.shopInfo)
     },
     computed: {
         ...mapState('user', [
             'lat',
             'lng',
         ]),
+        score() {
+            let score = this.shop.star
+            if (score !== 0) {
+                score = score.toFixed(1);
+            }
+            return score;
+        },
         scoreName() {
-            if (!this.shop.score) {
+            if (!this.shop.star) {
                 return ''
             }
-            let scoreName = 'score' + this.shop.score
+            let scoreName = 'score' + this.shop.star
             const scoreDot = scoreName.indexOf('.')
             if (scoreDot > -1) {
                 scoreName = scoreName.slice(0,scoreDot)
@@ -122,257 +139,89 @@ export default {
         },
         distance() {
             const _this = this
-            let num = getDistance(_this.lat, _this.lng, _this.shop.lat, _this.shop.lng)
+            let num = _this.shop.distance
             if (num > 1000) {
-                return (num / 1000).toFixed(0) + 'Km'
+                return (num / 1000).toFixed(1) + 'km'
             } else {
                 return num + 'm'
             }
         },
-        
         discount() {
-            if (!this.shop.proData) {
+            if (!this.shopInfo.check) {
                 return null
             } 
-            let discount = this.shop.proData.find(item => {
-                return item.type === 'check'
-            });
-            const check = discount ? discount.name.match(/^\d*(\.?\d{0,1})/g)[0] : null
+            let discount = this.shopInfo.check;
+            const check = discount ? discount / 10 : null
             return check 
         },
-        vouchers() {
-            if (this.shop.proData) {
-                let vouchers = this.shop.proData.find(item => {
-                    return item.type === 'vouchers'
-                })
-                return vouchers ? vouchers.name : null
-            }
-            return null 
-        },
-        groupon() {
-            if (this.shop.proData) {
-                let groupon = this.shop.proData.find(item => {
-                    return item.type === 'group'
-                })
-                return groupon ? groupon.name : null
-            }
-            return null
-        }
-    },
-    components: {
-        Rollnotice
     },
     methods: {
-        jumpShop(id) {
-            this.$router.push({
-                path: '/pages/shop/index/main?shop_id=' + id
-            })
+        formatShop(shop) {
+            let newShop = JSON.parse(JSON.stringify(shop))
+            newShop.star = parseFloat(newShop.star)
+            if (newShop.giveInfo) {
+                newShop.giveInfo.library = parseInt(newShop.giveInfo.library);
+                newShop.giveInfo.sale = parseInt(newShop.giveInfo.sale);
+            }
+            return newShop
         },
-        tapLike(type) {
-            const s_id = this.shop.s_id
-            likeShare({
-                s_id,
-                type,
-            }).then(res => {
-                console.log(res);
-                if (type === 'like') { 
-                    this.shop.like_num = res.store_num
-                    this.shop.user_is_like = !this.shop.user_is_like
-                }
-                if (type === 'collect') { 
-                    this.shop.collect_num = Number(this.shop.collect_num) + 1
-                    this.shop.user_is_collect = true
-                }
-                wx.showToast({
-                    title: res.message,
-                    icon: 'none',
-                    duration: 1000
+        jumpShop(shop) {
+            if (shop.giveInfo) {
+                this.$router.push({
+                    path: '/pages/shop/saletime/main?gid=' + shop.giveInfo.gid
                 })
-            })
-        },
-        cancelCollect() {
-            const s_id = this.shop.s_id
-            unLikeShare({
-                s_ids: s_id,
-                type: 'collect',
-            }).then(res => {
-                console.log(res);
-                this.shop.collect_num = Number(this.shop.collect_num) - 1
-                this.shop.user_is_collect = false
-                wx.showToast({
-                    title: "取消成功",
-                    icon: 'success',
-                    duration: 1000
+            } else {    
+                this.$router.push({
+                    path: '/pages/shop/index/main?shop_id=' + shop.x_id
                 })
-            })
+            }
+            
         },
-        
-        tapShare(e) {
-            console.log(e);
+        jumpItemPage(item, title) {
+            let pathUrl = ''
+            switch (title) {
+            case 'combo':
+                pathUrl = `/pages/shop/item/main?shop_id=${item.x_id}&title=${title}&item_id=${item.id}`
+                break;
+            case 'timesale':
+                if (!this.Activity) {
+                    pathUrl = `/pages/orders/confirm/main?shop_id=${item.x_id}&title=${title}&item_id=${item.gid}`
+                }
+                break;
+            }
+            if (pathUrl !== '') {
+                this.$router.push({
+                    path: pathUrl
+                })
+            }
+            
         },
+        stopActivity() {
+            this.Activity = true
+        }
     },
 };
 </script>
 
 
 <style lang="scss" scoped>
-
+.shop-card{
+    padding:20rpx 30rpx;
+    font-family: '.PingFang-SC-Medium';
+}
 .card{
     background: #fff;
-    margin-bottom: 24rpx;
     border-radius: 10rpx;
     padding: 36rpx 24rpx;
     position: relative;
-    .title{
-        font-family: '.PingFang-SC-Medium';
-        line-height: 1;
-        display: flex;
-        margin-bottom: 20rpx;
-        justify-items: center;
-        align-items: center;
-        .name{
-            font-size: 30rpx;
-            font-weight:700;
-            margin-right: 10rpx;
-        }
-        .discount{
-            height: 30rpx;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            letter-spacing: 1px; 
-            border-radius: 2px;
-            padding-left: 15rpx;
-            padding-right: 5rpx;
-            margin-right: 10rpx;
-            background-size: auto 30rpx;
-            background-position: left center;
-            background-repeat: no-repeat;
-            background-image: url('~@/assets/img/discount.png');
-            position: relative;
-            overflow: hidden;
-            &::before{
-                content:  '';
-                position: absolute;
-                left: 50%;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                z-index: 1;
-                background: #ff2900;
-            }
-            .text{
-                position: relative;
-                z-index: 2;
-                color: #fff;
-                font-size:12px;
-                span{
-                    font-size:9px;
-                }
-            }
-        }
-    }
-    .handle{
-        border-top: 1rpx dashed #e8e8e8;
-        display: flex;
-        height: 100rpx;
-        align-items: center;
-        margin-top: 20rpx;
-        .handle-item{
-            display: flex;
-            height: 100%;
-            align-items: center;
-            flex: 1;
-            justify-content: center;
-            &::after{
-                content: '';
-                display: none;
-            }
-        }
-        .num{
-            font-size: 24rpx;
-            color: #818181;
-        }
-        .icon{
-            margin-right: 15rpx;
-            width: 30rpx;
-            height: 30rpx;
-            display: inline-block;
-            vertical-align: bottom;
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            &.like{
-                background-image: url('~@/assets/img/icon_like.png');
-            }
-            &.like_1{
-                background-image: url('~@/assets/img/icon_like_1.png');
-            }
-            &.collect{
-                background-image: url('~@/assets/img/icon_collect.png');
-            }
-            &.collect_1{
-                background-image: url('~@/assets/img/icon_collect_1.png');
-            }
-            &.rate{
-                background-image: url('~@/assets/img/icon_msg.png');
-            }
-            &.share{
-                background-image: url('~@/assets/img/icon_share.png');
-            }
-        }
-    }
-}
-.other{
-    padding: 38rpx 24rpx 0;
-    .title{
-        margin-bottom: 20rpx;
-        .discount{
-            height: 30rpx;
-            border-radius: 2px;
-            padding-left: 15rpx;
-            padding-right: 5rpx;
-            margin-right: 10rpx;
-            background-size: auto 30rpx;
-            background-position: left center;
-            background-repeat: no-repeat;
-            background-image: url('~@/assets/img/discount.png');
-            position: relative;
-            overflow: hidden;
-            &::before{
-                content:  '';
-                position: absolute;
-                left: 50%;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                z-index: 1;
-                background: #ff2900;
-            }
-            .text{
-                position: relative;
-                z-index: 2;
-                color: #fff;
-                font-size:12px;
-                span{
-                    font-size:9px;
-                }
-            }
-        }
-    }
-    .distance{
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 10rpx;
-    }
+    box-shadow: 1px 4px 10px #ddd;
     .score{
         display: flex;
         align-items: center;
         .text{
-            color:#818181;
+            color:#ff5100;
             margin-left: 10rpx;
-            font-size: 24rpx;
+            font-size: 12px;
             line-height: 1;
         }
         .star{
@@ -413,60 +262,290 @@ export default {
             
         }
     }
-    .location{
-        color: #000;
-        font-size: 22rpx;
-        .number{
-            padding-right: 24rpx;
-            border-right: 1rpx solid #e8e8e8;
-        }
-        .remark{
-            padding-left: 24rpx;
-        }
-    }
-    .record{
-        margin-bottom: 14rpx;
-    }
-    .list-img{
-        display: flex;
-        margin-right: -10rpx;
-        .img-warp{
-            width: 33.333%;
-            padding-right: 10rpx;
-            img{
-                width: 100%;
-                height: 180rpx;
-                border-radius: 10rpx;
+}
+.other{
+    padding: 0;
+    overflow: hidden;
+    .title{
+        margin-bottom: 20rpx;
+        .discount{
+            height: 30rpx;
+            line-height: 30rpx;
+            border-radius: 2px;
+            padding-left: 15rpx;
+            padding-right: 5rpx;
+            margin-right: 10rpx;
+            background-size: auto 30rpx;
+            background-position: left center;
+            background-repeat: no-repeat;
+            background-image: url('~@/assets/img/discount.png');
+            position: relative;
+            overflow: hidden;
+            &::before{
+                content:  '';
+                position: absolute;
+                left: 50%;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 1;
+                background: #ff2900;
+            }
+            .text{
+                position: relative;
+                z-index: 2;
+                color: #fff;
+                font-size:12px;
+                span{
+                    font-size:9px;
+                }
             }
         }
     }
-    .promotion{
-        font-size: 24rpx;
-        margin-top: 15rpx;
+    .distance{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10rpx;
+    }
+    
+    .location{
+        font-size: 12px;
+        color: #818181;
+        display: flex;
+        .address{
+            max-width: 200rpx;
+            min-width: 100rpx;
+            width: auto;
+            word-wrap: normal;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            padding-right: 24rpx;
+            border-right: 1rpx solid #e8e8e8;
+        }
+        .number{
+            padding-left: 24rpx;
+        }
+    }
+}
+.activity{
+    &.gray{
+        filter: grayscale(100%);
+        -webkit-filter: grayscale(100%);
+    }
+    .top{
+        position: relative;
+    }
+    .bottom{
+        padding: 20rpx 30rpx 30rpx 30rpx;
+        line-height: 1;
+        .info{
+            position: relative;
+        }
+        .location{
+            position: absolute;
+            right: 0;
+            top: 20rpx;
+            font-size: 11px;
+        }
+        .description{
+            font-size: 12px;
+            line-height: 1.6;
+            color: #818181;
+            font-weight: 400;
+        }
+        .handle{
+            margin-top: 10rpx;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .price-group{
+            color: #323232;
+            font-size: 12px;
+        }
+        .price{
+            font-size: 21px;
+            color: #ff4400;
+            font-weight: 400;
+            text-align: center;
+            &::before{
+                content: "￥";
+                font-size: 12px;
+                font-weight: 400;
+            }
+        }
+        .go{
+            background: #ff4400;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 400;
+            height: 60rpx;
+            min-width: 132rpx;
+            line-height: 60rpx;
+            border-radius: 60rpx;
+            padding: 0 24rpx;
+            text-align: center;
+            &.gray{
+                filter: grayscale(100%);
+                -webkit-filter: grayscale(100%);
+            }
+        }
+    }
+    
+    .name{
+        font-size: 16px;
+        color: #000;
+        font-weight: 700;
+        margin-bottom: 10rpx;
+        margin-right: 100rpx;
+        line-height: 1.4;
+        .icon{
+            background: #ff4400;
+            font-size: 12px;
+            color: #fff;
+            padding: 1rpx 9rpx;
+            border-radius: 2px;
+            margin-right: 10rpx;
+            position: relative;
+            top: -1rpx;
+        }
+    }
+    .time{
+        position: absolute;
+        z-index: 4;
+        width: 116rpx;
+        height: 50rpx;
+        line-height: 50rpx;
+        top: 20rpx;
+        background: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        font-size: 11px;
+        padding-left: 24rpx;
+        border-radius: 0 50rpx 50rpx 0;
+    }
+}
+.default{
+    padding: 30rpx;
+    .top{
+        display: flex;
+    }
+    .bottom{
+        margin-top: 30rpx;
+        overflow-x: auto;
+    }
+    .logo{
+        width: 130rpx;
+        height: 130rpx;
+        border-radius: 10rpx;
         overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-         &::before{
+        margin-right: 24rpx;
+    }
+    .title{
+        flex: 1;
+        margin: 0;
+        .desc{
+            display: flex;
+            margin-top: 10rpx;
+        }
+        .score{
+            margin-right: 10rpx;
+        }
+    }
+    .name{
+        font-weight: 700;
+        color: #000;
+        font-size: 16px;
+    }
+    
+    .discount{
+        height: 30rpx;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        letter-spacing: 1px; 
+        border-radius: 2px;
+        padding-left: 15rpx;
+        padding-right: 5rpx;
+        margin-left: 10rpx;
+        background-size: auto 30rpx;
+        background-position: left center;
+        background-repeat: no-repeat;
+        background-image: url('~@/assets/img/discount.png');
+        position: relative;
+        overflow: hidden;
+        &::before{
             content:  '';
-            flex-shrink: 0;
-            width: 30rpx;
-            height: 30rpx;
-            margin-right: 20rpx;
-            display: inline-block;
-            vertical-align: bottom;
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
+            position: absolute;
+            left: 50%;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            background: #ff2900;
+        }
+        .text{
+            position: relative;
+            z-index: 2;
+            color: #fff;
+            font-size:12px;
+            span{
+                font-size:9px;
+            }
         }
     }
     .vouchers{
-        &::before{
-            background-image: url('~@/assets/img/first_code.png');
+        margin-top: 15rpx;
+        display: flex;
+        .voucher{
+            border: 1rpx solid #ffd4ce;
+            border-radius: 2px;
+            padding: 7rpx;
+            margin-right: 10rpx;
+            color: #ff5100;
+            font-size: 9px;
+            line-height: 1;
         }
     }
     .groupon{
-        &::before{
-            background-image: url('~@/assets/img/first_group.png');
+        display: flex; 
+        min-width: 100%;
+        justify-content: space-between;
+        .group-info{
+            width: 200rpx;
+            overflow: hidden;
+            border-radius: 10rpx;
+            line-height: 1.3;
+        }
+        .name{
+            font-size: 12px;
+            margin-top: 15rpx;
+            word-wrap: normal;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .price{
+            margin-top: 25rpx;
+            .new{
+                &::before{
+                    content: "￥";
+                    margin-right: -2rpx;
+                }
+                color: #ff1800;
+                font-size: 15px;
+                margin-right: 8rpx;
+                font-weight: 700;
+            }
+            .old{
+                &::before{
+                    content: "￥";
+                    margin-right: -2rpx;
+                }
+                font-size: 10px;
+                color: #818181;
+            }
         }
     }
 }

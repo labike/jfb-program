@@ -170,10 +170,10 @@ export default {
                 }).then(res => {
                     const shopList = _current.shopList.slice(0)
                     _current.shopList = []
-                    if (_this.shopListLength > res.data.length) {
+                    if (_this.shopListLength > res.list.length) {
                         _current.loadMore = false
                     }
-                    res.data.forEach(element => {
+                    res.list.forEach(element => {
                         if (element.x_id) {
                             shopList.push(element)
                         }
@@ -183,7 +183,7 @@ export default {
                         _current.empty = true
                     }
                     _current.loading = true
-                    resolve(res.data.length)
+                    resolve(res.list.length)
                 }) 
 
             })
@@ -253,17 +253,17 @@ export default {
 #navBar{
     width: 100%;
     white-space:nowrap;
-    background-color:#fff;
     box-sizing: border-box;
 }
 .shop-list {
-    background: #fff;
+    // background: #fff;
     .navs {
         color: #323232;
         white-space: nowrap;
         display: flex;
+
         .nav {
-            padding: 24rpx;
+            padding: 24rpx 20rpx;
             display: inline-block;
             text-align: center;
             .name{
@@ -272,7 +272,7 @@ export default {
             }
             .desc{
                 margin-top: 10rpx;
-                padding: 0 24rpx;
+                padding: 0 20rpx;
                 font-size: 11px;
                 font-weight: 400;
                 color: #818181;
@@ -298,7 +298,7 @@ export default {
 }
 
 .content {
-	background-color: #fff;
+	// background-color: #fff;
 	height: auto;
     &.scroll{
        height: 100%; 
@@ -323,6 +323,7 @@ export default {
 	z-index: 999;
 	animation: move 0.1s linear;
     box-shadow: 0 0 5px #666;
+    background-color:#fff;
     .navs{
         .nav{
             padding: 24rpx 40rpx;

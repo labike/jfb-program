@@ -28,7 +28,7 @@
                             <p class="tag">抢购价</p>
                             <p class="sale">已售: {{shopAdvt.sale}}</p>
                         </div>
-                        <div class="consume">最低消费{{shopAdvt.min_consume}}元</div>
+                        <div class="consume">最低消费{{shopAdvt.min_consume}}元可用此券</div>
                     </div>
                 </div>
 
@@ -36,7 +36,7 @@
 
             <div class="bottom">
                 <div class="title">
-                    <i class="icon"></i>价值{{shopAdvt.buyer}}元{{shopAdvt.pro_name}}
+                    <i class="icon">赠送</i>价值{{shopAdvt.buyer}}元{{shopAdvt.pro_name}}
                     <span>{{shopAdvt.number}}{{shopAdvt.unit}}</span>
                 </div>
                 <div class="location">{{distance}}</div>
@@ -45,7 +45,9 @@
             <div class="linetime">
                 <ul class="avatar-group">
                     <li class="avatar" v-for="(item, index) in shopAdvt.buyList" :key="index">
-                        <ImageView :src="item.header_img" picture='/static/img/avatar.png' ></ImageView>
+                        <ImageView  picture='/static/img/avatar.png' :src="item.header_img"
+                            mode='aspectFill'  width='50rpx' height='50rpx'
+                        ></ImageView>
                     </li>
                 </ul>
                 <div class="progress-group">
@@ -260,13 +262,15 @@ export default {
             line-height: 1;
             position: relative;
             .icon{
-                margin-right: 16rpx;
-                width: 68rpx;
-                height: 38rpx;
-                background-size: contain;
-                background-position: center;
-                background-repeat: no-repeat;
-                background-image: url('~@/assets/img/send1.png');
+                background: #ff4400;
+                font-size: 24rpx;
+                color: #fff;
+                padding: 4rpx 8rpx;
+                border-radius: 4rpx;
+                margin-right: 10rpx;
+                position: relative;
+                top: -1rpx;
+                line-height: 1;
             }
             .title{
                 font-size: 17px;

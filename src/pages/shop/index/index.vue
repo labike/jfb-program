@@ -27,7 +27,6 @@
     <div class="shop-footer" v-if="shopInfo.proData.is_shopping == 1">
         <lay-footer :infoData="shopInfo.infoData"></lay-footer>
     </div>
-    
 </section>
 </template>
 
@@ -102,6 +101,9 @@ export default {
         font-size: 15px;
         display: flex;
         background: #fff;
+        // position: sticky;
+        // top: 0;
+
         &.fiexd {
             top: 88rpx;
             box-shadow: 0px 1px 4px #e1e1e1;

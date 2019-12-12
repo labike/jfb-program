@@ -92,41 +92,42 @@ export default {
     onLoad (options) {
         this.orderNum = 1
         this.orderType = options.title
-        if (this.currentItem && this.currentItem.id === options.item_id) {
-            
-        } else {
-            if (options.title === 'vouchers') {
-                let voucher = new Voucher({
-                    id: options.item_id
-                })
-                voucher.getVoucherRules(options.shop_id).then(res => {
-                    console.log(res);
-                    this.SET_CURRENT_ITEM(res)
-                })
-            }
-            if (options.title === 'combo') {
-                let combo = new Combo({
-                    id: options.item_id
-                })
-                combo.getComboDetails(options.shop_id).then(res => {
-                    this.SET_CURRENT_ITEM(res)
-                })
-            }
-            if (options.title === 'timesale') {
-
-                let timesale = new Timesale({
-                    id: options.item_id
-                })
-                timesale.getTimesaleRules(options.shop_id).then(res => {
-                    this.SET_CURRENT_ITEM(res)
-                })
-            }
+        if (options.title === 'vouchers') {
+            let voucher = new Voucher({
+                id: options.item_id
+            })
+            voucher.getVoucherRules(options.shop_id).then(res => {
+                this.SET_CURRENT_ITEM(res)
+            }).catch(err => {
+                this.navBack(err)
+            })
+        }
+        if (options.title === 'combo') {
+            let combo = new Combo({
+                id: options.item_id
+            })
+            combo.getComboDetails(options.shop_id).then(res => {
+                this.SET_CURRENT_ITEM(res)
+            }).catch(() => {
+                this.navBack()
+            })
+        }
+        if (options.title === 'timesale') {
+            let timesale = new Timesale({
+                id: options.item_id
+            })
+            timesale.getTimesaleRules(options.shop_id).then(res => {
+                this.SET_CURRENT_ITEM(res)
+            }).catch(err => {
+                this.navBack(err)
+            })
         }
     },
     onUnload() {        
         const self = this;
         self.orderNum = 1
         self.orderType = ''
+        self.SET_CURRENT_ITEM(null)
     },
     methods: {
         ...mapMutations('shop', [
@@ -153,6 +154,20 @@ export default {
             } else {
                 this.orderNum += 1
             }
+        },
+        navBack() {
+            mpvue.showModal({
+                content: '该产品已经下架，或者被删除',
+                showCancel: false,
+                confirmText: '好的',
+                confirmColor: '#333',
+                success: function(res) {
+                    if (res.confirm) {
+                        mpvue.navigateBack()            
+                    }
+                },
+                fail: function(res) {}
+            })
         }
     },
 };

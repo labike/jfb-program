@@ -316,6 +316,9 @@ export default {
             &.goods {
                 background-image: url(~@/assets/img/goods.png);
             }
+            &.timesale {
+                background-image: url(~@/assets/img/timesale.png);
+            }
             &.label {
                 background-image: url(~@/assets/img/label.png);
             }

@@ -19,7 +19,7 @@ export const WAPHOST = 'https://wap2.qmw111.com/';
 
 
 /**
- *  门店类型 （1-餐饮 2-酒店 3-休闲娱乐4-爱车 5-大健康 6-教育 7-母婴）
+ *  门店类型 （1-餐饮 2-酒店 3-休闲娱乐4-爱车 5-大健康 6-教育 7-母婴 8-周边游）
  */
 export const shopType = {
     repast: 1,
@@ -28,8 +28,10 @@ export const shopType = {
     icar: 4,
     health: 5,
     education: 6,
-    fransnana: 7
+    fransnana: 7,
+    travel: 8,
 };
+export const shopTypeArr = ['all', 'repast', 'hotel', 'pastime', 'icar', 'health', 'education', 'fransnana', 'travel']
 
 /**
  *  相册类型 【all:全部  pro：商品  scen：环境  license：资质】

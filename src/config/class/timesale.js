@@ -27,15 +27,19 @@ export default class Timesale {
         if (that.rules) {
             return Promise.resolve(that);
         }
-        return new Promise(resolve => {
+        return new Promise((resolve,reject) => {
             apiGiveDetail(that.id).then(ticketData => {
-                that.name = ticketData.pro_name;
-                that.headerImg = ticketData.img;
-                that.price = ticketData.sale_price;
-                that.sale_num = ticketData.sale;
-                that.rules = ticketData.ruler;
-                that.storeInfo = ticketData.storeInfo;
-                resolve(that);
+                if (!ticketData.pro_name) {
+                    reject(new Error("该产品已下架或者被删除"))
+                } else {
+                    that.name = ticketData.pro_name;
+                    that.headerImg = ticketData.img;
+                    that.price = ticketData.sale_price;
+                    that.sale_num = ticketData.sale;
+                    that.rules = ticketData.ruler;
+                    that.storeInfo = ticketData.storeInfo;
+                    resolve(that);
+                }
             });
         });
     }

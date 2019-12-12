@@ -5,8 +5,9 @@
  -->
 <template>
 <div class="container">
+    <div class="bg"></div>
     <div class="banner">
-        <lay-swiper :list='banners' v-if="banners.length" sHeight='200rpx'></lay-swiper>
+        <lay-swiper :list='banners' v-if="banners.length" sHeight='260rpx'></lay-swiper>
     </div>
     <div class="content">
         <ul class="menu">
@@ -76,25 +77,49 @@ export default {
 <style lang="scss" scoped>
 .container{
     background: #fff;
-    padding: 24rpx 0;
+    position: relative;
+    z-index: 0;
+    .bg{
+        position: absolute;
+        z-index: 8;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #2a8cfa;
+        height: 130rpx;
+        &::after{
+            content: '';
+            position: absolute;
+            z-index: 9;
+            top: 95rpx;
+            left: -20%;
+            background: #fff;
+            width: 140%;
+            height: 200rpx;
+            border-radius: 50% 50% 0 0;
+        }
+    }
     .banner{
         margin: 0 24rpx;
         border-radius: 10rpx;
         overflow: hidden;
-
+        position: relative;
+        z-index: 10;
     }
     .content{
+        position: relative;
+        z-index: 11;
         ul{
             display: flex;
             flex-wrap: wrap;
             li{
-                width: 25%;
+                width: 20%;
             }
         }
         .img-warp{
-            margin: 35rpx auto 0;
-            width: 130rpx;
-            height: 130rpx;
+            margin: 35rpx auto 10rpx;
+            width: 100rpx;
+            height: 100rpx;
         }
         .text{
             font-size: 12px;

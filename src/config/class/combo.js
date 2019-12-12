@@ -31,22 +31,27 @@ export default class Combo {
         if (that.rules) {
             return Promise.resolve(that);
         }
-        return new Promise(resolve => {
+        return new Promise((resolve,reject) => {
             apiGetProDetails({
                 s_id,
                 pro_type: orderType.combo,
                 id: that.id
             }).then(ticketData => {
-                that.name = ticketData.topData.group_name;
-                that.imgUrl = ticketData.topData.imgUrl;
-                that.headerImg = ticketData.topData.imgUrl.imgList[0].img;
-                that.price = ticketData.topData.price;
-                that.old_price = ticketData.topData.old_price;
-                that.sale_num = ticketData.topData.sales_num;
-                that.groupContent = ticketData.topData.groupContent;
-                that.rules = _normalizeRules(ticketData.rulesData);
-                that.description = ticketData.topData.description
-                resolve(that);
+                if (!ticketData.topData) {
+                    reject(new Error("该产品已下架或者被删除"))
+                } else {
+                    that.rules = _normalizeRules(ticketData.rulesData);
+                    that.name = ticketData.topData.group_name;
+                    that.imgUrl = ticketData.topData.imgUrl;
+                    that.headerImg = ticketData.topData.imgUrl.imgList[0].img;
+                    that.price = ticketData.topData.price;
+                    that.old_price = ticketData.topData.old_price;
+                    that.sale_num = ticketData.topData.sales_num;
+                    that.groupContent = ticketData.topData.groupContent;
+                    that.description = ticketData.topData.description;
+                    that.groupDescription = ticketData.topData.group_description
+                    resolve(that);
+                }
             });
         });
     }

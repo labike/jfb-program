@@ -232,7 +232,7 @@ export default {
             background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
-            background-image: url('~@/assets/img/sends.png');
+            background-image: url('~@/assets/img/timesale.png');
             position: relative;
         }
         .disc{

@@ -1,7 +1,7 @@
 {
 	"description": "项目配置文件。",
 	"setting": {
-		"urlCheck": false,
+		"urlCheck": true,
 		"es6": false,
 		"enhance": false,
 		"postcss": false,
@@ -26,7 +26,7 @@
 	"projectname": "mpvue-jfb",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
-	"libVersion": "2.8.1",
+	"libVersion": "2.9.4",
 	"condition": {
 		"search": {
 			"current": -1,
@@ -276,8 +276,8 @@
 					"scene": null
 				},
 				{
-					"id": -1,
-					"name": "pages/filter/near/main",
+					"id": 32,
+					"name": "near",
 					"pathName": "pages/filter/near/main",
 					"query": "",
 					"scene": null
@@ -287,6 +287,13 @@
 					"name": "pages/shop/faddish/main",
 					"pathName": "pages/shop/faddish/main",
 					"query": "shop_id=154&title=combo&item_id=185",
+					"scene": null
+				},
+				{
+					"id": 34,
+					"name": "faddish",
+					"pathName": "pages/shop/faddish/main",
+					"query": "shop_id=48&gid=249",
 					"scene": null
 				}
 			]

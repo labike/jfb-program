@@ -6,54 +6,38 @@
 <template>
 
 <div  class="time-sale-warp" v-if="shopAdvt">
-    <scroll-view class="time-sale"  scroll-y>
-        <div class="activity" :class="{gray: shopAdvt.stopActivity}" >
+    <scroll-view class="time-sale"  scroll-y v-if="shopAdvt.topData" >
+        <div class="activity" >
             <div class="top">
                 <div class="img-warp">
                     
                     <swiper :indicator-dots='true' indicator-color='rgba(0, 0, 0, .3)' indicator-active-color="#fff" :style="{height: '400rpx'}" :autoplay='false' :interval='6000' :duration='1000' :circular='true'>
-                        <swiper-item>
-                            <ImageView :src="shopAdvt.img" mode='aspectFill' height="400rpx" width="750rpx"></ImageView>
-                        </swiper-item>
-                        <swiper-item>
-                            <ImageView :src="shopAdvt.proImg" mode='aspectFill' height="400rpx" width="750rpx"></ImageView>
-                        </swiper-item>
+                         <block v-for="(item, index) of shopAdvt.topData.imgUrl.imgList" :key="index">
+                            <swiper-item>
+                                <ImageView :src="item.img" mode='aspectFill' height="400rpx" width="750rpx"></ImageView>
+                            </swiper-item>
+                        </block>
                 </swiper>
                 </div>
                 <div class="product">
                     <div class="info">
                         <div class="disc">
-                            <p class="price">{{shopAdvt.sale_price}}</p>
-                            <p class="tag">抢购价</p>
-                            <p class="sale">已售: {{shopAdvt.sale}}</p>
+                            <p class="price">{{shopAdvt.topData.price}}</p>
+                            <p class="tag">特惠价</p>
+                            <p class="old-price">{{shopAdvt.topData.old_price}}</p>
+                            <p class="sale">已售: {{shopAdvt.topData.sales_num}}</p>
                         </div>
-                        <div class="consume">最低消费{{shopAdvt.min_consume}}元</div>
+                        <div class="consume">{{shopAdvt.topData.discount}} 折优惠</div>
                     </div>
                 </div>
             </div>
             <div class="bottom">
                 <div class="title">
-                    <i class="icon"></i>价值{{shopAdvt.buyer}}元{{shopAdvt.pro_name}}
-                    <span>{{shopAdvt.number}}{{shopAdvt.unit}}</span>
+                    <i class="icon">爆款</i>
+                    <span>{{shopAdvt.topData.group_name}}</span>
                 </div>
                 <div class="location">{{distance}}</div>
-                <div class="description">{{shopAdvt.description}}</div>
-            </div>
-            <div class="linetime">
-                <ul class="avatar-group">
-                    <li class="avatar" v-for="(item, index) in shopAdvt.buyList" :key="index">
-                        <ImageView :src="item.header_img" picture='/static/img/avatar.png' ></ImageView>
-                    </li>
-                </ul>
-                <div class="progress-group">
-                    <div class="progress" :style="{width:(shopAdvt.sale/shopAdvt.library*100)+ '%'}"></div>
-                </div>
-                
-                <div class="library">
-                    <p class="left">限售 {{shopAdvt.library}}</p>
-                    <p class="center">已抢 {{shopAdvt.sale}}</p>
-                    <p class="right">剩余 {{shopAdvt.library - shopAdvt.sale}}</p>
-                </div>
+                <div class="description">{{shopAdvt.topData.description}}</div>
             </div>
         </div>
 
@@ -73,36 +57,46 @@
             <div class="rule-desc">
                 <dl>
                     <dt>有效期</dt>
-                    <dd><span>期限</span>{{shopAdvt.ruler.effective_time}}</dd>
+                    <dd><span>期限</span>{{shopAdvt.rulesData.periodOfValidity}}</dd>
                 </dl>
                 <dl>
                     <dt>使用时间</dt>
-                    <dd><span>可用</span>{{shopAdvt.ruler.consume_time}}</dd>
+                    <dd><span>可用</span>{{shopAdvt.rulesData.availableTime}}</dd>
                 </dl>
                 <dl>
                     <dt>不可用日期</dt>
                     <dd>
-                        <div><span>日期</span>{{shopAdvt.ruler.disabled}}</div>
-                        <div><span>按周</span>{{shopAdvt.ruler.week}}</div>
+                        <div><span>日期</span>{{shopAdvt.rulesData.UnavailableDate}}</div>
+                        <div><span>按周</span>{{shopAdvt.rulesData.UnavailableWeek}}</div>
                     </dd>
                 </dl>
                 <dl>
                     <dt>使用规则</dt>
                     <dd>
-                        <div>{{shopAdvt.ruler.bespeak}}</div>
-                        <div>{{shopAdvt.ruler.overlying}}</div>
-                        <div>{{shopAdvt.ruler.currency}}</div>
-                        <div>{{shopAdvt.ruler.invoice}}</div>
-                        <div>{{shopAdvt.ruler.refund}}</div>
+                        <div>{{shopAdvt.rulesData.bespeak}}</div>
+                        <div>{{shopAdvt.rulesData.overlying}}</div>
+                        <div>{{shopAdvt.rulesData.currency}}</div>
+                        <div>{{shopAdvt.rulesData.invoice}}</div>
+                        <div>{{shopAdvt.rulesData.refund}}</div>
                     </dd>
                 </dl>
             </div>
         </div>
 
-        <div class="describe" v-if="shopAdvt.give_description">
+        <div class="describe" v-if="shopAdvt.topData.group_description">
             <div class="title">商品详情</div>
+            <div class="gds-details">
+                <dl v-for="(group, ginx) in shopAdvt.topData.groupContent" :key="ginx">
+                    <dt>{{ group.sort_name }} <span v-if=" group.selectType != 0">（{{ group.selectType }}）</span></dt>
+                    <dd v-for="(item, cinx) in group.content" :key="cinx">
+                        <div class="name">{{ item.name }}</div>
+                        <div class="num">{{ item.num }}份</div>
+                        <div class="price">{{ item.price }}</div>
+                    </dd>
+                </dl>
+            </div>
             <div class="desc">
-                <div v-html="shopAdvt.give_description"></div>
+                <div v-html="shopAdvt.topData.group_description"></div>
             </div>
         </div>
     </scroll-view>
@@ -115,11 +109,10 @@
             </div>
         </li>
         <li class="item">
-            <div class="shop" @click="jumpShop(shopAdvt.x_id)">进店看看</div>
+            <div class="shop" @click="jumpShop(shop_id)">进店看看</div>
         </li>
         <li class="item">
-            <div class="go gray" v-if="shopAdvt.stopActivity">已结束</div>
-            <div class="go gray" v-else-if="shopAdvt.sale>=shopAdvt.library">已售罄</div>
+            <div class="go gray" v-if="!shopAdvt.topData">已结束</div>
             <div class="go" v-else @click="jumpItemPage(shopAdvt)">马上抢</div>
         </li>
     </ul>
@@ -129,18 +122,16 @@
 
 <script>
 import ImageView from '@c/layouts/ImageView.vue'
-import { apiGiveDetail } from "@/api/api";
-import { WAPHOST, shopType } from "@/config/base";
+import { WAPHOST, orderType } from "@/config/base";
 import { getDistance, callPhone } from '@/utils/index';
-import { mapState } from 'vuex';
+import { apiGetProDetails } from "@/api/api.js";
 export default {
     name: "time-sale",
     data() {
         return {
-            params: {},
+            shop_id: 0,
             scrollTop: 0,
             scrollStatus: true,
-            remainListsLength: 5,
             shopAdvt: null
         };
     },
@@ -148,10 +139,6 @@ export default {
         ImageView,
     },        
     computed: {
-        // ...mapState('user', [
-        //     'lat',
-        //     'lng',
-        // ]),
         
         lat() {
             return wx.getStorageSync('appData').currentLocation.lat
@@ -164,9 +151,9 @@ export default {
             if (!_this.lat || !_this.shopAdvt) {
                 return ''
             }
-            let num = getDistance(_this.lat, _this.lng, _this.shopAdvt.storeInfo.lat, _this.shopAdvt.storeInfo.lng)
+            let num = getDistance(_this.lat, _this.lng, _this.shopAdvt.storeInfo.gps.lat, _this.shopAdvt.storeInfo.gps.lng)
             if (num > 1000) {
-                return (num / 1000).toFixed(0) + 'km'
+                return (num / 1000).toFixed(1) + 'km'
             } else {
                 return num + 'm'
             }
@@ -174,30 +161,58 @@ export default {
     },
     onLoad (options) {
         const that = this
-        apiGiveDetail(options.gid).then(res => {
+        that.shop_id = options.shop_id
+        apiGetProDetails({
+            s_id: options.shop_id,
+            pro_type: orderType.combo,
+            id: options.gid
+        }).then(res => {
+            console.log(res);
+            if (!res.topData) {
+                mpvue.showModal({
+                    content: '该产品已经下架，或者被删除',
+                    showCancel: false,
+                    confirmText: '好的',
+                    confirmColor: '#333',
+                    success: function(res) {
+                        if (res.confirm) {
+                            wx.navigateBack()            
+                        }
+                    },
+                    fail: function(res) {}
+                })
+            }
             that.shopAdvt = that.formatData(res)
-        }) 
+        })
     },
     methods: {
-        stopActivity(shop) {
-            shop.stopActivity = true
-        },
         formatData (res) {
-            res.library = parseFloat(res.library)
-            res.sale = parseFloat(res.sale)
-            if (res.give_description) {
+            if (!res.topData || !res.rulesData) {
+                return res
+            }
+            if (res.rulesData.availableTime === "") {
+                res.rulesData.availableTime = '24小时可用'
+            }
+            if (res.rulesData.UnavailableDate === "") {
+                res.rulesData.UnavailableDate = '不限'
+            }
+            if (res.rulesData.UnavailableWeek === "") {
+                res.rulesData.UnavailableWeek = '不限'
+            }
+            if (res.topData.old_price) {
+                res.topData.old_price = parseFloat(res.topData.old_price)
+                res.topData.price = parseFloat(res.topData.price)
+                let discount = (res.topData.price / res.topData.old_price).toFixed(1)
+                res.topData.discount = discount * 10
+            }
+            
+            if (res.topData.group_description) {
                 let reg = /<img (src=[\'\"]?(?:[^\'\"]*)[\'\"]?).*?(?:>|\/>)/ig;
-                res.give_description = res.give_description.replace(reg, (...ary) => {
+                res.topData.group_description = res.topData.group_description.replace(reg, (...ary) => {
                     let tepm = `<img class="img" ${ary[1]} style="max-width:100%;height:auto"/>`
                     return tepm
                 })
-            }
-            res.buyList = Array.from({length: 9}).map((item, index) => {
-                let avatar = {}
-                avatar.header_img = res.buyList[index] ? res.buyList[index].header_img : ''
-                return avatar;
-            });
-            
+            }            
             return res
         },
 
@@ -207,11 +222,13 @@ export default {
             })
         },
         jumpItemPage(shop) {
-            if (shop.stopActivity) {
+            console.log(shop);
+            const that = this
+            if (!shop.topData) {
                 return
             }
-            this.$router.push({
-                path: `/pages/orders/confirm/main?shop_id=${shop.x_id}&title=timesale&item_id=${shop.gid}`
+            that.$router.push({
+                path: `/pages/orders/confirm/main?shop_id=${that.shop_id}&title=combo&item_id=${shop.topData.id}`
             })
         },
         
@@ -257,13 +274,15 @@ export default {
             line-height: 1;
             position: relative;
             .icon{
-                margin-right: 16rpx;
-                width: 68rpx;
-                height: 38rpx;
-                background-size: contain;
-                background-position: center;
-                background-repeat: no-repeat;
-                background-image: url('~@/assets/img/send1.png');
+                background: #ff4400;
+                font-size: 24rpx;
+                color: #fff;
+                padding: 4rpx 8rpx;
+                border-radius: 4rpx;
+                margin-right: 12rpx;
+                position: relative;
+                top: -1rpx;
+                line-height: 1;
             }
             .title{
                 font-size: 17px;
@@ -301,6 +320,7 @@ export default {
                 font-size: 13px;
                 color: #fff;
             }
+
             .disc{
                 display: flex;
                 justify-content: space-between;
@@ -323,6 +343,16 @@ export default {
                     text-align: right;
                     font-size: 13px;
                 }
+                .old-price{
+                    margin: 0 10rpx;
+                    color: #fff;
+                    font-size: 12px;
+                    font-weight: 400;
+                    text-decoration:line-through;
+                    &::before{
+                        content: '￥';
+                    }
+                }
             }
             .consume{
                 font-size: 12px;
@@ -330,63 +360,6 @@ export default {
             }
         }
         
-        .linetime{
-            border-top: 1rpx solid #f2f2f2;
-            .avatar-group{
-                margin: 20rpx 30rpx;
-                display: flex;
-                justify-content: space-between;
-            }
-            .avatar{
-                width: 60rpx;
-                height: 60rpx;
-                border-radius: 50%;
-                overflow: hidden;
-            }
-            .progress-group{
-                min-width: 110rpx;
-                margin: 0 30rpx;
-                height: 14rpx;
-                line-height: 14rpx;
-                background: #ffeadd;
-                border-radius: 14rpx;
-                position: relative;
-                overflow: hidden;
-                z-index: 3;
-                .progress{
-                    position:absolute;
-                    left: 0;
-                    top: 0;
-                    width: 0;
-                    height: 14rpx;
-                    z-index: 8;
-                    background-color: #ff2d00;
-                    background-image: linear-gradient(to right, #ff6600, #ff2d00);
-                    border-radius: 14rpx;
-                }
-                .sale{
-                    position: relative;
-                    text-align: center;
-                    z-index: 10;
-                    color: #fff;
-                }
-            }
-            .library{
-                padding: 24rpx 30rpx;
-                color: #818181;
-                font-size: 12px;
-                display: flex;
-                text-align: left;
-                justify-content: space-between;
-                .right{
-                    text-align: right;
-                }
-                .sale{
-                    flex: 1;
-                    text-align: center;
-                }
-            }
-        }
     }
 
     .shop-info {
@@ -471,14 +444,61 @@ export default {
             height: 100rpx;
             line-height: 100rpx;
             color: #323232;
-            font-weight: 700;
+            font-weight: 400;
             font-size: 17px;
             padding-left: 30rpx;
             background: #f2f2f2;
         }
+        .gds-details {
+            margin: 30rpx;
+            color: #323232;
+            font-weight: 400;
+            dl {
+                margin-bottom: 30rpx;
+                dt {
+                    color: #000;
+                    margin-bottom: 30rpx;
+                    font-size: 14px;
+                }
+                dd {
+                    font-size: 13px;
+                    margin-bottom: 15rpx;
+                    display: flex;
+                    align-items: center;
+                    &::before {
+                        content: '';
+                        display: inline-block;
+                        width: 0;
+                        height: 0;
+                        border: 2px solid #000;
+                        vertical-align: middle;
+                        margin-right: 10rpx;
+                        border-radius: 50%;
+                    }
+                    .name {
+                        flex: 1;
+                    }
+                    .num {
+                        width: 15%;
+                        text-align: right
+                    }
+                    .price {
+                        width: 35%;
+                        text-align: right;
+                        font-size: 13px;
+                        color: #323232;
+                        font-weight: 400;
+                        &::before{
+                            content: '￥';
+                            font-size: 10px;
+                        }
+                    }
+                }
+            }
+        }
         .desc{
-            padding: 40rpx;
-            line-height: 1.4;
+            padding: 40rpx 30rpx;
+            line-height: 1.6;
             .img{
                 width: 100%;
             }

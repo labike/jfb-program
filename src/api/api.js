@@ -93,6 +93,30 @@ export const apiGetNearbys = params => {
         }
     });
 };
+
+
+/**
+ * 2.3 附近爆品数据 
+ * @method GET https://clients.qmw111.com/v1/nearbys/burst
+ * @params lng:经度
+ * @params lat：纬度
+ * @params page:页码
+ * @params top_sort:(非必填项)顶级分类id
+ * @params limit
+ * @return {}
+ */
+export const apiGetBurstByNear = params => {
+    return get(`nearbys/burst`, params).then(res => {        
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        if (err.code === 0) {
+            return Promise.reject(err);
+        } else {
+            throw err.msg;
+        }
+    });
+};
+
 /**
  * 2.6 首页分类 
  * @method POST https://clients.qmw111.com/v1/index-sort
@@ -894,15 +918,16 @@ export const apiVerifyByAlipay = params => {
 
 /**
  * 2.1.2 首页推荐店铺或产品上拉请求
- * @method GET https://clients.qmw111.com/v1/index/recommends 
+ * @method GET https://clients.qmw111.com/v2/index/recommends 
+ * @method GET https://clients.qmw111.com/v2/index/recommendv2 
  * @params city_id:城市id (非必填，如果没有填写 ，根据ip获取当前城市) 
  * @params lng: 经度 
  * @params lat: 纬度
- * @params page:页码（上拉必须从2开始）
+ * @params page:页码
  * @return {}
  */
 export const apiGetRecommends = params => {
-    return post2(`index/recommend`, params).then(res => {        
+    return post2(`index/recommendv2`, params).then(res => {        
         return Promise.resolve(res.data); 
     }).catch(err => {
         if (err.code === 0) {
@@ -968,10 +993,10 @@ export const apiSuperStores = () => {
 };
 
 /**
-* 优惠专区【首页】
+* 优惠专区【首页】 已删除
 * @method GET  http://clients.qmw111.com/v2/index/discount
 * @params  path: index(首页index,)
-*/
+
 export const apiSuperDiscount = () => {
     return get2('index/discount').then(res => {
         return Promise.resolve(res.data); 
@@ -979,6 +1004,8 @@ export const apiSuperDiscount = () => {
         throw err;
     });
 };
+*/
+
 
 /**
  * 活动列表页

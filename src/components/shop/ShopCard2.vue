@@ -4,19 +4,14 @@
  * @Description: file content
  -->
 <template>
-<div class="shop-card" v-if="shop && shop.s_id" @click="jumpShop(shop.s_id)">
+<div class="shop-card" v-if="shop && shop.s_id" @click="jumpShop(shop.s_id)" >
     <div class="card other" v-if="shop.type=='other'">
         <div class="lt-img">
-            <ImageView :src="shop.headerImg[0].img_url" mode="scaleToFill" width='150rpx' height='150rpx'></ImageView>
+            <i class="icon" v-if="shop.share">返佣好店</i>
+            <ImageView :src="shop.headerImg[0].img_url" mode="scaleToFill" width='270rpx' height='270rpx'></ImageView>
         </div>
         <div class="rt-content">
-            <div class="title">
-                <div class="name">{{shop.store_name}}</div>
-                <div class="discount" v-if="discount">
-                    <p class="text">{{discount}}<span>折</span>买</p>
-                </div>
-                <!-- <div class="dishes" v-if="shop.sort_name==='美食'"></div> -->
-            </div>
+            <div class="title">{{shop.store_name}}</div>
             <div class="info">
                 <ul class="score" :class="scoreName">
                     <li class="star"></li>
@@ -28,10 +23,31 @@
                 </ul>
                 <div class="distance" v-if="shop.distance">{{shop.distance}}</div>
             </div>
+
+            <div class="info2">
+                <p class="sort">{{shop.sort_name}}</p>
+                <p class="address">{{shop.address}}</p>
+            </div>
             
-            <div class="address">{{shop.address}}</div>
-            <div class="vouchers" v-if="vouchers">{{vouchers}}</div>
+            <ul class="business">
+                <li v-if="shop.group">团购</li>
+                <li v-if="shop.vouchers">优惠券</li>
+                <li v-if="shop.dish">购物车</li>
+                <li v-if="shop.share">分享</li>
+            </ul>
+            <div class="btn-group" v-if="shop.share">
+            
+                <div class="btn join" @click.stop="tapShare('join')">成为合伙人</div>
+                <div class="btn earn" @click.stop="tapShare('earn')">去赚钱</div>
+            </div>
+            <div class="record" v-else-if="shop.msgData">
+                <rollnotice autoplay="2000" :rollData='shop.msgData'>
+                </rollnotice>
+            </div>
+        </div>
+        <div class="bt-hot" v-if="vouchers || groupon">
             <div class="groupon" v-if="groupon">{{groupon}}</div>
+            <div class="vouchers" v-if="vouchers">{{vouchers}}</div>
         </div>
     </div>
     <div class="card hotel" v-if="shop.type=='hotel'">
@@ -43,10 +59,6 @@
                 <div class="name">{{shop.store_name}}</div>
             </div>
             <div class="handle">
-                <div class="like" @click.stop="tapLike(shop.s_id)">
-                    <div class="icon"></div>
-                    <div class="num">{{shop.like_num}}</div>
-                </div>
                 <button open-type="share" class="share" :data-share="shop" @click.stop="tapShare">
                     <div class="icon"></div>
                     <div class="num">{{shop.share_num}}</div>
@@ -64,7 +76,7 @@
 <script>
 import Rollnotice from "@c/rollnotice/Rollnotice.vue";
 import ImageView from '@c/layouts/ImageView.vue'
-import { likeShare, apiShareStore } from "@/api/api";
+import { apiShareStore } from "@/api/api";
 export default {
     name: 'ShopCard',
     data() {
@@ -139,22 +151,16 @@ export default {
                 path: '/pages/shop/index/main?shop_id=' + id
             })
         },
-        tapLike(s_id) {
-            likeShare({
-                s_id,
-                type: 'like'
-            }).then(res => {
-                // store_num: 114
-                console.log(res);
-                this.shop.like_num = res.store_num
-                wx.showToast({
-                    title: res.message,
-                    icon: 'success',
-                    duration: 1000
-                })
+        tapShare(type) {
+            const that = this
+            apiShareStore(that.shop.s_id).then(result => {
+                result.type = type
+                that.$emit('share', result)
             })
         },
-        tapShare(e) {},
+        tapEarn() {
+            
+        }
     },
 };
 </script>
@@ -174,88 +180,44 @@ export default {
         justify-items: center;
         align-items: center;
         .name{
-            font-size:11pt;
-            font-weight:700;
+            font-size: 17px;
+            font-weight: 400;
             margin-right: 10rpx;
-        }
-        .discount{
-            height: 30rpx;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            letter-spacing: 1px; 
-            border-radius: 2px;
-            padding-left: 15rpx;
-            padding-right: 5rpx;
-            margin-right: 10rpx;
-            background-size: auto 30rpx;
-            background-position: left center;
-            background-repeat: no-repeat;
-            background-image: url('~@/assets/img/discount.png');
-            position: relative;
-            overflow: hidden;
-            &::before{
-                content:  '';
-                position: absolute;
-                left: 50%;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                z-index: 1;
-                background: #ff2900;
-            }
-            .text{
-                position: relative;
-                z-index: 2;
-                color: #fff;
-                font-size: 24rpx;
-                span{
-                    font-size: 20rpx;
-                }
-            }
-        }
-        .dishes{
-            height:32rpx;
-            min-width:100rpx;
-            background-size:auto 32rpx;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-image: url('~@/assets/img/self_cart.png');
         }
     }
     .score{
         display: flex;
         align-items: center;
-        margin-bottom: 18rpx;
         .text{
             color:#818181;
             margin-left: 10rpx;
-            font-size: 22rpx;
-            line-height: 1;
+            font-size: 12px;
+            line-height: 32rpx;
         }
         .star{
-            width: 24rpx;
-            height: 24rpx;
+            width: 32rpx;
+            height: 32rpx;
             margin-right: 5rpx;
             display: inline-block;
             vertical-align: bottom;
-            background-size: 24rpx 24rpx;
+            background-size: 32rpx;
             background-position: center;
             background-repeat: no-repeat;
-            background-image: url('~@/assets/img/star.png');
+            background-image: url('~@/assets/img/star3.png');
+            position: relative;
+            top: -2rpx;
         }
         &1 .star:nth-child(1),
         &2 .star:nth-child(-n + 2),
         &3 .star:nth-child(-n + 3),
         &4 .star:nth-child(-n + 4),
         &5 .star:nth-child(-n + 5) {
-            background-image: url('~@/assets/img/starSelect.png');
+            background-image: url('~@/assets/img/starSelect3.png');
         }
         &1.dot .star:nth-child(2),
         &2.dot .star:nth-child(3),
         &3.dot .star:nth-child(4),
         &4.dot .star:nth-child(5) {
-            position: relative;
             &::after{
                 content: '';
                 position: absolute;
@@ -264,10 +226,10 @@ export default {
                 width: 50%;
                 height: 100%;
                 vertical-align: bottom;
-                background-size: 25rpx 25rpx;
+                background-size: 32rpx;
                 background-position: 0 0;
                 background-repeat: no-repeat;
-                background-image: url('~@/assets/img/starSelect.png');
+                background-image: url('~@/assets/img/starSelect3.png');
             }
             
         }
@@ -277,99 +239,143 @@ export default {
     background: #fff;
     position: relative;
     .lt-img{
-        position: absolute;
-        left: 24rpx;
-        top: 30rpx;
-        width: 150rpx;
-        height: 150rpx;
-        flex-shrink: 0;
+        width: 270rpx;
+        height: 270rpx;
+        overflow: hidden;
+        border-radius: 10rpx;
+        float: left;
+        position: relative;
         img{
-            width: 150rpx;
-            height: 150rpx;
+            width: 270rpx;
+            height: 270rpx;
+        }
+        .icon{
+            font-size: 10px;
+            background: #000;
+            width: 100rpx;
+            height: 36rpx;
+            line-height: 36rpx;
+            text-align: center;
+            font-weight: 400;
+            color: #ffc263;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-radius: 10rpx 0 10rpx 0;
         }
     }
     .rt-content{
-        margin-left: 174rpx;
-        .info{
-            display: flex;
-            justify-content: space-between;
-        }
+        margin-left: 294rpx;
+        min-height: 270rpx;
         .distance{
+            position :absolute;
+            right: 0;
+            top: 0;
+            line-height: 32rpx;
             color:#818181;
-            font-size: 22rpx;
-            line-height: 1;
+            font-size: 12px;
         }
-    }
-    .title{
-        display: flex;
-        margin-bottom: 20rpx;
-        justify-items: center;
-        align-items: center;
-        .name{
-            font-size:11pt;
-            font-weight:700;
-            margin-right: 10rpx;
-            word-wrap: normal;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-            max-width: 70%;
-            width: auto;
-        }
-        .discount{
-            height: 30rpx;
-            border-radius: 2px;
-            padding-left: 15rpx;
-            padding-right: 5rpx;
-            margin-right: 10rpx;
-            background-size: auto 30rpx;
-            background-position: left center;
-            background-repeat: no-repeat;
-            background-image: url('~@/assets/img/discount.png');
-            position: relative;
-            overflow: hidden;
-            &::before{
-                content:  '';
-                position: absolute;
-                left: 50%;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                z-index: 1;
-                background: #ff2900;
-            }
-            .text{
-                position: relative;
-                z-index: 2;
-                color: #fff;
-                font-size:12px;
-                span{
-                    font-size:9px;
+        .business{
+            margin-bottom: 20rpx;
+            display: flex;
+            li{
+                font-size: 11px;
+                background: #f7f7f7;
+                color: #818181;
+                text-align: center;
+                height: 40rpx;
+                line-height: 40rpx;
+                padding: 0 12rpx;
+                &:not(:last-child){
+                    margin-right: 10rpx;
                 }
             }
         }
-        .dishes{
-            height:32rpx;
-            min-width:100rpx;
-            background-size:auto 32rpx;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-image: url('~@/assets/img/self_cart.png');
+        .info{
+            position: relative;
+            margin-bottom: 15rpx;
         }
+        .info2{
+            display: flex;
+            align-items: center;
+            line-height: 1;
+            color: #818181;
+            font-size: 12px;
+            margin-bottom: 20rpx;
+            p:not(:last-child){
+                border-right: 2rpx solid #e8e8e8;
+            }
+            .sort{
+                flex-shrink: 0;
+                padding-right: 10rpx;
+            }
+            .address{
+                padding-left: 10rpx;
+                @include textOverflow;
+            }
+        }
+        
+        
     }
     
-    .address{
-        color: #818181;
-        font-size: 22rpx;
+    .record{
+        background: rgba(255, 88, 63, .1);
+        height: 60rpx;
+        line-height: 60rpx;
+        text-align: right;
+        color: #ff583f;
+        overflow: hidden;
+        border-radius: 10rpx;
+        @include textOverflow;
     }
+    .btn-group{
+        display: flex;
+        align-items: center;
+        .btn{
+            width: 170rpx;
+            height: 60rpx;
+            line-height: 60rpx;
+            text-align: center;
+            border-radius: 10rpx;
+            color: #fff;
+            font-weight: 400;
+            font-size: 13px;
+            &:not(:last-child){
+                margin-right: 30rpx;
+            }
+        }
+        .join{
+            background: linear-gradient(to right,#00aaff, #0086ff);
+        }
+        .earn{
+            background: linear-gradient(to right,#ff6000, #ff2f10);
+        }
+    }
+    .bt-hot{
+        clear: both;
+        margin-top: 30rpx;
+        border-top: 1px dashed #d2d2d2;
+        line-height: 36rpx;
+        color: #818181;
+    }
+    .title{
+        display: block;
+        font-size: 17px;
+        font-weight: 400;
+        margin-bottom: 15rpx;
+        margin-right: 10rpx;
+        @include textOverflow;
+    }
+    
     .vouchers{
         font-size: 24rpx;
-        margin-top: 14rpx;
+        margin-top: 20rpx;
         @include textOverflow;
         &::before{
             content:  '';
-            width: 30rpx;
-            height: 30rpx;
+            width: 34rpx;
+            height: 34rpx;
+            font-size: 0;
             flex-shrink: 0;
             margin-right: 20rpx;
             display: inline-block;
@@ -382,12 +388,13 @@ export default {
     }
     .groupon{
         font-size: 24rpx;
-        margin-top: 14rpx;
+        margin-top: 20rpx;
         @include textOverflow;
         &::before{
             content:  '';
-            width: 30rpx;
-            height: 30rpx;
+            width: 34rpx;
+            height: 34rpx;
+            font-size: 0;
             flex-shrink: 0;
             margin-right: 15rpx;
             display: inline-block;

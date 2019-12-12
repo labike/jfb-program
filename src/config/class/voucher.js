@@ -31,20 +31,24 @@ export default class Voucher {
         if (that.rules) {
             return Promise.resolve(that);
         }
-        return new Promise(resolve => {
+        return new Promise((resolve,reject) => {
             apiGetProDetails({
                 s_id,
                 pro_type: orderType.vouchers,
                 id: that.id
             }).then(ticketData => {
-                that.price = ticketData.topData.price;
-                that.old_price = ticketData.topData.old_price;
-                that.nickName = that.name = `${Number(this.old_price)}元代金券`;
-                that.sale_num = ticketData.topData.sales_num;
-                that.rules = _normalizeRules(ticketData.rulesData);
-                that.storeInfo = ticketData.storeInfo;
-                that.headerImg = ticketData.storeInfo.headerImg;
-                resolve(that);
+                if (!ticketData.topData) {
+                    reject(new Error("该产品已下架或者被删除"))
+                } else {
+                    that.price = ticketData.topData.price;
+                    that.old_price = ticketData.topData.old_price;
+                    that.nickName = that.name = `${Number(this.old_price)}元代金券`;
+                    that.sale_num = ticketData.topData.sales_num;
+                    that.rules = _normalizeRules(ticketData.rulesData);
+                    that.storeInfo = ticketData.storeInfo;
+                    that.headerImg = ticketData.storeInfo.headerImg;
+                    resolve(that);
+                }
             });
         });
     }
