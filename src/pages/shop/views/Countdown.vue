@@ -1,3 +1,8 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-06-26 17:29:48
+ * @Description: file content
+ -->
 <template>
     <div class="time">
         <span v-if="PayStatus">剩余支付时间</span>
@@ -18,7 +23,6 @@ export default {
     },
     onLoad () {
         this.PayStatus = true
-        
         this.countTime()
     },
     methods: {

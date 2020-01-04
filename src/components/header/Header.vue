@@ -18,21 +18,26 @@
 import { mapState } from 'vuex';
 export default {
     name: "JFBHeader",
+    data() {
+        return {
+            cityName: ''
+        }
+    },
     computed: {
         ...mapState('user', [
             'city_name'
         ]),
         appData() {
-            return wx.getStorageSync('appData');
+            return mpvue.getStorageSync('appData');
         },
-        cityName() {
-            if (this.city_name) {
-                return this.city_name
-            }
-            if (this.appData && this.appData.currentCity) {
-                return this.appData.currentCity.name
-            }
-            return ''
+    },
+    onLoad() {
+        if (this.city_name) {
+            this.cityName = this.city_name
+        } else if (this.appData && this.appData.currentCity) {
+            this.cityName = this.appData.currentCity.name
+        } else {
+            this.cityName = ''
         }
     },
     methods: {

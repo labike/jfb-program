@@ -31,8 +31,7 @@
                 </div>
             </section>
 
-            <section class="empty" v-else>
-                <div class="loading" v-if="listLoading"></div>
+            <section class="empty" v-if="listEmpty">
                 <ImageView src="/static/img/null_bg.png" width='160rpx'></ImageView>
                 <div class="text">暂无相关商铺！</div>
             </section>
@@ -77,6 +76,7 @@ export default {
             barParams: {},
             params: '',
             scrollTop: 80, 
+            listEmpty: false
         };
     },
     components: {
@@ -88,7 +88,7 @@ export default {
     },
     computed: {
         appData() {
-            return wx.getStorageSync('appData');
+            return mpvue.getStorageSync('appData');
         }
     },
     onLoad (options) {
@@ -113,7 +113,7 @@ export default {
         that.barParams.top_sort = that.top_sort
         that.getSortShop().then(() => {
             setTimeout(() => {
-                const query = wx.createSelectorQuery();             
+                const query = mpvue.createSelectorQuery();             
                 query.select(".header-warp").boundingClientRect();
                 query.exec(function(rect) {  
                     that.scrollTop = rect[0].height
@@ -123,21 +123,20 @@ export default {
     },
     onUnload() {        
         const self = this;
-        self.scrollBox = 'auto'
-        self.modelStatus = false
+        self.page = 1
+        self.shopList = []
         self.selectNav = ''
         self.barParams = {}
+        self.scrollBox = 'auto'
+        self.listEmpty = false
+        self.modelStatus = false
         self.categoryStatus = false
-        self.shopList = []
-        self.remainListsLength = 5
-        self.page = 1
         self.selectNavList = ['全部', '附近', '智能排序']
     },
     methods: {
         showModel(e) {
             this.modelStatus = true
             this.scrollBox = '0'
-            
             this.selectNav = e.mp.currentTarget.dataset.index
         },
         closeModel() {
@@ -150,6 +149,7 @@ export default {
         },
         updataParam(item) {
             const _this = this
+            _this.params.page = 1
             switch (item.type) {
             case 0:
                 _this.params.sort_two = item.id
@@ -168,7 +168,10 @@ export default {
             _this.shopList = []
             apiSearch(_this.params).then(res => {
                 _this.shopList = res.list
-                _this.remainListsLength = res.list.length
+                _this.scrollStatus = !!(res.list.length >= _this.remainListsLength)
+                if (!res.list || res.list.length === 0) {
+                    _this.listEmpty = true
+                }
             })
         },
         getSortShop() {
@@ -179,39 +182,44 @@ export default {
                     lng: _this.appData.currentLocation.lng,
                     lat: _this.appData.currentLocation.lat,
                     top_sort: _this.top_sort,
-                    sort_one: _this.sort_one,
-                    sort_two: _this.sort_two ? _this.sort_two : '',
+                    sort_one: _this.barParams.sort_one || '',
+                    sort_two: _this.barParams.sort_two || '',
+                    limit: _this.remainListsLength,
                     page: 1
                 }
                 apiSearch(_this.params).then(res => {
-                    this.shopList = res.list
-                    this.remainListsLength = res.list.length
-                    resolve(res.list.length)
+                    _this.shopList = res.list
+                    _this.scrollStatus = !!(res.list.length >= _this.remainListsLength)
+                    if (!res.list || res.list.length === 0) {
+                        _this.listEmpty = true
+                    }
+                    resolve(res.list.length || 0)
                 })
             })
         },
         pullDownData (val) {
             const _this = this
             _this.params.page = val
-            apiSearch(_this.params).then(res => {
+            apiSearch(_this.params).then(res => {                
+                _this.scrollStatus = !!(res.list.length >= _this.remainListsLength)
+                if (val === 1) {
+                    this.listEmpty = res.list.length === 0
+                }
                 res.list.forEach(shop => {
                     this.shopList.push(shop)
                 });
-                this.remainListsLength = res.list.length
             })
         }
     },
     
     onPullDownRefresh () {
         this.page = 1
-        this.remainListsLength = 10
         this.getSortShop()
         mpvue.stopPullDownRefresh()
     },
     onReachBottom () {
-        if (this.remainListsLength === 10) {
+        if (this.scrollStatus) {
             this.page++
-            this.scrollStatus = true
             this.pullDownData(this.page)
         } else {
             mpvue.showToast({
@@ -219,7 +227,6 @@ export default {
                 icon: 'none',
                 duration: 1000
             })
-            this.scrollStatus = false
         }
     },
 };

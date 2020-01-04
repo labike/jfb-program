@@ -61,7 +61,7 @@ export default {
                 type: "action"
             }, {
                 href: "money",
-                img_url: WAPHOST + "static/advert/my_money.png",
+                img_url: WAPHOST + "static/advert/my_rebate.png",
                 type: "action"
             }],
             meritMode: []
@@ -90,8 +90,8 @@ export default {
                 break;
             }
             if (URL) {
-                wx.navigateTo({
-                    url: URL
+                this.$router.push({
+                    path: URL
                 })
             }
         }

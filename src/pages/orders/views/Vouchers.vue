@@ -4,7 +4,7 @@
  * @Description: file content
  -->
 <template>
-<div class="confirm-order" v-if="currentItem">
+<div class="confirm-order" v-if="currentItem" :class="orderType">
     <div class="order-details">
         <div class="dts-img">
             <ImageView :src="currentItem.headerImg" mode='scaleToFill' height="140rpx" width="210rpx"></ImageView>
@@ -25,14 +25,15 @@
 
     <div class="order-tools">
         <ul class="cell">
-            <li class="cell-item num" v-if="orderType != 'timesale'">
+            <li class="cell-item num">
                 <div class="cell-left">数量</div>
                 <div class="cell-right">
-                    <div class="spinner">
+                    <div class="spinner"  v-if="orderType != 'timesale'">
                         <span class="minus" @click="numMinus"></span>
                         <p class="num" >{{orderNum}}</p>
                         <span class="add" @click="numAdd"></span>
                     </div>
+                    <div class="num" v-else>{{orderNum}}</div>
                 </div>
             </li>
             <li class="cell-item subtotal">
@@ -136,7 +137,7 @@ export default {
         numMinus() {
             let orderNum = this.orderNum
             if (this.orderNum <= 1) {
-                wx.showToast({
+                mpvue.showToast({
                     title: '最少添加1个',
                     icon: 'none'
                 });
@@ -147,7 +148,7 @@ export default {
         numAdd() {
             let orderNum = this.orderNum
             if (this.orderNum >= 99) {
-                wx.showToast({
+                mpvue.showToast({
                     title: '数量最大99',
                     icon: 'none'
                 });
@@ -156,6 +157,7 @@ export default {
             }
         },
         navBack() {
+            const that = this
             mpvue.showModal({
                 content: '该产品已经下架，或者被删除',
                 showCancel: false,
@@ -163,10 +165,9 @@ export default {
                 confirmColor: '#333',
                 success: function(res) {
                     if (res.confirm) {
-                        mpvue.navigateBack()            
+                        that.$router.back()         
                     }
-                },
-                fail: function(res) {}
+                }
             })
         }
     },
@@ -182,7 +183,7 @@ export default {
         width: 2.1rem;
         height: 1.4rem;
         margin-right: .24rem;
-        background: #f5f5f5;
+        background: #f2f2f2;
         overflow: hidden;
         img {
             display: block;
@@ -243,6 +244,7 @@ export default {
             }
         }
     }
+
 }
 .spinner{
     display: flex;
@@ -277,6 +279,17 @@ export default {
         border: none;
         font-size: .26rem;
         background-color: #fff;
+    }
+}
+.timesale{
+    .dts-info{
+        .rules-use{
+            display: none;
+        }
+        .price{
+            top: auto;
+            bottom: 0;
+        }
     }
 }
 .order-tools {

@@ -89,7 +89,7 @@ export default {
     },
     onLoad: function() {
         this.getVisitedShop(this.activeTab)
-        var res = wx.getSystemInfoSync()
+        var res = mpvue.getSystemInfoSync()
         this.stv.lineWidth = res.windowWidth / this.tabs.length;
         this.stv.windowWidth = res.windowWidth;
     },

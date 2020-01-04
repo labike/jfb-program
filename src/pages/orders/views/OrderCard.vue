@@ -97,7 +97,7 @@ export default {
         status () {
             const order = this.order
             let staText = '待支付'
-            if (order.is_pay_success === '1') {
+            if (order.is_pay_success + '' === '1') {
                 const consume_codes = order.product_info[0].consume_codes
                 if (consume_codes) {
                     let flag = consume_codes.every((item) => {
@@ -124,26 +124,26 @@ export default {
         ]),
         jumpOrderPages(page, order) {
             this.SET_CURRENT_ORDER(order)
-            mpvue.navigateTo({
-                url: `/pages/orders/${page}/main?order_id=${order.order_id}`
-            }) 
+            this.$router.push({
+                path: `/pages/orders/${page}/main?order_id=${order.order_id}`
+            })
         },
         cancelOrder(order_id) {
             const _this = this
-            wx.showModal({
+            mpvue.showModal({
                 title: '取消订单提醒',
                 content: '您确认要取消该订单吗？',
                 success: function (res) {
                     if (res.confirm) {
                         apiOrderCancel(order_id).then(() => {
-                            wx.showToast({
+                            mpvue.showToast({
                                 title: '您已成功取消订单',
                                 icon: 'success',
                                 duration: 1000
                             })
                             _this.$emit('cancel')
                         }).catch(err => {
-                            wx.showToast({
+                            mpvue.showToast({
                                 title: err.msg,
                                 duration: 1000
                             })
@@ -162,9 +162,9 @@ export default {
                 actual: order.actual_price,
                 deadlinetime
             });
-            mpvue.navigateTo({
-                url: `/pages/shop/pay/main?order_id=${order.order_id}`
-            }) 
+            this.$router.push({
+                path: `/pages/shop/pay/main?order_id=${order.order_id}`
+            })
         }
     },
 };
@@ -211,7 +211,7 @@ export default {
 }
 .card-bd{
     .card{
-        background: #f5f5f5;
+        background: #f2f2f2;
         padding: 20rpx;
         display: flex;
     }

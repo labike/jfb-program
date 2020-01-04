@@ -13,10 +13,6 @@ const state = {
 }
 
 const mutations = {
-    SET_TOKEN: (state, token) => {
-        state.token = token;
-        mpvue.setStorageSync('token', token);
-    },
     // 设置店铺信息
     SET_SHOP_INFO: (state, shopInfo) => {
         state.shopInfo = shopInfo;
@@ -36,11 +32,11 @@ const mutations = {
 const actions = {
     /**
      * 获取商铺信息并缓存
-     * @param {*} params 
+     * @param {*} shop_id 
      */
-    saveShopInfo ({ commit }, params) {
+    saveShopInfo ({ commit }, shop_id) {
         return new Promise((resolve,reject) => {
-            apiGetShop(params).then(res => {
+            apiGetShop(shop_id).then(res => {
                 const shopInfo = createShop(res);
                 commit('SET_SHOP_INFO', saveShop(shopInfo));
                 resolve(shopInfo)

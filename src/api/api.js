@@ -31,25 +31,7 @@ export const apiGetIndex = params => {
 
 /********************************************** 广告位 ******************************************** */
 
-
-// /**
-//  * 2.1.1 advert数据附近顶部
-//  * @method GET https://clients.qmw111.com/v1/adverts/nearbyTop
-//  * @return {}
-//  */
-// export const apiGetAdvert = () => {
-//     return get(`adverts/nearbyTop`).then(res => {        
-//         return Promise.resolve(res.data); 
-//     }).catch(err => {
-//         if (err.code === 0) {
-//             return Promise.reject(err);
-//         } else {
-//             throw err.msg;
-//         }
-//     });
-// };
-
-/** 获取广告
+/** 2.1.1 获取广告
  *  首页【顶部】（名称暂定活动宝） position 1 industry 0
  *  附近【顶部】（名称暂定曝光栏） position 4 industry 0
  *  美食【顶部】（名称暂定活动宝） position 1 industry 1
@@ -179,8 +161,8 @@ export const apiGetHotWords = city_id => {
  * @params s_id:门店id
  * @return {}
  */
-export const apiGetShop = params => {
-    return get(`store-details`,params).then(res => {        
+export const apiGetShop = s_id => {
+    return get(`store-details`, {s_id}).then(res => {        
         return Promise.resolve(res.data); 
     }).catch(err => {
         if (err.code === 0) {
@@ -233,8 +215,10 @@ export const apiRateData = params => {
  * 4.7.3 门店评价列表 
  * @method GET
  * @params type 评论类型【all:全部,img:晒图,nice：好评,bed：差评】
- * @params page 页码
- * @params s_id
+ * @params tag_id: 标签id   (非必填,默认0表示全部） 
+ * @params page 当前页码   (非必填,默认1）
+ * @params s_id 门店id
+ * @params limit: 每页显示条数  (非必填,默认5）
  * @return []
  */
 export const apiGetShopRate = params => {
@@ -278,7 +262,7 @@ export const apiGetMyRate = params => {
  * @return {"imgList":[]}
  */
 export const apiGetShopImg = params => {
-    return get(`store-img/${params.type}/${params.s_id} `).then(res => {
+    return get(`store-img/${params.type}/${params.s_id}`).then(res => {
         return Promise.resolve(res.data); 
     }).catch(err => {
         if (err.code === 0) {
@@ -298,7 +282,7 @@ export const apiGetShopImg = params => {
  * @return []
  */
 export const apiGetProList = params => {
-    return get(`pro-list/${params.pro_type}/${params.s_id} `).then(res => {
+    return get(`pro-list/${params.pro_type}/${params.s_id}`).then(res => {
         return Promise.resolve(res.data); 
     }).catch(err => {
         if (err.code === 0) {
@@ -456,10 +440,10 @@ export const apiEditNickname = nickname => {
  * @method POST https://clients.qmw111.com/v1/order-create
  * 公共必填
  * @params s_id: 门店id
- * @params type:订单类型（1：代金券 2：团购 3：买单 4：购物车）
+ * @params type:订单类型（1：代金券 2：团购 3：买单 4：购物车 7：活动）
  * 买单
  * @params total：买单金额
- * 代金券
+ * 代金券 / 团购 / 活动
  * @params p_id:商品id
  * @params number: 数量
  * 购物车
@@ -488,7 +472,8 @@ export const apiCreateOrder = params => {
  * @method POST https://clients.qmw111.com/v1/order-pay
  * @params order_id:订单号
  * @params actual: 实际支付金额
- * @params pay_method:支付方式 [3-支付宝支付  4-jsapi微信支付]
+ * @params pay_method:支付方式 [3-支付宝支付  4-jsapi微信支付 6-小程序]
+ * @params openid 
  * @return confing
  */
 export const apiOrderPay = params => {
@@ -804,13 +789,100 @@ export const apiOrderDiscount = params => {
 };
 
 
+/******************************************** 充值 ******************************************* */
+
+/**
+* 充值面值列表
+* @method GET  http://clients.qmw111.com/v1/recharge
+* @params x_id: 商家id
+*/
+export const apiGetRechargeList = x_id => {
+    return get('users/recharge', { x_id }).then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        throw err;
+    });
+};
+
+
+/**
+* 充值下单
+* @method POST  https://clients.qmw111.com/v1/users/create-order
+* @params x_id: 商家id
+* @params money: 充的钱数
+* @return order_id
+*/
+export const apiCreateRecharge = params => {
+    return post(`users/create-order`, params).then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        if (err.code === 0) {
+            return Promise.reject(err);
+        } else {
+            throw err.msg;
+        }
+    });
+};
+
+/**
+ * 用户充值订单提交支付
+ * @method POST https://clients.qmw111.com/v1/users/order-pay
+ * @params order_id:订单号
+ * @params actual: 实际支付金额
+ * @params pay_method:支付方式 [3-支付宝支付  4-jsapi微信支付 6-小程序]
+ * @params openid 
+ * @return confing
+ */
+export const apiPayRecharge = params => {
+    return post(`users/order-pay`, params).then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        if (err.code === 0) {
+            return Promise.reject(err);
+        } else {
+            throw err.msg;
+        }
+    });
+};
+
+/**
+ * 用户充值消费明细
+ * @method GET https://clients.qmw111.com/v1/users/expend 消费明细
+ * @method GET https://clients.qmw111.com/v1/users/income 充值明细
+ * @params page: 1
+ * @params limit: 每页显示条数
+ * @return confing
+ */
+export const apiRechargeDetail = confing => {
+    return get(`user/${confing.type}`, confing.params).then(res => {
+        return Promise.resolve(res.data); 
+    }).catch(err => {
+        if (err.code === 0) {
+            return Promise.reject(err);
+        } else {
+            throw err.msg;
+        }
+    });
+};
+
+/**
+ * 用户共享卡余额
+ * @method GET http://clients.qmwjj.cc/v1/user/recharge-balance
+ * @return confing
+ */
+export const apiRechargeBalance = () => {
+    return get(`user/recharge-balance`).then(res => {
+        return Promise.resolve(res.data); 
+    })
+};
+
 
 /******************************************** 我的钱包 ******************************************* */
 
 /**
 * reward 我的钱包
 * @method GET  https://clients.qmw111.com/v1/reward/statistics
-* @return  total：总收益 balance：余额 arrival_account：已提现
+* @return  total：总收益 balance：返佣余额 arrival_account：已提现
 */
 export const apiReward = params => {
     return get('reward/statistics', params).then(res => {
@@ -819,12 +891,13 @@ export const apiReward = params => {
         throw err;
     });
 };
+
 /**
 * reward 返佣店铺详情
 * @method GET  https://clients.qmw111.com/v1/reward/list
 * @params  limit: 每页显示条数
 * @params  page: 页码
-* @return  total：总收益 balance：余额 arrival_account：已提现
+* @return  total：总收益 balance：返佣余额 arrival_account：已提现
 */
 export const apiRewardList = params => {
     return get('reward/list', params).then(res => {
@@ -1040,9 +1113,16 @@ export const apiGiveDetail = gid => {
     return get2('give/detail', { gid }).then(res => {
         return Promise.resolve(res.data); 
     }).catch(err => {
-        throw err;
+        if (err.code === 0) {
+            return Promise.reject(err);
+        } else {
+            throw err.msg;
+        }
     });
 };
+
+
+
 
 
 

@@ -88,7 +88,7 @@ export default {
     onLoad (options) {
         this.s_id = options.shop_id;
         this.getShopImg(this.activeTab)
-        const res = wx.getSystemInfoSync()
+        const res = mpvue.getSystemInfoSync()
         this.stv.lineWidth = res.windowWidth / this.tabs.length;
         this.stv.windowWidth = res.windowWidth;
     },

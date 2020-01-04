@@ -79,8 +79,8 @@ export default {
             shareShopStatus: false,
             cardInfo: {
                 title: '减付宝', //姓名
-                imageUrl: "http://t2.hddhhn.com/uploads/tu/201806/9999/91480c0c87.jpg", 
-                qrCode: "http://i4.hexun.com/2018-07-05/193365388.jpg", 
+                imageUrl: "", 
+                qrCode: "", 
                 address: "程序员鼓励师", //职位
                 mobile: "13888888888", //手机
                 company: "减付宝", //公司
@@ -90,7 +90,7 @@ export default {
     onLoad (options) {
         this.activeTab = Number(options.tab) || 0
         this.getVisitedShop(this.activeTab)
-        var res = wx.getSystemInfoSync()
+        var res = mpvue.getSystemInfoSync()
         this.stv.lineWidth = res.windowWidth / this.tabs.length;
         this.stv.windowWidth = res.windowWidth;
         this.stv.offset = this.stv.lineWidth * this.activeTab

@@ -42,9 +42,9 @@ export default {
 
     methods: {
         bookDetail(item) {
-            wx.navigateTo({
-                url: "/pages/detail/main?id=" + item.id
-            });
+            this.$router.push({
+                path: "/pages/detail/main?id=" + item.id
+            })
         }
     }
 };

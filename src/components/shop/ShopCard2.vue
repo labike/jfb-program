@@ -36,7 +36,6 @@
                 <li v-if="shop.share">分享</li>
             </ul>
             <div class="btn-group" v-if="shop.share">
-            
                 <div class="btn join" @click.stop="tapShare('join')">成为合伙人</div>
                 <div class="btn earn" @click.stop="tapShare('earn')">去赚钱</div>
             </div>
@@ -155,12 +154,10 @@ export default {
             const that = this
             apiShareStore(that.shop.s_id).then(result => {
                 result.type = type
+                
                 that.$emit('share', result)
             })
         },
-        tapEarn() {
-            
-        }
     },
 };
 </script>

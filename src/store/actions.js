@@ -1,5 +1,10 @@
-import { saveSearch, clearSearch, deleteSearch } from '@/config/cache';
-import { apiCreateOrder, apiOrderDetails } from "@/api/api.js";
+/*
+ * @Author: zhangHang
+ * @Date: 2019-05-15 10:02:02
+ * @Description: file content
+ */
+import { saveSearch, clearSearch, deleteSearch, saveIndustry } from '@/config/cache';
+import { apiCreateOrder, apiOrderDetails, apiCreateRecharge, apiNavList } from "@/api/api.js";
 
 /**
  * 保存搜索记录
@@ -25,6 +30,24 @@ export const clearSearchHistory = function ({commit}) {
 }
 
 
+/**
+ * 查詢全部行業 saveIndustry
+ * @param refresh<false> 
+ */
+export const queryIndustry = function ({state, commit}, refresh) {
+    return new Promise(resolve => {
+        if (state.storeIndustry && !refresh) {
+            resolve(state.storeIndustry)
+        } else {
+            apiNavList('index').then(mList => {
+                let IndustryList = saveIndustry(mList)
+                commit('SET_ALL_INDUSTRY', IndustryList)
+                resolve(IndustryList)
+            })  
+        }
+    })    
+}
+
 
 
 /**
@@ -32,6 +55,20 @@ export const clearSearchHistory = function ({commit}) {
  * @param {*} params 
  */
 export const createOrder = function ({commit}, params) {
+    if (params.type === 0) {
+        return new Promise(resolve => {
+            apiCreateRecharge(params).then(res => {
+                commit('SET_ORDER_RETURN', {
+                    order_id: res.order_id,
+                    order_name: '充值',
+                    actual: params.money,
+                    deadlinetime: null,
+                    recharge: true
+                });
+                resolve(res)
+            })
+        })
+    }
     return new Promise(resolve => {
         apiCreateOrder(params).then(res => {
             commit('SET_ORDER_RETURN', {

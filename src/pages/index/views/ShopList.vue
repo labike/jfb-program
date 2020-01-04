@@ -5,7 +5,7 @@
  -->
 
 <template>
-	<section class="shop-list">
+	<section class="shop-list"  v-if="showListView">
         <div class="nav-bar">
             <scroll-view :scroll-left="scrollleft"
                 id="navBar"
@@ -17,8 +17,8 @@
                         :class="{ cur:currentTab === oix }"
                         @click="currentTab = oix"
                     >
-                        <div class="name">{{nav.name}}</div>
-                        <div class="desc">{{nav.desc}}</div>
+                        <div class="name">{{nav.nickname}}</div>
+                        <div class="desc">{{nav.description}}</div>
                     </li>
                 </ul>
             </scroll-view>
@@ -35,7 +35,7 @@
                         <div class="text">暂无相关商铺！</div>
                     </section>
 
-					<scroll-view scroll-y v-else
+					<scroll-view scroll-y v-if="swi.shopList.length"
                         @scrolltolower="LoadMore"
                         class="content"
                         :item="currentTab"
@@ -60,40 +60,14 @@ export default {
     components: {
         ShopCard,
         ImageView
-    },  
+    },
+    props: {
+        allIndysty: Array
+    },
     data() {
         return {
-            navList: [{
-                type: 1,
-                name: '美食',
-                desc: '吃遍美食',
-                shopList: []
-            }, {
-                type: 4,
-                name: '爱车',
-                desc: '汽车服务',
-                shopList: []
-            }, {
-                type: 3,
-                name: '休闲',
-                desc: '潮玩享乐',
-                shopList: null
-            }, {
-                type: 5,
-                name: '健康',
-                desc: '健康养生',
-                shopList: []
-            }, {
-                type: 6,
-                name: '教育',
-                desc: '学习培训',
-                shopList: []
-            }, {
-                type: 7,
-                name: '母婴',
-                desc: '母婴亲子',
-                shopList: []
-            }],
+            showListView: false, 
+            navList: [],            
             fixtop: false, //是否吸顶
             top: 0, //导航栏初始到屏幕顶部高度
             currentTab: 0, //选项卡及swiper位置
@@ -102,13 +76,13 @@ export default {
             swiperHeight: 1000, //此处为swiper高度
             listScroll: false, //列表是否滚动
             listScrollHeigth: 0, //滚动界限
-            listScrollTop: 0, //滚动界限
-            shopListLength: 10
+            shopListLength: 10,
+            listLoading: false
         };
     },
     computed: {
         appData() {
-            return wx.getStorageSync('appData');
+            return mpvue.getStorageSync('appData');
         }
     },
     methods: {
@@ -121,7 +95,10 @@ export default {
                 return
             }
             const that = this;
-            const query = wx.createSelectorQuery();
+            if (that.listLoading) {
+                return
+            }
+            const query = mpvue.createSelectorQuery();
             that.currentTab = e.mp.detail.current;
             query.select("#navitem" + that.currentTab).boundingClientRect();
             query.exec(function(res) {
@@ -132,11 +109,12 @@ export default {
                     that.scrollleft = res[0].left;
                 }
                 setTimeout(function () {
-                    wx.pageScrollTo({
+                    mpvue.pageScrollTo({
                         scrollTop: that.top
                     })
                 }, 20)
             });
+            that.listLoading = true
             that.updataShopList(that.currentTab)
 
         },
@@ -146,30 +124,20 @@ export default {
                 const _current = _this.navList[index]
                 _current.empty = false
                 if (!page) {
-                    _current.shopList = []
                     _current.page = 1
                     _current.loadMore = true
+                    _current.shopList = []
                 } else {
                     _current.page = page
-                }
-                if (!_current.loadMore) {
-                    _current.loadMore = false
-                    wx.showToast({
-                        title: "没有更多数据了",
-                        icon: 'none',
-                        duration: 2000
-                    })
-                    return
                 }
                 apiGetRecommends({
                     lng: _this.appData.currentLocation.lng,
                     lat: _this.appData.currentLocation.lat,
-                    top_sort: _current.type, 
+                    top_sort: _current.id, 
                     page: _current.page,
                     limit: _this.shopListLength,
                 }).then(res => {
-                    const shopList = _current.shopList.slice(0)
-                    _current.shopList = []
+                    let shopList = _current.shopList
                     if (_this.shopListLength > res.list.length) {
                         _current.loadMore = false
                     }
@@ -178,11 +146,10 @@ export default {
                             shopList.push(element)
                         }
                     });
-                    _current.shopList = shopList
                     if (!_current.shopList.length) {
                         _current.empty = true
                     }
-                    _current.loading = true
+                    _this.listLoading = false
                     resolve(res.list.length)
                 }) 
 
@@ -192,18 +159,37 @@ export default {
         LoadMore(e) {            
             const that = this
             let _current = that.navList[that.currentTab]
-            console.log('LoadMore',_current);
+            console.log('LoadMore',_current.loadMore, _current);
+            if (!_current.loadMore) {
+                mpvue.showToast({
+                    title: "没有更多数据了",
+                    icon: 'none',
+                    duration: 2000
+                })
+                return
+            } 
             that.updataShopList(that.currentTab, _current.page + 1)
+            
+        },
+        _formatNavList() {
+            let that = this;
+            let allIndysty = that.allIndysty.filter(indysty => indysty.index_show && indysty.index_show === '1')
+            that.navList = allIndysty.map((item, index) => {
+                that.$set(item,"shopList", [])
+                return item
+            })
+            that.showListView = true
         }
     },
 
     onLoad() {
+        this._formatNavList()
         let that = this;
-        let system = wx.getSystemInfoSync();
+        let system = mpvue.getSystemInfoSync();
         that.windowWidth = system.windowWidth;
         that.updataShopList(that.currentTab).then(() => {
             setTimeout(() => {
-                const query = wx.createSelectorQuery();               
+                const query = mpvue.createSelectorQuery();               
                 query.select(".jfb-header").boundingClientRect();
                 query.select(".jfb-warp").boundingClientRect();
                 query.select(".hd-warp").boundingClientRect();
@@ -222,10 +208,10 @@ export default {
         const self = this;
         self.fixtop = false;
         self.listScroll = false;
+        self.showListView = false
     },
     onPageScroll: function(e) {
         // console.log(e.scrollTop);
-        
         const that = this;
         if (that.top === 0) {
             that.fixtop = false;

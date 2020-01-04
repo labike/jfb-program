@@ -34,31 +34,31 @@
             </div>
             <div class="scale-warp" v-if="shareScale">
                 <ul class="scale">
-                    <li class="paying">
+                    <li class="vippay" v-if="shareScale[orderType.vippay]-0">
                         <div class="icon"></div>
                         <div class="name">分享买单</div>
-                        <div class="num">{{shareScale[orderType.paying]}}%</div>
+                        <div class="num">{{shareScale[orderType.vippay]-0}}%</div>
                     </li>
-                    <li class="vouchers">
+                    <li class="vouchers" v-if="shareScale[orderType.vouchers]-0">
                         <div class="icon"></div>
                         <div class="name">分享代金券</div>
-                        <div class="num">{{shareScale[orderType.vouchers]}}%</div>
+                        <div class="num">{{shareScale[orderType.vouchers]-0}}%</div>
                     </li>
-                    <li class="goods">
+                    <li class="goods"  v-if="shareScale[orderType.goods]-0">
                         <div class="icon"></div>
                         <div class="name">分享购物车</div>
-                        <div class="num">{{shareScale[orderType.goods]}}%</div>
+                        <div class="num">{{shareScale[orderType.goods]-0}}%</div>
                     </li>
-                    <li class="combo">
+                    <li class="combo" v-if="shareScale[orderType.combo]-0">
                         <div class="icon"></div>
                         <div class="name">分享团购</div>
-                        <div class="num">{{shareScale[orderType.combo]}}%</div>
+                        <div class="num">{{shareScale[orderType.combo]-0}}%</div>
                     </li>
                 </ul>
             </div>
             <div class="explain">
                 <span class="title">说明 : </span>{{explain}}
-                <span class="btn" @click="jumpPages(`money/index/main`)"
+                <span class="btn" @click="jumpPages(`rebate/index/main`)"
                 >查看钱包</span>
             </div>
         </div>
@@ -134,7 +134,7 @@ export default {
                     that.cardInfo.shareImg = that.cardInfo.storeInfo.share_img || that.cardInfo.storeInfo.header_img
                     that.shareImgHidden = true
                 } else {
-                    wx.showModal({
+                    mpvue.showModal({
                         content: '您分享的店铺已到达上限',
                         showCancel: false,
                         // confirmText: '好的',
@@ -164,21 +164,21 @@ export default {
          * 先下载商铺图片
          */
         getAvaterInfo: function() {
-            wx.showLoading({
+            mpvue.showLoading({
                 title: '正在下载素材...',
                 mask: true,
             });
             var that = this;
             that.saveImgObj.onload = false
-            wx.downloadFile({
+            mpvue.downloadFile({
                 url: that.cardInfo.shareImg, //商铺图片路径
                 success: function(res) {
-                    wx.hideLoading();
+                    mpvue.hideLoading();
                     if (res.statusCode === 200) {
                         var imageUrl = res.tempFilePath; //下载成功返回结果
                         that.getQrCode(imageUrl); //继续下载二维码图片
                     } else {
-                        wx.showToast({
+                        mpvue.showToast({
                             title: '商铺图片下载失败！',
                             icon: 'none',
                             duration: 2000,
@@ -196,22 +196,22 @@ export default {
          * 下载二维码图片
          */
         getQrCode: function(imageUrl) {
-            wx.showLoading({
+            mpvue.showLoading({
                 title: '二维码生成中...',
                 mask: true,
             });
             var that = this;
 
             //已有二维码
-            wx.downloadFile({
+            mpvue.downloadFile({
                 url: that.cardInfo.shareQrImg, //二维码路径
                 success: function(res) {
-                    wx.hideLoading();
+                    mpvue.hideLoading();
                     if (res.statusCode === 200) {
                         var codeSrc = res.tempFilePath;
                         that.sharePosteCanvas(imageUrl, codeSrc);
                     } else {
-                        wx.showToast({
+                        mpvue.showToast({
                             title: '二维码下载失败！',
                             icon: 'none',
                             duration: 2000,
@@ -231,18 +231,18 @@ export default {
          * @param codeSrc   下载的二维码图片路径
          */
         sharePosteCanvas: function(imageUrl, codeSrc) {
-            wx.showLoading({
+            mpvue.showLoading({
                 title: '海报生成中...',
                 mask: true,
             })
             let that = this;
             let cardInfo = that.cardInfo; //需要绘制的数据集合
             cardInfo.company = "长按二维码进入本商家店铺"
-            const ctx = wx.createCanvasContext('shareImg'); //创建画布
+            const ctx = mpvue.createCanvasContext('shareImg'); //创建画布
             const ctxW = 750;
             const ctxH = 1000;
             const codeWidth = 140
-            const query = wx.createSelectorQuery();
+            const query = mpvue.createSelectorQuery();
             query.select(".top").boundingClientRect();
             query.exec(function(rect) {
                 let [ imgObj ] = rect;
@@ -353,12 +353,12 @@ export default {
         //保存到相册
         downShareImg: function() {
             var that = this;             
-            wx.showLoading({
+            mpvue.showLoading({
                 title: '正在保存',
                 mask: true,
             })
             setTimeout(function() {
-                wx.canvasToTempFilePath({
+                mpvue.canvasToTempFilePath({
                     canvasId: 'shareImg',
                     x: 0,
                     y: 0,
@@ -367,13 +367,12 @@ export default {
                     destWidth: that.saveImgObj.width,
                     destHeight: that.saveImgObj.height,
                     success: function(res) {
-                        wx.hideLoading();
+                        mpvue.hideLoading();
                         var tempFilePath = res.tempFilePath;
-                        wx.saveImageToPhotosAlbum({
+                        mpvue.saveImageToPhotosAlbum({
                             filePath: tempFilePath,
                             success(res) {
-                            // utils.aiCardActionRecord(19);
-                                wx.showModal({
+                                mpvue.showModal({
                                     content: '保存成功，从相册中分享到朋友圈吧',
                                     showCancel: false,
                                     confirmText: '好的',
@@ -387,7 +386,7 @@ export default {
                                 })
                             },
                             fail: function(res) {
-                                wx.showToast({
+                                mpvue.showToast({
                                     title: res.errMsg,
                                     icon: 'none',
                                     duration: 2000
@@ -413,7 +412,7 @@ export default {
     },
     // onShow: function() {
     //     let that = this;
-    //     wx.getSystemInfo({
+    //     mpvue.getSystemInfo({
     //         success: function(res) {
     //             console.log(res);
                 
@@ -539,9 +538,9 @@ export default {
             background-size: contain;
             margin: 0 auto 20rpx;
         }
-        .paying{
+        .vippay{
             .icon{
-                background-image: url(~@/assets/img/share_paying.png);
+                background-image: url(~@/assets/img/share_vippay.png);
             }
         }
         .vouchers{

@@ -1,7 +1,6 @@
-// import { orderType } from '@/config/base'
+
 import { createCombo } from '@/config/class/combo';
 import { createVoucher } from '@/config/class/voucher';
-import { createPayTheBill } from '@/config/class/pay_the_bill';
 
 
 export default class Shop {
@@ -24,16 +23,19 @@ export function createShop (shopData) {
         infoData: shopData.infoData,
         otherInfo: shopData.otherInfo,
         commentScore: shopData.comment,
-        proData: _normalizeProData(shopData.proData)
+        proData: _normalizeProData(shopData)
     });
 }
 
 
-function _normalizeProData(params) {
-    // console.log('Class shop',params);
-
-    if (params.check) {
-        params.check = createPayTheBill(params.check);
+function _normalizeProData(shopData) {
+    console.log('Class shop',shopData);
+    let params = shopData.proData
+    let is_paying_pro = parseInt(shopData.recharge)
+    if (is_paying_pro && is_paying_pro !== 100) {
+        params.is_paying_pro = is_paying_pro
+    } else {
+        params.is_paying_pro = 0
     }
     
     if (params.vouchers) {

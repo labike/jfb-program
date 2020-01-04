@@ -23,6 +23,7 @@
                 {{ tag.type_name }}<span>({{ tag.count }})</span>
             </li>
         </ul>
+        
         <div class="remark-list" v-if="totalPage > 0">
             <dl class="remark-item" v-for="(rate, inx) in rateList" :key="rate.id"  :data-index="'o_'+inx">
                 <dt class="user">

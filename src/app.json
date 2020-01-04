@@ -18,21 +18,16 @@
         "pages/mine/patronage/main",
         "pages/mine/message/main",
         "pages/mine/evaluate/main",
+        "pages/mine/recharge/main",
         "pages/mine/about/main",
         "pages/filter/near/main",
-        "pages/filter/repast/main",
-        "pages/filter/hotel/main",
-        "pages/filter/pastime/main",
-        "pages/filter/icar/main",
-        "pages/filter/health/main",
-        "pages/filter/education/main",
-        "pages/filter/fransnana/main",
         "pages/filter/all/main",
-        "pages/filter/category/main"
+        "pages/filter/category/main",
+        "pages/filter/reclassify/main"
     ],
     "subPackages": [
         {
-            "root": "pages/money/",
+            "root": "pages/rebate/",
             "pages": [
                 "index/main",
                 "withdraw/main",
@@ -45,6 +40,7 @@
             "pages": [
                 "index/main",
                 "paythebill/main",
+                "recharge/main",
                 "photos/main",
                 "item/main",
                 "pay/main",

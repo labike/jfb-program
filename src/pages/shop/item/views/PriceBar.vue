@@ -28,7 +28,7 @@ export default {
         jumpConfirm(id) {
             const that = this 
             that.$router.push({
-                url: `/pages/orders/confirm/main?shop_id=${that.shop_id}&title=${that.title}&item_id=${id}`
+                path: `/pages/orders/confirm/main?shop_id=${that.shop_id}&title=${that.title}&item_id=${id}`
             }) 
         }
     }

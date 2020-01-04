@@ -1,10 +1,10 @@
 {
 	"description": "项目配置文件。",
 	"setting": {
-		"urlCheck": true,
+		"urlCheck": false,
 		"es6": false,
 		"enhance": false,
-		"postcss": false,
+		"postcss": true,
 		"minified": true,
 		"newFeature": true,
 		"coverView": true,
@@ -136,10 +136,10 @@
 					"scene": null
 				},
 				{
-					"id": 13,
+					"id": 12,
 					"name": "paythebill",
 					"pathName": "pages/shop/paythebill/main",
-					"query": "shop_id=31",
+					"query": "shop_id=48",
 					"scene": null
 				},
 				{
@@ -186,9 +186,9 @@
 				},
 				{
 					"id": 19,
-					"name": "mine/evaluate",
+					"name": "evaluate",
 					"pathName": "pages/mine/evaluate/main",
-					"query": "",
+					"query": "shop_id=48",
 					"scene": null
 				},
 				{
@@ -202,7 +202,7 @@
 					"id": 21,
 					"name": "pages/shop/payok/main",
 					"pathName": "pages/shop/payok/main",
-					"query": "order_id=201910281132349963785115",
+					"query": "order_id=202001021641419489927820",
 					"scene": null
 				},
 				{
@@ -294,6 +294,34 @@
 					"name": "faddish",
 					"pathName": "pages/shop/faddish/main",
 					"query": "shop_id=48&gid=249",
+					"scene": null
+				},
+				{
+					"id": 35,
+					"name": "reclassify",
+					"pathName": "pages/filter/reclassify/main",
+					"query": "industry=repast",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/shop/index/main",
+					"pathName": "pages/shop/index/main",
+					"query": "shop_id=48",
+					"scene": null
+				},
+				{
+					"id": 37,
+					"name": "recharge",
+					"pathName": "pages/shop/recharge/main",
+					"query": "shop_id=48",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "mine/recharge",
+					"pathName": "pages/mine/recharge/main",
+					"query": "",
 					"scene": null
 				}
 			]

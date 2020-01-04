@@ -11,7 +11,7 @@ import { apiStoreScan } from "@/api/api.js";
 export default {
     name: 'Invitation',
     onLoad (options) {
-        console.log(options);
+        mpvue.removeStorageSync('loggingSign')
         // const scene = decodeURIComponent(options.scene)
         const s_id = options.x_id;
         const tjr_id = options.tjr_id

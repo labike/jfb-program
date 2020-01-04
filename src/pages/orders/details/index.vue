@@ -7,7 +7,7 @@
 <div class="container" v-if="detailed">
 
     <!-- 店铺（买单） -->
-    <div class="model slf shop"  v-if="detailed.type==orderType.paying || detailed.type==orderType.goods" @click="jumpPage('shop',detailed.baseInfo.x_id)">
+    <div class="model slf shop"  v-if="detailed.type==orderType.vippay || detailed.type==orderType.paying || detailed.type==orderType.goods" @click="jumpPage('shop',detailed.baseInfo.x_id)">
         <div class="img-warp">
             <img :src="detailed.baseInfo.header_img" alt="">
         </div>
@@ -53,22 +53,25 @@
         </div>
 
         <!-- 买单 -->
-        <div class="model-content" v-if="detailed.type==orderType.paying">
-            <ul class="cell">
+        <div class="model-content" v-if="detailed.type==orderType.vippay || detailed.type==orderType.paying">
+            <ul class="cell lrbj">
                 <li>
-                    <span class="left">订单金额</span>
+                    <span class="left">消费金额</span>
                     <span class="right">￥{{detailed.baseInfo.total_amount}}</span>
                 </li>
                 <li v-if="Number(detailed.baseInfo.discount_amount) != 0">
-                    <span class="left">商家优惠</span>
+                    <span class="left"  v-if="detailed.type==orderType.paying">商家优惠</span>
+                    <span class="left"  v-if="detailed.type==orderType.vippay">共享增值卡支付</span>
                     <span class="right">￥{{detailed.baseInfo.discount_amount}}</span>
                 </li>
                 <li>
-                    <span class="left">支付金额</span>
+                    <span class="left"  v-if="detailed.type==orderType.paying">支付金额</span>
+                    <span class="left"  v-if="detailed.type==orderType.vippay">移动支付支付</span>
                     <span class="right">￥{{detailed.baseInfo.pay_amount}}</span>
                 </li>
             </ul>
         </div>
+
 
         <!-- 购物车 -->
         <div class="model-content" v-if="detailed.type== orderType.goods">
@@ -161,31 +164,31 @@
         <div class="model-content">
             <ul class="cell">
                 <li>
-                    <span class="left">订&nbsp;&nbsp;单&nbsp;&nbsp;号&nbsp;&nbsp;:</span>
+                    <span class="left">订&nbsp;&nbsp;单&nbsp;&nbsp;号：</span>
                     <span class="right">{{detailed.baseInfo.order_id}}</span>
                 </li>
                 <li  v-if="detailed.baseInfo.is_pay_success==1">
-                    <span class="left">付款时间&nbsp;&nbsp;:</span>
+                    <span class="left">付款时间：</span>
                     <span class="right">{{payTime}}</span>
                 </li>
                 <li>
-                    <span class="left">总&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;价&nbsp;&nbsp;:</span>
+                    <span class="left">总&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;价：</span>
                     <span class="right">￥{{detailed.baseInfo.total_amount}}</span>
                 </li>
                 <li>
-                    <span class="left">优&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;惠&nbsp;&nbsp;:</span>
+                    <span class="left">优&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;惠：</span>
                     <span class="right">￥{{detailed.baseInfo.discount_amount}}</span>
                 </li>
                 <li v-if="detailed.baseInfo.is_pay_success == 1">
-                    <span class="left">实&nbsp;&nbsp;付&nbsp;&nbsp;款&nbsp;&nbsp;:</span>
+                    <span class="left">实&nbsp;&nbsp;付&nbsp;&nbsp;款：</span>
                     <span class="right">￥{{detailed.baseInfo.pay_amount}}</span>
                 </li>
                 <li v-if="detailed.baseInfo.is_pay_success == 0">
-                    <span class="left">待&nbsp;&nbsp;付&nbsp;&nbsp;款&nbsp;&nbsp;:</span>
+                    <span class="left">待&nbsp;&nbsp;付&nbsp;&nbsp;款：</span>
                     <span class="right">￥{{detailed.baseInfo.pay_amount}}</span>
                 </li>
                 <li v-if="detailed.baseInfo.is_refund == 2">
-                    <span class="left">退款金额&nbsp;&nbsp;:</span>
+                    <span class="left">退款金额：</span>
                     <span class="right">￥{{detailed.baseInfo.refund_amount}}</span>
                 </li>
             </ul>
@@ -492,6 +495,11 @@ export default {
                 flex: 1;
             }
         }
+        &.lrbj {
+            li{
+                justify-content: space-between;
+            }
+        }
     }
     .icon{
         display: inline-block;
@@ -506,7 +514,8 @@ export default {
         position: relative;
         top: -2px;
     }
-    &.paying{
+    &.paying,
+    &.vippay{
         .icon{
             background-image: url(~@/assets/img/paying_1.png);
         }

@@ -4,94 +4,100 @@
  * @Description: file content
  -->
 <template>
-<section class="pay-the-bill" v-if="paying">
-    <p class="address">{{paying.storeInfo.address}}</p>
+<section class="pay-the-bill" v-if="storeInfo">
+    <div class="store-name">{{storeInfo.storeName}}</div>
+    <p class="store-pro">本店消费支持{{vipPayPro}}%共享增值卡余额支付</p>
     <ul class="cell consume">
+        <li class="odrer-vip">
+            <p class="lable"><i class="vip"></i>共享增值卡支付<span>({{vipPayPro}}%)</span></p>
+            <div class="price">￥{{vipPrice}}</div>
+        </li>
+        <li class="odrer-wechat">
+            <p class="lable"><i class="wechat"></i>微信支付<span>({{100-vipPayPro}}%)</span></p>
+            <div class="price" >￥{{payPrice}}</div>
+        </li>
         <li class="odrer-price">
-            <p class="lable">订单金额</p>
-            <div class="input">
-                <input type="digit" v-model="orderPrice" placeholder="请询问服务员后输入"
+            <p class="lable">消费金额</p>
+            <div class="input">￥
+                <input type="digit" v-model="orderPrice" placeholder="输入金额"
+                    placeholder-style="color:#C0C0C0;font-size:30px;"
                     :confirm-hold='true' :focus='true'
                     @input='replaceInput'
                 />
             </div>
         </li>
-        <li class="odrer-ticket" v-if="paying.isUse">
-            <p class="lable">商家优惠<span class="tenth">({{paying.discount/10}}折)</span></p>
-            <div class="input">{{discountPrice}}</div>
-        </li>
-        <li class="odrer-ticket" v-else>
-            <p class="lable">商家优惠</p>
-            <div class="input">该时间段无优惠</div>
-        </li>
-        <li class="odrer-other">
-            <p class="lable">实际支付</p>
-            <div class="input">
-                <div class="input">{{payPrice}}</div>
-            </div>
-        </li>
     </ul>
-    <div id="payBtn" @click="jumpPay">和店员确认，立即支付</div>
+    <div class="tips" v-show="orderPrice&&(prepVipPrice>balance)">您的共享增值卡余额不足，只可抵扣0.00元，
+        <span @click="jumpRecharge">去充值</span></div>
+    <div class="payBtn" @click="jumpPay">和店员确认，立即支付</div>
 </section>
 </template>
 
 <script>
-import PayTheBill from '@/config/class/pay_the_bill';
 import { mapActions, mapState } from "vuex";
 import { orderType } from '@/config/base';
-import { Toast } from '@/utils/index';
+import { apiGetRechargeList } from "@/api/api.js";
 export default {
     name: "payTheBill",
     data() {
         return {
             shop_id: 0,
-            explain: false,
+            balance: 0,
+            payPrice: 0,
+            vipPrice: 0,
+            vipPayPro: 0,
             orderPrice: '',
-            paying: null
+            storeInfo: null,
+            prepVipPrice: 0
         };
     },
-    computed: {
-        discountPrice: function() {
-            let oPrice = parseFloat(this.orderPrice);
-            let price = '';
-            if (this.paying) {
-                const discount = (1 - this.paying.discount / 100).toFixed(2);
-                price = -(discount * oPrice).toFixed(2) || '';
+    onUnload() {        
+        const self = this;
+        self.shop_id = 0
+        self.balance = 0
+        self.payPrice = 0
+        self.vipPrice = 0
+        self.vipPayPro = 0
+        self.orderPrice = ''
+        self.prepVipPrice = 0
+        self.storeInfo = null
+    },
+    watch: {
+        orderPrice(oPrice) {
+            const that = this
+            oPrice = parseFloat(oPrice) || 0;
+            let prepVipPrice = this.vipPayPro * oPrice / 100
+            if (prepVipPrice > that.balance) {
+                that.vipPrice = 0
+                that.payPrice = oPrice.toFixed(2)
+            } else {
+                that.vipPrice = prepVipPrice.toFixed(2)
+                that.payPrice = (oPrice - prepVipPrice).toFixed(2)
             }
-            return price;
-        },
-        payPrice: function() {
-            let price = parseFloat(this.orderPrice) || 0;
-            if (this.paying && this.paying.isUse) {
-                price = this.orderPrice - (-this.discountPrice); 
-            }
-            return Number(price.toFixed(2));
+            that.prepVipPrice = prepVipPrice.toFixed(2)
         }
     },
     onLoad (options) {
-        this.shop_id = options.shop_id;
-        const paying = new PayTheBill({});
-        paying.getDetails(this.shop_id).then(res => {
-            this.paying = res;
-            mpvue.setNavigationBarTitle({
-                title: res.storeInfo.store_name
-            })
-        });
+        const that = this
+        that.shop_id = options.shop_id;
+        apiGetRechargeList(that.shop_id).then(res => {
+            console.log(res);
+            let vipPayPro = parseInt(res.ratio)
+            if (vipPayPro && vipPayPro !== 100) {
+                that.vipPayPro = vipPayPro
+            }
+            that.storeInfo = res.storeInfo || null
+            that.balance = res.user.balance || 0
+        })
+    },
+    onShow() {
+        console.log(123);
+        
     },
     methods: {
         ...mapActions(['createOrder']),
         replaceInput(e) {
             let value = e.mp.detail.value
-            // const reg = /(^[1-9]\d*(\.\d{1,2})?$)|(^0(\.\d{1,2})?$)/;
-            // let money;
-            // if (/^(\d?)+(\.\d{0,2})?$/.test(value)) { //正则验证，提现金额小数点后不能大于两位数字
-            //     money = value;
-            // } else {
-            //     money = value.substring(0, value.length - 1);
-            // }
-            // this.orderPrice = money
-
-
             let sNum = value.toString(); //先转换成字符串类型
             if (sNum.indexOf('.') === 0) { //第一位就是 .
                 console.log('first str is .')
@@ -114,87 +120,126 @@ export default {
             // const reg = /(^[1-9]\d*(\.\d{1,2})?$)|(^0(\.\d{1,2})?$)/;
             const reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;
             if (!reg.test(orderPrice) || orderPrice <= 0) {
-                Toast("请核对您的输入金额！");
+                mpvue.showToast({
+                    title: "请核对您的输入金额",
+                    icon: 'none',
+                    duration: 2000
+                })
                 return; 
             }
             // 创建订单
             that.createOrder({
                 s_id: that.shop_id,
                 total: orderPrice,
-                type: orderType.paying
+                type: orderType.vippay
             }).then(res => {
-                mpvue.navigateTo({
-                    url: `/pages/shop/pay/main?order_id=${res.order_id}`
-                }) 
+                that.$router.push({
+                    path: `/pages/shop/pay/main?order_id=${res.order_id}`
+                })
             });
+        },
+        jumpRecharge() {
+            console.log(11);
+            
+            this.$router.push({
+                path: `/pages/shop/recharge/main?shop_id=${this.shop_id}`
+            })
         }
     }
 };
 </script>
 
 <style lang="scss" scoped>
-@import "~@/assets/styles/components/pay-the-bill.scss";
-* { touch-action: pan-y; } 
-.navbar-explain{
-    color: #fff;
-    display: block;
-    width: 100%;
-    text-align: right;
-}
-.popup-explain{
-    background-color: #fff;
-    padding: .6rem .3rem;
-    .title{
-        text-align: center;
-        font-size: 15px;
-        margin-bottom: .4rem;
-    }
-    li {
-        margin-bottom: .2rem;
-        line-height: 1.7;
-        list-style-type: disc;
-        list-style-position: inside;
-        display: flex;
-        .rule{
-            flex:1;
-            color: #fb513f;
-        }
-    }
-}
-
-.cell {
+.pay-the-bill {
+    min-height: 100%;
     background: #fff;
-    text-align: right;
-    border: 1px solid #e8e8e8;
-    border-radius: 5px;
-    margin-bottom: .3rem;
-    li {
-        position: relative;
-        display: flex;
-        padding-left: .24rem;
-        overflow: hidden;
-        font-size: 14px;
-        line-height: 1rem;
-        &:not(:last-child)::before {
-            content: '';
-            position: absolute;
-            z-index: 2;
-            bottom: 0;
-            left: 0;
+    .store-name{
+        text-align: center;
+        font-size: 17px;
+        color: #323232;
+        font-weight: 700;
+        padding-top: 40rpx;
+    }
+    .store-pro {
+        text-align: center;
+        padding: 20rpx 0;
+        text-align: center;
+        font-size: 12px;
+        color: #818181;
+    }
+    .consume{
+        margin-top: 20rpx;
+        margin-bottom: 60rpx;
+        border-top: 1rpx solid #e8e8e8;
+        border-bottom: 1rpx solid #e8e8e8;
+        .price {
+            flex: 1;
             width: 100%;
-            height: 1px;
-            border-bottom: 1px solid #e8e8e8;
-            -webkit-transform: scaleY(0.5);
-            transform: scaleY(0.5);
-            -webkit-transform-origin: 0 100%;
-            transform-origin: 0 100%;
+            text-align: right;
+            padding-right: 24rpx;
+            font-size: 18px;
+            color: #f00;
         }
-        .lable {
-            float: left;
+        .input{
+            color: #323232;
+            font-weight: 700;
+            font-size: 35px;
             display: flex;
-            align-items: center;
-            margin-right: .5rem;
+            justify-items: center;
         }
+        input {
+            display: block;
+            height: 100%;
+            border: none;
+            font-size: 35px;
+            font-weight: 700;
+            background: transparent;
+            color: #323232;
+        }
+        i{
+            float: left;
+            width: 40rpx;
+            height: 100%;
+            margin-right: 20rpx;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            &.vip{
+                background-image: url(~@/assets/img/vip_pay.png);
+            }
+            &.wechat{
+                background-image: url(~@/assets/img/wechat_pay.png);
+            }
+        }
+    }
+    .odrer-price{
+        display: block;
+        text-align: left;
+        .lable{
+            font-weight: 400;
+            font-size: 12px;
+            color: #818181;
+        }
+    }
+    .tips{
+        font-size: 12px;
+        color: #c0c0c0;
+        margin-bottom: 30rpx;
+        padding: 0 24rpx;
+        span{
+            color: #f00;
+        }
+    }
+    .payBtn {
+        height: 100rpx;
+        line-height: 100rpx;
+        font-weight: 700;
+        text-align: center;
+        color: #fff;
+        font-size: 17px;
+        background: #f00;
+        border-radius: 10rpx;
+        margin: 0 24rpx;
     }
 }
 </style>

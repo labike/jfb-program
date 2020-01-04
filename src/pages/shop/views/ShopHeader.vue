@@ -4,55 +4,68 @@
  * @Description: file content
  -->
 <template>
-<div class="shop-title" :class="currentShopType">
+<div class="shop-intro" v-if="storeInfo">
     <div class="default">
         <div class="banner-warp">
-            <div class="banner">
-                <lay-swiper :list='infoData.headerImgData.envir' v-if="infoData.headerImgData.envir.length" sHeight='380rpx'></lay-swiper>
-            </div>
-        </div>        
-        <div class="intro border-bottom">
-            <div class="name">{{ infoData.store_name }}</div>
-            <div class="info">
-                <div :class="'rate rate' + infoData.score">
-                    <i class="icon rate"></i>
-                    <i class="icon rate"></i>
-                    <i class="icon rate"></i>
-                    <i class="icon rate"></i>
-                    <i class="icon rate"></i>
-                    <span class="rate-title">{{infoData.score}} 分</span>
+            <lay-swiper :list='storeInfo.headerImgData.envir' v-if="storeInfo.headerImgData.envir.length" sHeight='400rpx'></lay-swiper>
+        </div>
+        <div class="intro-warp">
+            <div class="name">{{ storeInfo.store_name }}</div>
+            <div class="share" @click="tapShare">分享</div>
+            <div class="intro">
+                <div class="lt-img">
+                    <ImageView :src="storeInfo.headerImgData.imgUrl" mode="scaleToFill" width='160rpx' height='160rpx'></ImageView>
                 </div>
-                <div class="type">{{ infoData.sort_name }}</div>
-            </div>
-        </div>
-        <div class="time border-bottom" v-if="infoData.do_business_time">{{ infoData.do_business_time }}</div>
-        <div class="address border-bottom">
-            <div class="left">
-                <p class="tit" @click="openTxMap">{{infoData.address}}</p>
-                <!-- <p class="near">距您直线距离{{infoData.distance}}</p> -->
-            </div>
-            <div class="right">
-                <div class="tel"  @click="getCallPhone(infoData.mobile)">
-                    <i class="icon-tel"></i>
+                <div class="rt-content">
+                    <div class="come">
+                        <ul class="avatar">
+                            <li v-for="(item, avaid) in storeInfo.avatarList" :key="avaid">
+                                <ImageView  picture='/static/img/avatar.png' :src="item.header_img"
+                                    mode='aspectFill'  width='46rpx' height='46rpx'
+                                ></ImageView>
+                            </li>
+                            <li class="more">...</li>
+                        </ul>
+                        <p class="hits"><span>{{storeInfo.browser}}</span>人已逛过</p>
+                    </div>
+                    <div class="info">
+                        <p>{{storeInfo.distance}}</p>
+                        <p v-if="storeInfo.average_fee-0">人均: <span>{{storeInfo.average_fee}}元</span></p>
+                        <p>人气:{{storeInfo.browser}}</p>
+                    </div>
+                    <div class="notice-warp">
+                        <div class="notice" v-if="storeInfo.Notice">{{storeInfo.Notice}}</div>
+                        <div class="notice" v-else>一店充值，多店消费</div>
+                    </div>
                 </div>
+                <div class="record">持“共享增值卡”消费买单可以抵折扣{{infoData.proData.is_paying_pro}}%消费金额</div>
             </div>
         </div>
-        <div class="ad" v-if="currentShopAD">
-            <div class="tit">商家公告：</div>
-            <div class="content">
-                <my-marquee :lists="currentShopAD"></my-marquee>
-            </div>
+        <div class="contact-warp">
+            <p><span>营业时间 :</span>{{storeInfo.do_business_time}}</p>
+            <p><span>地址 :</span>{{storeInfo.address}}</p>
+            <ul class="btn-group">
+                <li  @click="openTxMap">
+                    <div class="icon location"></div>
+                    <div class="text">导航</div>
+                </li>
+                <li  @click="getCallPhone(storeInfo.mobile)">
+                    <div class="icon tel"></div>
+                    <div class="text">电话</div>
+                </li>
+            </ul>
         </div>
+        
     </div>
 </div>
 </template>
 
 <script>
-import { shopType } from '@/config/base';
 import MyMarquee from '@c/layouts/Marquee.vue';
 import ImageView from '@c/layouts/ImageView.vue'
 import LaySwiper from "@c/swiper/Advertise.vue";
-import { callPhone } from '@/utils/index';
+import { getDistance, callPhone } from '@/utils/index';
+import { apiShareStore } from "@/api/api";
 
 export default {
     name: "ShopHeader",
@@ -61,24 +74,19 @@ export default {
     },
     data() {
         return {
-            currentShopAD: '',
-            currentShopType: ''
+            storeInfo: null
         }
+    },
+    computed: {
+        currentLocation () {            
+            let appData = mpvue.getStorageSync('appData')
+            let location = appData && appData.currentLocation ? appData.currentLocation : '';
+            return location
+        },
     },
     onLoad() {
         let that = this;
-        console.log(that.currentShopAD);
-        if (that.infoData.Notice) {
-            that.currentShopAD = that.shopAD() 
-        }
-        Object.keys(shopType).forEach(function(key) {
-            let vaule = shopType[key].toString()
-            if (vaule === that.infoData.store_type) {
-                that.currentShopType = key;
-            }
-        });
-            
-        console.log(that.currentShopAD,that.currentShopType);
+        that.storeInfo = that._formatStoreInfo(that.infoData.infoData)
     },
     components: {
         MyMarquee,
@@ -86,24 +94,45 @@ export default {
         LaySwiper
     },
     methods: {
+        _formatStoreInfo(storeInfo) {
+            const that = this
+            if (that.currentLocation && storeInfo) {
+                let num = getDistance(that.currentLocation.lat, that.currentLocation.lng, storeInfo.lat, storeInfo.lng)
+                if (num > 1000) {
+                    storeInfo.distance = (num / 1000).toFixed(1) + 'km'
+                } else {
+                    storeInfo.distance = num + 'm'
+                }
+            }
+            if (storeInfo.brower_user) {
+                storeInfo.avatarList = Array.from({length: 9}).map((item, index) => {
+                    let avatar = {}
+                    avatar.header_img = storeInfo.brower_user[index] ? storeInfo.brower_user[index].header_img : '';
+                    avatar.header_img === '0' && (avatar.header_img = '')
+                    return avatar;
+                });
+            }
+            if (storeInfo.do_business_time) {
+                let index = storeInfo.do_business_time.indexOf('时间:');
+                if (index >= 0) {
+                    storeInfo.do_business_time = storeInfo.do_business_time.substring(index + 3)
+                }
+            }
+            return storeInfo
+        },
         handlePhotos() {            
             this.$router.push({
-                path: `/pages/shop/photos/main?shop_id=${this.infoData.s_id}`
+                path: `/pages/shop/photos/main?shop_id=${this.storeInfo.s_id}`
             })
             
         },
-        shopAD: function () {
+        tapShare() {
             let that = this;
-            let shopAD = that.infoData.Notice;
-            if (that.infoData.Notice) {
-                let lists = [];
-                lists.push(that.infoData.Notice);
-                
-                return lists;
-            }
-            return "";
+            apiShareStore(that.storeInfo.s_id).then(result => {
+                result.type = 'earn'
+                that.$emit('share', result)
+            })
         },
-        
         getCallPhone(phone) {
             callPhone(phone)
         },
@@ -113,19 +142,20 @@ export default {
             let key = 'NW5BZ-Y2WKG-3T6QC-ISBMF-MTDQF-63BGJ'; //使用在腾讯位置服务申请的key
             let referer = '减付宝'; //调用插件的app的名称
             let endPoint = JSON.stringify({ //终点
-                'name': that.infoData.store_name,
-                'latitude': that.infoData.lat,
-                'longitude': that.infoData.lng
+                'name': that.storeInfo.store_name,
+                'latitude': that.storeInfo.lat,
+                'longitude': that.storeInfo.lng
             });
-            wx.navigateTo({
-                url: 'plugin://routePlan/index?key=' + key + '&referer=' + referer + '&endPoint=' + endPoint
-            });
+            this.$router.push({
+                path: 'plugin://routePlan/index?key=' + key + '&referer=' + referer + '&endPoint=' + endPoint
+            })
         }
     }
 };
 </script>
 
 <style lang="scss" scoped>
+@import "~@/assets/styles/common/mixins.scss";
 /*************评星*************/
 .rate {
     color: #eb1613;
@@ -173,123 +203,189 @@ export default {
         }
     }
     .banner-warp{
-        padding: 24rpx 24rpx 0 24rpx;
-        .banner{
-            overflow: hidden;
+        overflow: hidden;
+    }
+    .intro-warp{
+        overflow: hidden;
+        padding: 0 24rpx;
+        position: relative;
+        z-index: 0;
+        margin-top: 24rpx;
+        .name{
+            color: #000;
+            display: block;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 30rpx;
+            margin-right: 150rpx;
+            @include textOverflow;
+        }
+        .share{
+            font-size: 12px;
+            background: linear-gradient(to right,#f11b1b, #f25313);
+            width: 110rpx;
+            height: 44rpx;
+            line-height: 44rpx;
+            text-align: center;
+            font-weight: 400;
+            color: #fff;
+            position: absolute;
+            right: 40rpx;
+            top: 6rpx;
             border-radius: 10rpx;
         }
-    }
-    .intro{
-        padding: 24rpx;
-        .name{
-            font-size: 20px;
-            color: #000;
+        .intro{
+            margin-right: 26rpx;
+        }
+        
+        .record{
+            background: #57bbaa ;
             font-weight: 700;
+            height: 50rpx;
+            line-height: 50rpx;
+            color: #fff;
+            overflow: hidden;
+            border-radius: 12rpx;
+            @include textOverflow;
+            text-align: center;
+            margin-top: 18rpx;
+
+        }
+    }
+    .lt-img{
+        width: 160rpx;
+        height: 160rpx;
+        overflow: hidden;
+        border-radius: 10rpx;
+        float: left;
+        position: relative;
+        img{
+            width: 160rpx;
+            height: 160rpx;
+        }
+    
+    }
+    .rt-content{
+        margin-left: 184rpx;
+        min-height: 160rpx;
+        color: #818181;
+        font-weight: 700;
+        .come{
+            text-align: right;
+            line-height: 46rpx;
+            .hits{
+                color: #818181;
+                span{
+                    color: #cf0002;
+                }
+            }
+        }
+        .avatar{
+            li{
+                float: left;
+                position: relative;
+                margin-right: -18rpx;
+                width: 46rpx;
+                height: 46rpx;
+                border-radius: 50%;
+                overflow: hidden;
+                background: #f2f2f2;
+            }
+            .more{
+                line-height: 24rpx;
+                color: #fff;
+                font-weight: 700;
+                text-align: center;
+                font-size: 20px;
+            }
         }
         .info{
-            display: flex;
-            margin-top: 20rpx;
-            justify-content: space-between;
-        }
-    }
-    .time{
-        padding: 0.26rem 0.24rem 0.26rem 0.7rem;
-        display: flex;
-        position: relative;
-        font-size:  26rpx;
-        &::before {
-            content: ' ';
-            position: absolute;
-            display: block;
-            left: 26rpx;
-            top: 50%;
-            margin-top: -6px;
-            height: 13px;
-            width: 13px;
-            background: url('~@/assets/img/stores2.png') no-repeat;
-            background-size: contain;
-            background-position: center;
-        }
-    }
-    .address {
-        padding: 0.26rem 0.24rem;
-        display: flex;
-        .tit {
-            font-weight: 400;
-            font-size: 13px;
-            color: #000;
-        }
-        .near {
-            font-size: 14px;
-            color: #818181;
-        }
-        .left {
-            padding: 0 0.45rem;
             position: relative;
-            flex: 1;
-            &:before {
-                content: ' ';
-                position: absolute;
-                display: block;
-                left: 0;
-                top: 2px;
-                height: 15px;
-                width: 15px;
-                background-image: url('~@/assets/img/location.png');
-                background-repeat: no-repeat;
-                background-size: contain;
-                background-position: 0 0;
-                margin: auto;
+            display: flex;
+            align-items: center;
+            line-height: 1;
+            font-size: 11px;
+            line-height: 24rpx;
+            margin-top: 20rpx;
+            p:not(:last-child){
+                border-right: 2rpx solid #818181;
+                padding-right: 8rpx;
+                margin-right: 8rpx;
+            }
+            span{
+                color: #cf0002;
             }
         }
-        .right {
-            height: 100%;
-            width: .6rem;
-            border-left: 1px solid #e8e8e8;
-        }
-        .tel {
-            display: flex;
-            margin-left: .17rem;
-            width: 100%;
-            height: 100%;
-            align-items: center;
-            justify-content: center;
-            .icon-tel:before {
-                display: block;
-                content: ' ';
-                height: 17px;
-                width: 17px;
-                background: url('~@/assets/img/tel.png') no-repeat;
-                background-size: contain;
-                background-position: center;
-                margin: auto;
+        .notice-warp{
+            display: inline-block;
+            max-width: 100%;
+            margin-top: 20rpx;
+            @include textOverflow;
+            text-align: center;
+            .notice{
+                background: #f7f5f8;
+                padding: 0 24rpx;
+                font-size: 12px;
+                color: #323232;
+                line-height: 40rpx;
+                margin-right: 10rpx;
+                display: inline-block;
             }
         }
     }
-    .ad {
-        padding: 0.26rem 0.24rem 0.26rem 0.7rem;
-        display: flex;
+    .contact-warp{
+        padding: 0 24rpx;
         position: relative;
-        &::before {
-            content: ' ';
+        z-index: 0;
+        margin-top: 24rpx;
+        padding-right: 200rpx;
+        font-weight: 700;
+        p{
+            line-height: 40rpx;
+            color: #323232;
+            margin-top: 10rpx;
+            @include textOverflow;
+            span{
+                color: #818181;
+                margin-right: 10rpx;
+            }
+        }
+        .btn-group{
             position: absolute;
-            display: block;
-            left: 26rpx;
-            top: 50%;
-            margin-top: -6px;
-            height: 12px;
-            width: 12px;
-            background: url('~@/assets/img/ad.png') no-repeat;
-            background-size: contain;
-            background-position: center;
-        }
-        .tit {
-            width: 130rpx;
-            font-size: 26rpx;
-            flex-shrink: 0;
-        }
-        .content{
-            flex: 1;
+            right: 40rpx;
+            bottom: 0;
+            width: 142rpx;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            &::before{
+                content: '';
+                position: absolute;
+                height: 60%;
+                top: 20%;
+                left: 49%;
+                width: 1px;
+                background: #eee;
+            }
+            .icon{
+                width: 50rpx;
+                height: 50rpx;
+                border-radius: 50%;
+                background-color: #f7f9f8;
+                background-size: auto 30rpx;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+            .text{
+                margin-top: 10rpx;
+                color: #818181;
+            }
+            .location{
+                background-image: url('~@/assets/img/location2.png');
+            }
+            .tel{
+                background-image: url('~@/assets/img/tel2.png');
+            }
         }
     }
 }

@@ -53,20 +53,20 @@ export default {
          * 先下载商铺图片
          */
         getAvaterInfo: function() {
-            wx.showLoading({
+            mpvue.showLoading({
                 title: '生成中...',
                 mask: true,
             });
             var that = this;
-            wx.downloadFile({
+            mpvue.downloadFile({
                 url: that.cardInfo.imageUrl, //商铺图片路径
                 success: function(res) {
-                    wx.hideLoading();
+                    mpvue.hideLoading();
                     if (res.statusCode === 200) {
                         var imageUrl = res.tempFilePath; //下载成功返回结果
                         that.getQrCode(imageUrl); //继续下载二维码图片
                     } else {
-                        wx.showToast({
+                        mpvue.showToast({
                             title: '商铺图片下载失败！',
                             icon: 'none',
                             duration: 2000,
@@ -84,7 +84,7 @@ export default {
          * 下载二维码图片
          */
         getQrCode: function(imageUrl) {
-            wx.showLoading({
+            mpvue.showLoading({
                 title: '生成中...',
                 mask: true,
             });
@@ -93,10 +93,10 @@ export default {
             // drawQrcode({
             //     width: 50,
             //     height: 50,
-            //     ctx: wx.createCanvasContext('shareImg'),
+            //     ctx: mpvue.createCanvasContext('shareImg'),
             //     text: that.cardInfo.link,
             //     callback: (res) => {
-            //         wx.canvasToTempFilePath({
+            //         mpvue.canvasToTempFilePath({
             //             width: 50,
             //             height: 50,
             //             canvasId: 'shareImg',
@@ -110,15 +110,15 @@ export default {
             // })
 
             //已有二维码
-            wx.downloadFile({
+            mpvue.downloadFile({
                 url: that.cardInfo.qrCode, //二维码路径
                 success: function(res) {
-                    wx.hideLoading();
+                    mpvue.hideLoading();
                     if (res.statusCode === 200) {
                         var codeSrc = res.tempFilePath;
                         that.sharePosteCanvas(imageUrl, codeSrc);
                     } else {
-                        wx.showToast({
+                        mpvue.showToast({
                             title: '二维码下载失败！',
                             icon: 'none',
                             duration: 2000,
@@ -138,15 +138,15 @@ export default {
          * @param codeSrc   下载的二维码图片路径
          */
         sharePosteCanvas: function(imageUrl, codeSrc) {
-            wx.showLoading({
+            mpvue.showLoading({
                 title: '生成中...',
                 mask: true,
             })
             var that = this;
             var cardInfo = that.cardInfo; //需要绘制的数据集合
-            const ctx = wx.createCanvasContext('shareImg'); //创建画布
+            const ctx = mpvue.createCanvasContext('shareImg'); //创建画布
             let width = "";
-            wx.createSelectorQuery().select('.canvas-warp').boundingClientRect(function(rect) {
+            mpvue.createSelectorQuery().select('.canvas-warp').boundingClientRect(function(rect) {
                 width = rect.width;
                 const height = rect.height;
                 const left = parseInt(width * 0.04);
@@ -232,7 +232,7 @@ export default {
             setTimeout(function() {
                 ctx.draw();
                 
-                wx.hideLoading();
+                mpvue.hideLoading();
             }, 1000)
 
         },
@@ -272,21 +272,21 @@ export default {
         //点击保存到相册
         saveShareImg: function() {
             var that = this;
-            wx.showLoading({
+            mpvue.showLoading({
                 title: '正在保存',
                 mask: true,
             })
             setTimeout(function() {
-                wx.canvasToTempFilePath({
+                mpvue.canvasToTempFilePath({
                     canvasId: 'shareImg',
                     success: function(res) {
-                        wx.hideLoading();
+                        mpvue.hideLoading();
                         var tempFilePath = res.tempFilePath;
-                        wx.saveImageToPhotosAlbum({
+                        mpvue.saveImageToPhotosAlbum({
                             filePath: tempFilePath,
                             success(res) {
                                 // utils.aiCardActionRecord(19);
-                                wx.showModal({
+                                mpvue.showModal({
                                     content: '图片已保存到相册，赶紧晒一下吧~',
                                     showCancel: false,
                                     confirmText: '好的',
@@ -300,7 +300,7 @@ export default {
                                 })
                             },
                             fail: function(res) {
-                                wx.showToast({
+                                mpvue.showToast({
                                     title: res.errMsg,
                                     icon: 'none',
                                     duration: 2000
@@ -315,7 +315,7 @@ export default {
     },
     // onShow: function() {
     //     let that = this;
-    //     wx.getSystemInfo({
+    //     mpvue.getSystemInfo({
     //         success: function(res) {
     //             console.log(res);
                 

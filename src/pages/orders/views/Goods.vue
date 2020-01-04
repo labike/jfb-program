@@ -150,7 +150,7 @@ export default {
                 width: .7rem;
                 height: .7rem;
                 margin-right: .24rem;
-                background: #f5f5f5;
+                background: #f2f2f2;
                 overflow: hidden;
                 img{
                     display: block;

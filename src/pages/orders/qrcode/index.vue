@@ -45,8 +45,8 @@ export default {
     methods: {
         
         jumpShop(id) {
-            mpvue.navigateTo({
-                url: '/pages/shop/index/main?shop_id=' + id
+            this.$router.push({
+                path: '/pages/shop/index/main?shop_id=' + id
             }) 
         },
         getOrderDetails() {

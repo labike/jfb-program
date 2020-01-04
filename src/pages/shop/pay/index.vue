@@ -17,40 +17,44 @@
 			</div>
 		</div>
 
-		<div class="btn-group" v-if="paying">
+		<div class="btn-group" v-if="confirmPay">
 			<div class="btn" @click="goPay">确认支付</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import { apiOrderPay, apiPayStatus } from "@/api/api";
+import { apiOrderPay, apiPayRecharge, apiPayStatus } from "@/api/api";
 import { mapState, mapActions } from 'vuex';
 import { payIsSuccess } from "@/config/base";
 import LastTime from "./../views/Countdown.vue";
 export default {
     name: "Pay",
-    data() {
-        return {
-            order_id: '',
-            paying: true,
-            showPay: false,
-        }
-    },
     components: {
         LastTime
     },
+    data() {
+        return {
+            order_id: '',
+            showPay: false,
+            confirmPay: true,
+        }
+    },
+    onUnload() {        
+        const self = this;
+        self.order_id = ''
+        self.showPay = false
+        self.confirmPay = true
+    },
     onLoad (options) {
         console.log(this.createOrderReturn);
-        
-        this.showPay = false;
-        this.paying = true;
         this.order_id = options.order_id;
         if (this.createOrderReturn && this.createOrderReturn.order_id === this.order_id) {
             this.showPay = true;
         } else {
-            this.updateOrderReturn(this.order_id).then(res => {
-                this.showPay = true;
+            this.$router.replace({
+                path: "/pages/orders/list/main",
+                reLaunch: true
             })
         }
     },
@@ -59,15 +63,15 @@ export default {
     },
     methods: {
         ...mapActions(['updateOrderReturn']),
-        // closePay() {
-        //     console.log('closePay');
-        //     this.paying = false
-        // },
         goPay() {
             const that = this
+            mpvue.showLoading({
+                title: '正在支付中...',
+            })
             that.orderPay().then(wxConfig => {
+                mpvue.hideLoading()
                 console.log(wxConfig);
-                wx.requestPayment({
+                mpvue.requestPayment({
                     'timeStamp': wxConfig.timeStamp,
                     'nonceStr': wxConfig.nonceStr,
                     'package': wxConfig.package,
@@ -83,41 +87,41 @@ export default {
                         console.log(res);
                         if (res.errMsg === 'requestPayment:ok') {
                             apiPayStatus(that.order_id).then(res => {
-                                if (res.is_pay_success === payIsSuccess.OK) {
-                                    mpvue.navigateTo({
-                                        url: `/pages/shop/payok/main?order_id=${that.order_id}`
-                                    }) 
+                                if (res.is_pay_success + '' === payIsSuccess.OK) {
+                                    that.$router.push({
+                                        path: `/pages/shop/payok/main?order_id=${that.order_id}`
+                                    })
                                 }
                             })
                         }
             
                     }
                 });
+            }).catch(err => {
+                mpvue.hideLoading();
+                mpvue.showToast({
+                    title: err,
+                    icon: 'none',
+                    duration: 2000
+                })
             })
         },
 
         orderPay() {
             const that = this
-            wx.showLoading({
-                title: '正在支付中，请稍等...',
-            })
-            return new Promise(resolve => {
-                apiOrderPay({
+            if (this.createOrderReturn.recharge) {
+                return apiPayRecharge({
                     order_id: that.order_id,
                     actual: that.createOrderReturn.actual,
                     pay_method: 6,
-                    openid: wx.getStorageSync('openId')
-                }).then(res => {
-                    wx.hideLoading()
-                    resolve(res)
-                }).catch(err => {
-                    wx.hideLoading();
-                    wx.showToast({
-                        title: err,
-                        icon: 'none',
-                        duration: 2000
-                    })
+                    openid: mpvue.getStorageSync('openId')
                 })
+            }
+            return apiOrderPay({
+                order_id: that.order_id,
+                actual: that.createOrderReturn.actual,
+                pay_method: 6,
+                openid: mpvue.getStorageSync('openId')
             })
             
         },

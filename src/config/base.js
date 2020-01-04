@@ -19,7 +19,7 @@ export const WAPHOST = 'https://wap2.qmw111.com/';
 
 
 /**
- *  门店类型 （1-餐饮 2-酒店 3-休闲娱乐4-爱车 5-大健康 6-教育 7-母婴 8-周边游）
+ *  门店类型 （1-餐饮 2-酒店 3-休闲娱乐 4-爱车 5-大健康 6-教育 7-母婴 191-周边游）
  */
 export const shopType = {
     repast: 1,
@@ -29,9 +29,8 @@ export const shopType = {
     health: 5,
     education: 6,
     fransnana: 7,
-    travel: 8,
+    travel: 191,
 };
-export const shopTypeArr = ['all', 'repast', 'hotel', 'pastime', 'icar', 'health', 'education', 'fransnana', 'travel']
 
 /**
  *  相册类型 【all:全部  pro：商品  scen：环境  license：资质】
@@ -54,14 +53,15 @@ export const rateType = {
 };
 
 /**
- *  type:订单类型（1：代金券 2：团购 3：买单 4：购物车 7:限时抢购）
+ *  type:订单类型（1：代金券 2：团购 3：优惠买单  4：购物车 7:限时抢购 8：增值买单）
  */
 export const orderType = {
     vouchers: '1',
     combo: '2',
     paying: '3',
     goods: '4',
-    timesale: '7'
+    timesale: '7',
+    vippay: '8'
 };
 
 /**
@@ -89,22 +89,13 @@ export const activityTag = {
     full: '满减',
 };
 
-/**
- *  tabbar
- */
-export const tabbar = [
-    "pages/index/main", 
-    "pages/filter/near/main",
-    "pages/orders/list/main",
-    "pages/mine/index/main"
-];
 
 /**
  *  广告功能页面
  */
 export const adFeature = {
     reshop: '/pages/mine/reshop/main',
-    money: '/pages/money/index/main'
+    money: '/pages/rebate/index/main'
 };
 
 

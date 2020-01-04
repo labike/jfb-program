@@ -92,7 +92,7 @@ export default {
     },
     computed: {
         appData() {
-            return wx.getStorageSync('appData');
+            return mpvue.getStorageSync('appData');
         }
     },
     props: {

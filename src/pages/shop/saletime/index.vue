@@ -39,7 +39,7 @@
                     <i class="icon">赠送</i>价值{{shopAdvt.buyer}}元{{shopAdvt.pro_name}}
                     <span>{{shopAdvt.number}}{{shopAdvt.unit}}</span>
                 </div>
-                <div class="location">{{distance}}</div>
+                <div class="location">{{shopAdvt.storeInfo.distance}}</div>
                 <div class="description">{{shopAdvt.description}}</div>
             </div>
             <div class="linetime">
@@ -135,7 +135,6 @@
 <script>
 import ImageView from '@c/layouts/ImageView.vue'
 import { apiGiveDetail } from "@/api/api";
-import { WAPHOST, shopType } from "@/config/base";
 import { getDistance, callPhone } from '@/utils/index';
 import { mapState } from 'vuex';
 export default {
@@ -153,41 +152,35 @@ export default {
         ImageView,
     },        
     computed: {
-        // ...mapState('user', [
-        //     'lat',
-        //     'lng',
-        // ]),
-        
-        lat() {
-            return wx.getStorageSync('appData').currentLocation.lat
-        },
-        lng() {
-            return wx.getStorageSync('appData').currentLocation.lng
-        },
-        distance() {
-            const _this = this
-            if (!_this.lat || !_this.shopAdvt) {
-                return ''
-            }
-            let num = getDistance(_this.lat, _this.lng, _this.shopAdvt.storeInfo.lat, _this.shopAdvt.storeInfo.lng)
-            if (num > 1000) {
-                return (num / 1000).toFixed(0) + 'km'
-            } else {
-                return num + 'm'
-            }
+        currentLocation () {            
+            let appData = mpvue.getStorageSync('appData')
+            let location = appData && appData.currentLocation ? appData.currentLocation : '';
+            return location
         },
     },
     onLoad (options) {
         const that = this
         apiGiveDetail(options.gid).then(res => {
-            that.shopAdvt = that.formatData(res)
-        }) 
+            that.shopAdvt = that._formatData(res)
+        }).catch(() => {
+            mpvue.showModal({
+                content: '该产品已经下架，或者被删除',
+                showCancel: false,
+                confirmText: '好的',
+                confirmColor: '#333',
+                success: function(res) {
+                    if (res.confirm) {
+                        that.$router.back()
+                    }
+                }
+            })
+        });
     },
     methods: {
         stopActivity(shop) {
             shop.stopActivity = true
         },
-        formatData (res) {
+        _formatData (res) {
             res.library = parseFloat(res.library)
             res.sale = parseFloat(res.sale)
             if (res.give_description) {
@@ -197,11 +190,21 @@ export default {
                     return tepm
                 })
             }
+            if (this.currentLocation) {
+                let num = getDistance(this.currentLocation.lat, this.currentLocation.lng, res.storeInfo.lat, res.storeInfo.lng)
+                if (num > 1000) {
+                    res.storeInfo.distance = (num / 1000).toFixed(0) + 'km'
+                } else {
+                    res.storeInfo.distance = num + 'm'
+                }
+            }
             res.buyList = Array.from({length: 9}).map((item, index) => {
                 let avatar = {}
                 avatar.header_img = res.buyList[index] ? res.buyList[index].header_img : ''
                 return avatar;
             });
+
+
             
             return res
         },

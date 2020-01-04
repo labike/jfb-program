@@ -79,9 +79,9 @@ export default {
     methods: {
         ...mapActions(['getCurrentOrder']),
         jumpShop(id) {
-            mpvue.navigateTo({
-                url: '/pages/shop/index/main?shop_id=' + id
-            }) 
+            this.$router.push({
+                path: '/pages/shop/index/main?shop_id=' + id
+            })
         },
         getRateLables(shop_id) {
             apiGetRateLables(shop_id).then(res => {
@@ -107,7 +107,7 @@ export default {
         chooseImg: function (e) { //这里是选取图片的方法
             const that = this;
             let pics = that.pics;
-            wx.chooseImage({
+            mpvue.chooseImage({
                 count: 5 - pics.length, // 最多可以选择的图片张数，默认9
                 sizeType: ['original', 'compressed'], // original 原图，compressed 压缩图，默认二者都有
                 sourceType: ['album', 'camera'], // album 从相册选图，camera 使用相机，默认二者都有
@@ -160,7 +160,7 @@ export default {
             const _this = this 
             _this.checkData()
             if (_this.errTxt) {
-                wx.showToast({
+                mpvue.showToast({
                     title: _this.errTxt,
                     icon: 'none',
                     duration: 1000
@@ -175,34 +175,32 @@ export default {
 
         },
         uploadImg () { //这里触发图片上传的方法
-            const pics = this.pics;
-            const formData = this.formData;
-            wx.uploadFile({
+            const that = this;
+            const pics = that.pics;
+            const formData = that.formData;
+            mpvue.uploadFile({
                 url: APIHOST + 'comment/order',
                 filePath: pics[0],
                 name: 'img[]',
                 header: {
                     "Content-Type": "multipart/form-data",
-                    'accessToken': wx.getStorageSync('token')
+                    'accessToken': mpvue.getStorageSync('token')
                 },
                 formData,
                 success: function(res) {
                     const data = JSON.parse(res.data)
                     if (data.code === "200") {
-                        wx.showToast({
+                        mpvue.showToast({
                             title: '评论成功',
                             icon: 'success',
                             duration: 1000
                         })
                         setTimeout(() => {
-                            wx.navigateBack({//返回
-                                delta: 1
-                            })
+                            that.$router.back()
                         }, 1000)
-                        
                     }
                     if (data.code === "0") {
-                        wx.showToast({
+                        mpvue.showToast({
                             title: '评论失败！',
                             icon: 'none',
                             duration: 1000
@@ -212,17 +210,16 @@ export default {
             })
         },
         uploadData() {
-            console.log(this.formData);
-            apiRateData(this.formData).then(res => {
-                wx.showToast({
+            const that = this
+            console.log(that.formData);
+            apiRateData(that.formData).then(res => {
+                mpvue.showToast({
                     title: '评论成功',
                     icon: 'success',
                     duration: 1000
                 })
                 setTimeout(() => {
-                    wx.navigateBack({//返回
-                        delta: 1
-                    })
+                    that.$router.back()
                 }, 1000)
             })
         }

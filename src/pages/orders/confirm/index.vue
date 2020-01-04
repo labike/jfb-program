@@ -61,10 +61,10 @@ export default {
 
         orderData: function () {
             /**
-            * * 代金券
+            *  代金券
             * @params p_id:商品id
             * @params number: 数量
-            * 购物车
+            *  购物车
             * @params activity_id: 优惠活动id (0-无优惠)
             * @params carts:购物车内容 [{ "pid": "203", "sku": "", "num": 2}}
             */
@@ -112,8 +112,8 @@ export default {
             const that = this
             // 创建订单
             that.createOrder(that.orderData).then(res => {
-                mpvue.navigateTo({
-                    url: `/pages/shop/pay/main?order_id=${res.order_id}`
+                that.$router.push({
+                    path: `/pages/shop/pay/main?order_id=${res.order_id}`
                 })
             })
         }

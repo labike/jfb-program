@@ -2,5 +2,5 @@
     "enablePullDownRefresh": true,
     "backgroundTextStyle":"dark",
     "onReachBottomDistance":50,
-    "navigationBarTitleText": "评价"
+    "navigationBarTitleText": ""
 }

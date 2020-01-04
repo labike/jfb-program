@@ -12,7 +12,7 @@
     <div class="content">
         <ul class="menu">
             <li class="nav-item" v-for="item of menu" :key="item.id" 
-                @click="jumpTypePages(item.sign)"
+                @click="jumpTypePages(item.id)"
             >
                 <div class="img-warp">
                     <ImageView :src="item.img"></ImageView>
@@ -26,7 +26,7 @@
 
 <script>
 import LaySwiper from "@c/swiper/Advertise.vue";
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { apiGetAdvert, apiNavList } from "@/api/api";
 import { WAPHOST } from "@/config/base";
 import ImageView from '@c/layouts/ImageView.vue'
@@ -51,9 +51,7 @@ export default {
         }).then(advers => {
             _this.banners = advers.advert
         })
-        apiNavList('index').then(mList => {
-            console.log(mList);
-            
+        _this.queryIndustry(true).then(mList => {
             _this.menu = mList
         })
     },
@@ -64,10 +62,22 @@ export default {
         }),
     },
     methods: {
-        jumpTypePages(type) {
-            this.$router.push({
-                path: `/pages/filter/${type}/main`
-            }) 
+        ...mapActions(['queryIndustry']),
+        jumpTypePages(id) {
+            if (id === '9') {
+                this.$router.push({
+                    path: `/pages/web/main?url=${encodeURIComponent(WAPHOST + 'teamwork/club')}`
+                })  
+            } else if (id === '10') {
+                this.$router.push({
+                    path: `/pages/filter/all/main`
+                }) 
+            } else {
+                this.$router.push({
+                    path: `/pages/filter/reclassify/main?industry=${id}`
+                })
+            }
+             
         }
     }
     

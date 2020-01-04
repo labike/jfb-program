@@ -31,14 +31,19 @@ import { mapState, mapActions } from "vuex";
 import LayShare from "@c/share/Share.vue";
 export default {
     name: "PayOK",
+    components: {
+        LayShare
+    },
     data() {
         return {
             showPayOk: false,
             shareStoreId: null,
         }
     },
-    components: {
-        LayShare
+    onUnload() {        
+        const self = this;
+        self.showPayOk = false
+        self.shareStoreId = null
     },
     onLoad (options) {
         this.order_id = options.order_id;
@@ -47,10 +52,10 @@ export default {
             this.updateOrderReturn(this.order_id)
         }
         apiPayStatus(this.order_id).then(res => {
-            if (res.is_pay_success === payIsSuccess.OK) {
+            if (res.is_pay_success + '' === payIsSuccess.OK) {
                 mpvue.hideLoading();
                 this.showPayOk = true
-                this.shareStoreId = res.store_id 
+                this.shareStoreId = res.store_id || null
             }
         }).catch(err => {
             console.log(err);
@@ -63,10 +68,13 @@ export default {
     methods: {
         ...mapActions(['updateOrderReturn']),
         jumpMy() {
-            // mpvue.switchTab({
-            //     url: `/pages/orders/list/main`
-            // })
-            
+            if (this.createOrderReturn && this.createOrderReturn.recharge) {
+                this.$router.push({
+                    path: "/pages/mine/index/main",
+                    reLaunch: true
+                }) 
+                return
+            }
             this.$router.push({
                 path: "/pages/orders/list/main",
                 reLaunch: true

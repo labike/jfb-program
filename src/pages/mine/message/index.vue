@@ -33,7 +33,7 @@
 <script>
 import CommonGallary from "@c/gallary/Gallary.vue";
 import { rateType, orderType } from '@/config/base';
-import { Toast, formatTime, findKey } from '@/utils/index';
+import { formatTime, findKey } from '@/utils/index';
 import { apiGetMyRate } from "@/api/api.js";
 export default {
     data() {
@@ -94,7 +94,11 @@ export default {
             this.getMyRate()
             this.scrollStatus = true
         } else {
-            Toast("没有更多数据了！");
+            mpvue.showToast({
+                title: "没有更多数据了",
+                icon: 'none',
+                duration: 2000
+            })
             this.scrollStatus = false
         }
     },
@@ -105,7 +109,7 @@ export default {
 <style lang="scss" scoped>
 .empty{
     height: 100%;
-    background: #f5f5f5;
+    background: #f2f2f2;
     text-align: center;
     .icon{
         margin-top: 100rpx;

@@ -14,7 +14,7 @@ const state = {
     city_name: '',
     openId: '初始openId',
     userInfo: {},
-    balance: '',
+    rebate: '',
     withdraw: null
 }
 const mutations = {
@@ -42,8 +42,8 @@ const mutations = {
         state.userInfo = userInfo
         mpvue.setStorageSync('userData', userInfo);
     },
-    SET_BALANCE: (state, balance) => {
-        state.balance = balance
+    SET_REBATE: (state, rebate) => {
+        state.rebate = rebate
     },
     SET_WITHDRAW: (state, withdraw) => {
         state.withdraw = withdraw
@@ -105,15 +105,15 @@ const actions = {
     },
     // 更新userinfo数据
     updataUsers({ commit }, params) {
+        params.balance = parseFloat(params.balance).toFixed(2)
         commit('SET_USER_INFO', params)
     },
 
-    // 获取余额
-    getBalance({ commit }) {
+    // 获取返佣余额
+    getRebateBalance({ commit }) {
         return new Promise((resolve,reject) => {
             apiReward().then(res => {
-                commit('SET_BALANCE', res.balance)
-                // commit('SET_BALANCE', 100)
+                commit('SET_REBATE', res.balance)
                 resolve(res)
             }).catch(err => {
                 reject(err)

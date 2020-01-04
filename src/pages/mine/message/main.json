@@ -1,6 +1,6 @@
 {
   "enablePullDownRefresh": true,
   "backgroundTextStyle":"dark",
-  "onReachBottomDistance":50,
+  "onReachBottomDistance": 50,
   "navigationBarTitleText": "消息"
 }

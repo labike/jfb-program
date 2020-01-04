@@ -26,7 +26,7 @@
         <div class="jfb-content">
             <menus></menus>
             <advertise></advertise>
-            <shop-list></shop-list>
+            <shop-list v-if="storeIndustry" :allIndysty='storeIndustry'></shop-list>
         </div>
     </div>
 </scroll-view>
@@ -37,15 +37,13 @@ import LayHeader from "@c/header/Header.vue";
 import Menus from "./views/Menus.vue";
 import Advertise from "./views/Advertise.vue";
 import ShopList from "./views/ShopList.vue";
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState, mapGetters } from 'vuex';
 import { WAPHOST } from "@/config/base";
-import { Toast } from '@/utils/index';
 import { apiGetIndex, apiGetRecommends, apiStoreScan } from "@/api/api";
 import { getLocation } from '@/api/wechat'
 
 export default {
     name: "index",
-
     components: {
         LayHeader,
         Menus,
@@ -53,6 +51,9 @@ export default {
         ShopList,
     },
     computed: {
+        ...mapGetters([
+            'storeIndustry'
+        ]),
         ...mapState({
             "user": state => state.user 
         }),
@@ -96,8 +97,8 @@ export default {
                         type: 1
                     }).then(res => {
                         console.log(res);
-                        wx.navigateTo({
-                            url: '/pages/shop/paythebill/main?shop_id=' + res.x_id,
+                        _this.$router.push({
+                            path: '/pages/shop/paythebill/main?shop_id=' + res.x_id,
                         })
                     })
                 }
@@ -116,8 +117,8 @@ export default {
                         type: 2
                     }).then(res => {
                         console.log(res);
-                        wx.navigateTo({
-                            url: '/pages/shop/index/main?shop_id=' + res.x_id,
+                        _this.$router.push({
+                            path: '/pages/shop/index/main?shop_id=' + res.x_id,
                         })
                     })
                 }

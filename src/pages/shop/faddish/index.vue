@@ -25,7 +25,7 @@
                             <p class="price">{{shopAdvt.topData.price}}</p>
                             <p class="tag">特惠价</p>
                             <p class="old-price">{{shopAdvt.topData.old_price}}</p>
-                            <p class="sale">已售: {{shopAdvt.topData.sales_num}}</p>
+                            <p class="sale" v-if="shopAdvt.topData.sales_num-0">已售: {{shopAdvt.topData.sales_num}}</p>
                         </div>
                         <div class="consume">{{shopAdvt.topData.discount}} 折优惠</div>
                     </div>
@@ -36,7 +36,7 @@
                     <i class="icon">爆款</i>
                     <span>{{shopAdvt.topData.group_name}}</span>
                 </div>
-                <div class="location">{{distance}}</div>
+                <div class="location">{{shopAdvt.storeInfo.distance}}</div>
                 <div class="description">{{shopAdvt.topData.description}}</div>
             </div>
         </div>
@@ -126,7 +126,7 @@ import { WAPHOST, orderType } from "@/config/base";
 import { getDistance, callPhone } from '@/utils/index';
 import { apiGetProDetails } from "@/api/api.js";
 export default {
-    name: "time-sale",
+    name: "faddish",
     data() {
         return {
             shop_id: 0,
@@ -139,24 +139,10 @@ export default {
         ImageView,
     },        
     computed: {
-        
-        lat() {
-            return wx.getStorageSync('appData').currentLocation.lat
-        },
-        lng() {
-            return wx.getStorageSync('appData').currentLocation.lng
-        },
-        distance() {
-            const _this = this
-            if (!_this.lat || !_this.shopAdvt) {
-                return ''
-            }
-            let num = getDistance(_this.lat, _this.lng, _this.shopAdvt.storeInfo.gps.lat, _this.shopAdvt.storeInfo.gps.lng)
-            if (num > 1000) {
-                return (num / 1000).toFixed(1) + 'km'
-            } else {
-                return num + 'm'
-            }
+        currentLocation () {            
+            let appData = mpvue.getStorageSync('appData')
+            let location = appData && appData.currentLocation ? appData.currentLocation : '';
+            return location
         },
     },
     onLoad (options) {
@@ -176,10 +162,9 @@ export default {
                     confirmColor: '#333',
                     success: function(res) {
                         if (res.confirm) {
-                            wx.navigateBack()            
+                            that.$router.back()         
                         }
-                    },
-                    fail: function(res) {}
+                    }
                 })
             }
             that.shopAdvt = that.formatData(res)
@@ -207,12 +192,22 @@ export default {
             }
             
             if (res.topData.group_description) {
-                let reg = /<img (src=[\'\"]?(?:[^\'\"]*)[\'\"]?).*?(?:>|\/>)/ig;
-                res.topData.group_description = res.topData.group_description.replace(reg, (...ary) => {
+                let reg = /<img.*?(src=[\'\"]?(?:[^\'\"]*)[\'\"]?).*?(?:>|\/>)/ig;
+                let group_description = res.topData.group_description.replace(reg, (...ary) => {
                     let tepm = `<img class="img" ${ary[1]} style="max-width:100%;height:auto"/>`
                     return tepm
                 })
-            }            
+                res.topData.group_description = group_description
+            }
+            
+            if (this.currentLocation) {
+                let num = getDistance(this.currentLocation.lat, this.currentLocation.lng, res.storeInfo.gps.lat, res.storeInfo.gps.lng)
+                if (num > 1000) {
+                    res.storeInfo.distance = (num / 1000).toFixed(0) + 'km'
+                } else {
+                    res.storeInfo.distance = num + 'm'
+                }
+            }
             return res
         },
 
@@ -323,7 +318,6 @@ export default {
 
             .disc{
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
                 .tag{
                     margin-left: 10rpx;

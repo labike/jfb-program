@@ -49,7 +49,7 @@
 					<div class="scale">
 						<ul>
 							<li>团购   {{shareScale[orderType.combo]}}%</li>
-							<li>买单   {{shareScale[orderType.paying]}}%</li>
+							<li>买单   {{shareScale[orderType.vippay]}}%</li>
 							<li>代金券 {{shareScale[orderType.vouchers]}}%</li>
 							<li>购物车 {{shareScale[orderType.goods]}}%</li>
 						</ul>
@@ -121,7 +121,7 @@ export default {
                     
                     that.showShowShare = true
                 } else {
-                    wx.showModal({
+                    mpvue.showModal({
                         content: '您分享的店铺已到达上限',
                         showCancel: false,
                         // confirmText: '好的',
@@ -310,7 +310,7 @@ export default {
             margin: auto;
             width: 120rpx;
             height: 120rpx;
-            background: #f5f5f5;
+            background: #f2f2f2;
             border-radius: 50%;
             overflow: hidden;
             img{

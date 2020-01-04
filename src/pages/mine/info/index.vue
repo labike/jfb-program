@@ -80,12 +80,13 @@ export default {
                     headimgurl: res.header_img,
                     nickname: res.nickname,
                     mobile: res.mobile,
+                    balance: res.balance
                 })
             })
         },
         chooseImg: function (e) { //这里是选取图片的方法
             const that = this;
-            wx.chooseImage({
+            mpvue.chooseImage({
                 count: 1, // 最多可以选择的图片张数，默认9
                 sizeType: ['compressed'], // original 原图，compressed 压缩图，默认二者都有
                 sourceType: ['album', 'camera'], // album 从相册选图，camera 使用相机，默认二者都有
@@ -104,25 +105,25 @@ export default {
         
         uploadImg (avater) { //这里触发图片上传的方法
             const that = this;
-            wx.uploadFile({
+            mpvue.uploadFile({
                 url: APIHOST + 'users-avatar',
                 filePath: avater,
                 name: 'FILE',
                 header: {
                     "Content-Type": "multipart/form-data",
-                    'accessToken': wx.getStorageSync('token')
+                    'accessToken': mpvue.getStorageSync('token')
                 },
                 success: function(res) {
                     const result = JSON.parse(res.data)
                     if (result.code === "200") {
                         that.avater = result.data.imgData 
-                        wx.showToast({
+                        mpvue.showToast({
                             title: '头像更新成功',
                             icon: 'success',
                             duration: 1000
                         })                        
                     } else {
-                        wx.showToast({
+                        mpvue.showToast({
                             title: '头像更新失败，请检查你的网络或稍后再试！',
                             icon: 'none',
                             duration: 1000
@@ -139,7 +140,7 @@ export default {
         editNickname() {
             const self = this;
             apiEditNickname(self.nickname).then(res => {
-                wx.showToast({
+                mpvue.showToast({
                     title: '昵称修改成功!',
                     icon: 'success',
                     duration: 1000
@@ -148,24 +149,12 @@ export default {
                 self.getUsers()
             }).catch(() => {
                 self.nicknameEdit = false
-                wx.showToast({
+                mpvue.showToast({
                     title: '昵称修改失败，请检查你的网络或稍后再试！',
                     icon: 'none',
                     duration: 1000
                 })
             })
-        },
-        jumpMinePages(page, params) {
-            if (params) {
-                mpvue.navigateTo({
-                    url: `/pages/mine/${page}/main?${params}`
-                })
-            } else {
-                mpvue.navigateTo({
-                    url: `/pages/mine/${page}/main`
-                })
-            }
-             
         },
     }
 }
@@ -179,7 +168,7 @@ export default {
     height: 100rpx;
     &.bor{
         border-radius: 100rpx;
-        border: 5rpx solid #f5f5f5;
+        border: 5rpx solid #f2f2f2;
     }
 }
 .group{
@@ -253,7 +242,7 @@ export default {
 
     }
     .nickname-edit{
-        background: #f5f5f5;
+        background: #f2f2f2;
         position: relative;
         padding: 24rpx;
         overflow: hidden;

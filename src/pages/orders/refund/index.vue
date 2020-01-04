@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { formatTime, Toast, showSuccess } from '@/utils/index'
+import { formatTime } from '@/utils/index'
 import { orderType } from "@/config/base";
 import { apiOrderDetails, apiOrderRefund } from "@/api/api.js";
 import { mapState } from 'vuex';
@@ -179,9 +179,9 @@ export default {
     },
     methods: {
         jumpShop(id) {
-            mpvue.navigateTo({
-                url: '/pages/shop/index/main?shop_id=' + id
-            }) 
+            this.$router.push({
+                path: '/pages/shop/index/main?shop_id=' + id
+            })
         },
         getOrderDetails() {
             apiOrderDetails(this.order_id).then(res => {
@@ -197,7 +197,11 @@ export default {
                 return item.key
             })
             if (!reasonArr.length) {
-                Toast("退款原因至少选择其中一项！");
+                mpvue.showToast({
+                    title: "没有更多数据了",
+                    icon: 'none',
+                    duration: 2000
+                })
                 return
             }
             if (_this.rests) {
@@ -209,11 +213,12 @@ export default {
                 order_id: _this.order_id,
                 refund_reason
             }).then(res => {
-                showSuccess("退款申请成功！")
+                mpvue.showToast({
+                    title: '退款申请成功！',
+                    icon: 'success'
+                });
                 setTimeout(() => {
-                    wx.navigateBack({
-                        delta: 1
-                    })
+                    _this.$router.back()
                 }, 1000)
             })
         }

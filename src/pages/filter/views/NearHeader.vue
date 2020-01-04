@@ -36,7 +36,7 @@ export default {
     },
     computed: {
         appData() {
-            return wx.getStorageSync('appData');
+            return mpvue.getStorageSync('appData');
         }
     },
     onLoad () {
@@ -70,9 +70,8 @@ export default {
                         content,
                         type: 1
                     }).then(res => {
-                        console.log(res);
-                        wx.navigateTo({
-                            url: '/pages/shop/paythebill/main?shop_id=' + res.x_id,
+                        _this.$router.push({
+                            path: '/pages/shop/paythebill/main?shop_id=' + res.x_id,
                         })
                     })
                 }
@@ -90,9 +89,8 @@ export default {
                         content,
                         type: 2
                     }).then(res => {
-                        console.log(res);
-                        wx.navigateTo({
-                            url: '/pages/shop/index/main?shop_id=' + res.x_id,
+                        _this.$router.push({
+                            path: '/pages/shop/index/main?shop_id=' + res.x_id,
                         })
                     })
                 }

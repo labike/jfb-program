@@ -150,7 +150,7 @@ export default {
                         }
                         that.$emit('share', cardInfo)
                     } else {
-                        wx.showModal({
+                        mpvue.showModal({
                             content: '您已加入的分享好店到达50家上限，请您先删除不需要的分享店铺',
                             showCancel: false,
                             // confirmText: '好的',
@@ -158,7 +158,7 @@ export default {
                         })
                     }
                 } else {
-                    wx.showModal({
+                    mpvue.showModal({
                         content: '您分享的店铺暂已关闭分享返佣，是否继续分享',
                         // confirmText: '好的',
                         confirmColor: '#333',

@@ -83,6 +83,16 @@
                         </div>
                         <scroll-view scroll-x="true" class="tabs-bar" >
                             <ul class="tabs">
+                                
+                                <li class="tab" @click="subclass('')"
+                                    :class="{active: swi.sort_one === '' }"
+                                >
+                                    <div class="icon">
+                                        <ImageView src="/static/img/all.png" width='88rpx'></ImageView>
+                                    </div>
+                                    <div class="name">全部</div>
+                                </li>
+
                                 <li v-for="(tab,tabIndex) of swi.sortList" :key="tabIndex"
                                     :data-current="tabIndex" class="tab"
                                     :class="{active: swi.sort_one === tab.id }"
@@ -152,14 +162,14 @@ export default {
     },
     computed: {
         appData() {
-            return wx.getStorageSync('appData');
+            return mpvue.getStorageSync('appData');
         }
     },
     onLoad () {
         let that = this;
-        let system = wx.getSystemInfoSync();
+        let system = mpvue.getSystemInfoSync();
         that.windowWidth = system.windowWidth;
-        const query = wx.createSelectorQuery();
+        const query = mpvue.createSelectorQuery();
         query.select(".near-header").boundingClientRect();
         query.select(".near-scene").boundingClientRect();
         query.exec(function(rect) {
@@ -186,10 +196,10 @@ export default {
                 return
             }
             const that = this;
-            wx.pageScrollTo({
+            mpvue.pageScrollTo({
                 scrollTop: that.listScrollTop
             })
-            const query = wx.createSelectorQuery();
+            const query = mpvue.createSelectorQuery();
             that.currentTab = e.mp.detail.current;
             query.select("#navitem" + that.currentTab).boundingClientRect();
             query.exec(function(res) {
@@ -223,7 +233,7 @@ export default {
             list.forEach(element => {
                 const type = {
                     id: element.id,
-                    sort_one: 0,
+                    sort_one: '',
                     name: element.sort_name,
                     sortList: element.childData,
                     shopList: null,
@@ -299,7 +309,7 @@ export default {
                 }
                 if (!_current.loadMore) {
                     _current.loadMore = false
-                    wx.showToast({
+                    mpvue.showToast({
                         title: "没有更多数据了",
                         icon: 'none',
                         duration: 2000
@@ -488,9 +498,9 @@ export default {
              padding-right: 28rpx;
              color: #323232;
             &.active{
-                color: #00aaff;
+                color: #38b1ff;
                 .icon{
-                    background: #00aaff;
+                    border: 8rpx solid #38b1ff;
                 }
             }
             .icon{
@@ -499,7 +509,8 @@ export default {
                 margin: 0 auto;
                 border-radius: 50%;
                 overflow: hidden;
-                background: #fff;
+                background: transparent;
+                border: 8rpx solid transparent;
             }
             .name{
                 flex-shrink: 0;
@@ -665,29 +676,6 @@ export default {
     }
 }
 
-.empty{
-    text-align: center;
-    padding-top: 160rpx;
-    .text{
-        margin-top: 15rpx;
-        font-size: 24rpx;
-        color: #818181;
-        text-shadow: 1px 1px 1px #e8e8e8;
-    }
-}
-
-.fix1 {
-	position: fixed;
-	top: 80rpx;
-	left: 0;
-	width: 100%;
-	z-index: 999;
-	animation: move 0.1s linear;
-    box-shadow: 0 0 5px #333;
-    .navs{
-        padding: 0;
-    }
-}
 
 .empty{
     text-align: center;

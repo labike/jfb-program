@@ -8,7 +8,7 @@
     <div class="search-box">
         <div class="search">
             <img src="/static/img/ic-search.png" class="icon">
-            <input type="text" class="keywords" :focus='true' placeholder="请输入搜索内容" v-model="keywords"
+            <input type="text" class="keywords" :focus='true' placeholder="请输入搜索内容" v-model.trim="keywords"
                 @keyup.enter="getSearchList"
             >
         </div>
@@ -94,6 +94,9 @@ export default {
         },
         getSearchList() {
             const _this = this
+            if (_this.keywords === "") {
+                return
+            }
             _this.saveSearchHistory(_this.keywords)
             _this.searchList = []
             apiSearch({

@@ -4,39 +4,26 @@
  * @Description: file content
  -->
 <template>
-<div class="activity-card" v-if="infoData && infoData.x_id" @click="jumpPage(infoData)">
+<div class="activity-card" @click="jumpPage(infoData)">
     <div class="activity"   :class="{gray: Activity}">
-        <div class="top">
-            <div class="shade">
-                <div class="round">
-                    <div class="img-warp">
-                        <ImageView :src="infoData.img" mode='scaleToFill' height="374rpx" width="702rpx"></ImageView>
-                    </div>
-                </div>
+        <div class="product">
+            <div class="img-warp">
+                <ImageView :src="infoData.img" mode='aspectFill'  width='220rpx' height='220rpx'></ImageView>
             </div>
-        </div>
-        <div class="bottom">
-            <div class="product">
+            <div class="info-warp">
                 <div class="name">
-                    <div class="icon"></div>
                     <p>价值{{infoData.buyer}}元{{infoData.pro_name}}
                         <span>{{infoData.number}}{{infoData.unit}}</span>
                     </p>
                 </div>
                 <div class="disc">最低消费{{infoData.min_consume}}免费送</div>
-                <div class="price">{{infoData.sale_price}}</div>
+                <div class="description">{{infoData.description}}</div>
             </div>
-            <div class="handle">
-                <div class="go gray" v-if="sale>=library">已售罄</div>
-                <div class="go" v-else @click.stop='jumpItemPage(infoData)'>马上抢</div>
-                <div class="library-warp">
-                    <p class="sale">已售{{infoData.sale}} </p>
-                    <div class="library">
-                        <div class="progress" :style="{width:(infoData.sale/infoData.library*100)+ '%'}"></div>
-                    </div>
-                </div>
-                
-            </div>
+        </div>
+        <div class="handle">
+            <div class="price">{{infoData.sale_price}}</div>
+            <div class="go gray" v-if="sale>=library">已售罄</div>
+            <div class="go" v-else @click.stop='jumpItemPage(infoData)'>预定</div>
         </div>
     </div>
 </div>
@@ -95,127 +82,77 @@ export default {
 
 
 <style lang="scss" scoped>
-.activity-card{
-    padding: 30rpx 24rpx;
-    font-family: '.PingFang-SC-Medium';
-    background: #fff;
-    margin-top: 20rpx;
-}
 .activity{
+    margin: 24rpx;
+    padding: 24rpx;
     border-radius: 15rpx;
     overflow: hidden;
     box-shadow: 1px 1px 10px #ececec;
     &.gray{
-        -webkit-filter: grayscale(100%)
+        filter: grayscale(100%);
+        -webkit-filter: grayscale(100%);
     }
-    .top{
+    .handle{
         position: relative;
-        z-index: 1;
-    }
-    .shade{
-        height: 226rpx;
-        position: relative;
-        .round{
-            position: absolute;
-            z-index: 9;
-            bottom: 0;
-            left: -20%;
-            background: #fff;
-            width: 140%;
-            height: 400rpx;
-            border-radius: 0 0 50% 50%;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-        }
-    }
-    .time{
-        position: absolute;
-        right: 24rpx;
-        top: 20rpx;
-        z-index: 10;
-    }
-    
-    .linetime{
-        font-size: 12px;
-        background-size: auto 100rpx;
-        background-position: left center;
-        background-repeat: no-repeat;
-        background-image: url('~@/assets/img/linetime.png');
-        padding: 0 24rpx 0 30rpx;
-        position: relative;
-        &::after{
-            content: '';
-            position:absolute;
-            right: 0;
-            top: 0;
-            left: 50rpx;
-            height: 100%;
-            z-index: 1;
-            background: #ff5100;
-        }
-        .time{
-            position: relative;
-            z-index: 4;
-        }
-    }
-    .bottom{
-        padding: 24rpx;
+        z-index: 0;
         display: flex;
         line-height: 1;
+        justify-content: space-between;
+        padding-top: 24rpx;
+        margin-top: 24rpx;
+        &::before{
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 1rpx;
+            background: #f2f2f2;
+            box-shadow: 0rpx 0rpx 1rpx #eceaea;
+        }
+        .price{
+            line-height: 70rpx;
+            &::before{
+                content: "￥";
+                font-size: 12px;
+            }
+            font-size: 17px;
+            color: #ff5100;
+            // color: #ff2971;
+            font-weight: 700;
+        }
         .go{
-            background: #ff1800;
+            background: #ff5100;
             color: #fff;
             font-size: 14px;
             font-weight: 700;
             height: 70rpx;
-            width: 180rpx;
+            width: 160rpx;
             line-height: 70rpx;
             border-radius: 10rpx;
             text-align: center;
+            letter-spacing: 10rpx;
+            padding-left: 10rpx;
+            background-image: linear-gradient(to right,#f16963,#f93c36); 
             &.gray{
-                -webkit-filter: grayscale(100%)
+                filter: grayscale(100%);
+                -webkit-filter: grayscale(100%);
             }
         }
-        .library-warp{
-            font-size: 10px;
-            position: relative;
-            margin-top: 40rpx;
-            .sale{
-                position: absolute;
-                right: 100%;
-                bottom: 2rpx;
-                text-align: right;
-                z-index: 10;
-                color: #818181;
-                width: 100%;
-                padding-right: 15rpx;
-            }
-        }
-        .library{
-            height: 16rpx;
-            line-height: 16rpx;
-            background: #fff;
-            border: 1rpx solid #ff5100;
-            overflow: hidden;
-            position: relative;
-            z-index: 4;
-            border-radius: 16rpx;
-            .progress{
-                position:absolute;
-                left: 0;
-                top: 0;
-                width: 0;
-                height: 16rpx;
-                z-index: 8;
-                background: #ffa57b;
-                border-radius: 16rpx 0 0 16rpx;
-            }
-        }
+        
     }
     .product{
-        flex: 1;
+        .img-warp{
+            width: 220rpx;
+            height: 220rpx;
+            float: left;
+            overflow: hidden;
+            border-radius: 10rpx;
+        }
+        .info-warp{
+            min-height: 220rpx;
+            margin-left: 244rpx;
+        }
         .name{
             font-size: 15px;
             color: #000;
@@ -225,29 +162,21 @@ export default {
             align-items: flex-start;
             line-height: 1.3;
         }
-        .icon{
-            margin-right: 12rpx;
-            width: 36rpx;
-            height: 36rpx;
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-image: url('~@/assets/img/timesale.png');
-            position: relative;
-        }
         .disc{
-            color: #818181;
+            color: #eb3276;
             font-size: 12px;
             margin-bottom: 24rpx;
         }
-        .price{
-            &::before{
-                content: "￥";
-                font-size: 12px;
-            }
-            font-size: 17px;
-            color: #ff5100;
-            font-weight: 700;
+        
+        .description{
+            font-size: 12px;
+            line-height: 1.6;
+            color: #818181;
+            font-weight: 400;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
         }
     }
 }

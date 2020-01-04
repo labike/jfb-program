@@ -76,7 +76,6 @@
 import LastTime from "@c/shop/LastTime.vue";
 import ImageView from '@c/layouts/ImageView.vue'
 import { apiGiveList } from "@/api/api";
-import { WAPHOST, shopType } from "@/config/base";
 import { mapState } from 'vuex';
 export default {
     name: "time-sale",
@@ -211,7 +210,7 @@ export default {
 
 <style lang="scss" scoped>
 .time-sale{
-    background: #f5f5f5;
+    background: #f2f2f2;
     padding: 30rpx;
     overflow: hidden;
     position: relative;
@@ -222,7 +221,7 @@ export default {
         top: 0;
         left: 0;
         right: 0;
-        background-image: linear-gradient(to bottom , #fcfcfc, #f5f5f5);
+        background-image: linear-gradient(to bottom , #fcfcfc, #f2f2f2);
         height: 400rpx;
         &::after{
             content: '';
@@ -294,7 +293,8 @@ export default {
         overflow: hidden;
         margin-bottom: 30rpx;
         &.gray{
-            -webkit-filter: grayscale(100%)
+            filter: grayscale(100%);
+            -webkit-filter: grayscale(100%);
         }
         .top{
             position: relative;
@@ -343,6 +343,7 @@ export default {
                 padding: 0 24rpx;
                 text-align: center;
                 &.gray{
+                    filter: grayscale(100%);
                     -webkit-filter: grayscale(100%)
                 }
             }

@@ -1,5 +1,13 @@
+<!--
+ * @Author: zhangHang
+ * @Date: 2019-07-04 15:55:22
+ * @Description: file content
+ -->
 <template>
-    <web-view v-if="h5Url" :src="h5Url" @message="postMessage"></web-view>
+    <web-view v-if="h5Url" :src="h5Url" 
+        @message="postMessage"
+        @load="pageLoad"
+    ></web-view>
 </template>
 
 <script>
@@ -10,7 +18,8 @@ export default {
         }
     },
     onLoad (options) {
-        this.h5Url = decodeURIComponent(options.url)
+        mpvue.showNavigationBarLoading()
+        this.h5Url = decodeURIComponent(options.url)       
         console.log(this.h5Url);
         
     },
@@ -18,6 +27,9 @@ export default {
         postMessage(e) {
             console.log(e)
         },
+        pageLoad() {
+            mpvue.hideNavigationBarLoading()
+        }
     },
 }
 </script>

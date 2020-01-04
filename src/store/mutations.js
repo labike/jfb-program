@@ -1,9 +1,4 @@
-
-
 const mutations = {
-    'SET_TOKEN'(state, token) {
-        state.token = token;
-    },
 
     // 当前订单
     'SET_CURRENT_ORDER'(state, currentOrder) {
@@ -24,6 +19,13 @@ const mutations = {
     'SET_SEARCH_HISTORY'(state, history) {
         state.searchHistory = history
     },
+    
+    // 查询全部行业
+    'SET_ALL_INDUSTRY'(state, storeIndustry) {
+        state.storeIndustry = storeIndustry
+    },
+
+    
 };
 
 export default mutations;

@@ -73,7 +73,10 @@ export default {
         LayModel
     },
     onLoad() {
+        mpvue.removeStorageSync('loggingSign')
         const self = this;
+        let token = mpvue.getStorageSync('token');
+        token && self.jumpHistory() 
         authLogin(succ => {
             setTimeout(function() {
                 self.remind = ''
@@ -232,7 +235,6 @@ export default {
                     }
                 }) 
             } else {
-                debugger
                 apiGetMobileByWx({
                     session_key: self.session_key,
                     iv: e.mp.detail.iv,
@@ -271,11 +273,11 @@ export default {
         },
         jumpHistory() {
             let beforeUrl = mpvue.getStorageSync('loginBefore')
-            if (beforeUrl === "") {
-                beforeUrl = 'pages/index/main'
+            if (beforeUrl.indexOf("/pages") !== 0) {
+                beforeUrl = '/pages/index/main'
             }
             this.$router.push({
-                path: "/" + beforeUrl,
+                path: beforeUrl,
                 reLaunch: true
             })
         }

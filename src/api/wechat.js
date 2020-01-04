@@ -67,7 +67,7 @@ export function getLocation (onSuccess) {
         },
         fail(err) {
             console.log(err);
-            wx.showModal({
+            mpvue.showModal({
                 content: '定位失败，请检查网络环境或手机定位权限设置',
                 showCancel: false,
                 confirmText: '重新定位',

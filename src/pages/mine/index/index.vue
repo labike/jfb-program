@@ -6,48 +6,50 @@
 <template>
 <div class="mine_container">
     <header class="base-info">
-        <div class="lt-warp">
-            <img :src="userInfo.headimgurl" class="avater bor" v-if="userInfo.headimgurl&&userInfo.headimgurl!=0">
-            <img src="/static/tabs/icon_user_head.png" class="avater" v-else>
+        <div class="avater" @click="jumpMinePages('info')">
+            <ImageView  picture='/static/img/avatar.png' :src="userInfo.headimgurl"
+                mode='aspectFill'  width='130rpx' height='130rpx'
+            ></ImageView>
         </div>
-        <div class="rt-warp">
+        <div class="intro-warp">
             <div class="name" v-if="userInfo.mobile">{{userInfo.nickname}}</div>
-            <div class="name" v-else>未登录</div>
-            <div class="phone">{{userInfo.mobile}}</div>
+            <div class="personal">个人主页</div>
+            <div class="message" @click="jumpMinePages('message')"></div>
+            <div class="settings" @click="jumpMinePages('info')"></div>
         </div>
-        <div class="location"  @click="jumpMinePages('info')"></div>
-    </header>
-    <div class="big-icon">
-        <ul class="nav-bar">
-            <li class="nav" @click="jumpMinePages('message')">
-                <img src="/static/tabs/icon_me_message.png" alt="" class="icon">
-                <div class="text">我的消息</div>
+        <ul class="navbar-warp">
+            <li class="reshop" @click="jumpMinePages('reshop')">
+                <i class="icon"></i>
+                <div class="text">返佣好店</div>
             </li>
-            <li class="nav" @click="jumpMinePages('evaluate')">
-                <img src="/static/tabs/icon_me_evaluate.png" alt="" class="icon">
+            <li class="evaluate" @click="jumpMinePages('evaluate')">
+                <i class="icon"></i>
                 <div class="text">我的评价</div>
             </li>
-            <li class="nav" @click="jumpMinePages('patronage', 'tab=1')">
-                <img src="/static/tabs/icon_me_collect.png" alt="" class="icon">
-                <div class="text">我的收藏</div>
+            <li class="patronage" @click="jumpMinePages('patronage', 'tab=1')">
+                <i class="icon"></i>
+                <div class="text">收藏店铺</div>
+            </li>
+            <li class="rebate" @click="jumpRebatePages('index')">
+                <i class="icon"></i>
+                <div class="text">我的返佣</div>
             </li>
         </ul>
-    </div>
 
-    <ul class="group">
-        <li class="group-item"  @click="jumpMoneyPages('index')">
-            <img src="/static/tabs/icon_me_property_wallet.png" class="icon">
-            <div class="group-item-text">
-                <div class="left">我的钱包</div>
+        <div class="club-warp">
+            <div class="club-card" @click="jumpWeb(WAPHOST +'teamwork/club')">
+                <div class="title">共享增值卡</div>
+                <div class="desc">消费买单可以抵扣一定比例的消费金额</div>
+                <div class="go" >去看看</div>
             </div>
-        </li>
-        <li class="group-item" @click="jumpMinePages('reshop')">
-            <img src="/static/tabs/icon_me_shop.png" class="icon">
-            <div class="group-item-text">
-                <div class="left">我的返佣好店</div>
-            </div>
-        </li>
-    </ul>
+        </div>
+    </header>
+
+    <div class="money-info"  @click="jumpMinePages('recharge')">
+        <div class="title">增值卡余额(元)</div>
+        <div class="price">{{userInfo.balance}}</div>
+        <div class="btn" >余额明细</div>
+    </div>
 
     <ul class="group">
         <li class="group-item"  @click="jumpMinePages('help')">
@@ -66,7 +68,7 @@
         <li class="group-item"  @click="jumpWeb(WAPHOST +'teamwork')">
             <img src="/static/tabs/icon_me_service_collaborate.png" class="icon">
             <div class="group-item-text">
-                <div class="left">我要合作</div>
+                <div class="left">商家合作</div>
             </div>
         </li>
         <li class="group-item"  @click="jumpMinePages('about')">
@@ -77,7 +79,6 @@
         </li>
     </ul>
 
-
 </div>
 </template>
 
@@ -86,9 +87,13 @@ import { WAPHOST } from '@/config/base'
 import { mapState, mapActions } from 'vuex';
 import { apiGetUsers } from '@/api/api';
 import { callPhone } from '@/utils/index';
+import ImageView from '@c/layouts/ImageView.vue'
 
 export default {
     name: 'mine',
+    components: {
+        ImageView
+    },
     data() {
         return {
             WAPHOST
@@ -99,6 +104,9 @@ export default {
             "userInfo": state => state.user.userInfo 
         }),
     },
+    onLoad() {
+        mpvue.removeStorageSync('loggingSign')
+    },
     onShow() {
         const self = this;
         if (!self.userInfo.nickname || !self.userInfo.mobile) {
@@ -108,6 +116,7 @@ export default {
                     headimgurl: res.header_img,
                     nickname: res.nickname,
                     mobile: res.mobile,
+                    balance: res.balance
                 }) 
             })
         }
@@ -117,26 +126,19 @@ export default {
         ...mapActions('user', [
             'updataUsers',
         ]),
-        jumpMinePages(page, params) {
-            if (params) {
-                mpvue.navigateTo({
-                    url: `/pages/mine/${page}/main?${params}`
-                })
-            } else {
-                mpvue.navigateTo({
-                    url: `/pages/mine/${page}/main`
-                })
-            }
-             
+        jumpMinePages(page, params = '') {
+            this.$router.push({
+                path: `/pages/mine/${page}/main?${params}`
+            })
         },
         jumpWeb(page) {
             this.$router.push({
                 path: `/pages/web/main?url=${encodeURIComponent(page)}`
             }) 
         },
-        jumpMoneyPages(page) {
+        jumpRebatePages(page) {
             this.$router.push({
-                path: `/pages/money/${page}/main`
+                path: `/pages/rebate/${page}/main`
             }) 
         },
         getCallPhone(phone) {
@@ -150,96 +152,218 @@ export default {
 <style lang="scss" scoped>
 @import "~@/assets/styles/common/variables.scss";
 .base-info {
+    position: relative;
+    z-index: 0;
     background-color: $base-color;
-    display: flex;
-    align-items: center;
-    padding : 30rpx 24rpx;
-    .location{
-        width: 30rpx;
-        height: 60rpx;
-        background-image: url(~@/assets/img/icon_go.png);
-        background-repeat: no-repeat;
-        background-size: contain;
-        background-position: center;
+    margin-bottom: 94rpx;
+    .avater{
+        display: block;
+        width: 130rpx;
+        height: 130rpx;
+        border-radius: 130rpx;
+        overflow: hidden;
+        position: absolute;
+        left: 24rpx;
+        top: 0;
     }
-    .lt-warp{
-        flex-grow: 0;
-        margin-right: .24rem;
-        .avater{
-            display: block;
-            width: 120rpx;
-            height: 120rpx;
-            &.bor{
-                border-radius: 120rpx;
-                border: 5rpx solid #f5f5f5;
-            }
-        }
-    }
-    .rt-warp{
-        flex: 1;
+    .intro-warp{
+        margin-left: 184rpx;
+        padding-top: 24rpx;
         color: #fff;
-        height: 100rpx;
+        height: 150rpx;
         .name{
-            font-weight: 400;
-            height: 40rpx;
-            font-size: 14px;
-            margin-bottom: 20rpx;
+            font-size: 20px;
+            margin-bottom: 30rpx;
+            font-weight: 700;
+            line-height: 1;
         }
-        .phone{
+        .personal{
             display: flex;
             align-items: flex-end;
             font-size: 11px;
             line-height: 1;
-            &::before{
+            &::after{
                 content: '';
                 display: inline-block;
-                margin-right: 10rpx;
+                margin-left: 6rpx;
                 width: 24rpx;
-                height: 24rpx;
-                background-image: url(~@/assets/img/icon_phone.png);
+                height: 20rpx;
+                background-image: url(~@/assets/img/icon_go.png);
                 background-repeat: no-repeat;
                 background-size: contain;
                 background-position: center;
+                position: relative;
+                top: 1rpx;
             }
         }
+        .message{
+            position: absolute;
+            z-index: 10;
+            top: 24rpx;
+            right: 104rpx;
+            width: 50rpx;
+            height: 44rpx;
+            background-image: url(~@/assets/img/icon_message.png);
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+        }
+        .settings{
+            position: absolute;
+            z-index: 10;
+            top: 24rpx;
+            right: 30rpx;
+            width: 50rpx;
+            height: 44rpx;
+            background-image: url(~@/assets/img/icon_setting.png);
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+            
+        }
     }
-}
-.big-icon{
-    background: #fff;
-    .nav-bar{
+    .navbar-warp{
         display: flex;
-        .nav{
-            padding: 40rpx 0;
+        li{
             flex: 1;
             position: relative;
             text-align: center;
-            &:not(:last-child)::before {
-                content: '';
-                position: absolute;
-                z-index: 2;
-                top: 0;
-                right: 0;
-                width: 1px;
-                height: 100%;
-                border-right: 1px solid #e8e8e8;
-                -webkit-transform: scaleX(0.5);
-                transform: scaleX(0.5);
-            }
         }
         .icon{
-            width: 80rpx;
-            height: 80rpx;
-            margin-bottom: 10rpx;
+            height: 60rpx;
+            margin-bottom: 30rpx;
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+        }
+        .reshop > .icon{
+            background-image: url(~@/assets/img/icon_reshop.png);
+        }
+        .evaluate > .icon{
+            background-image: url(~@/assets/img/icon_evaluate.png);
+        }
+        .patronage > .icon{
+            background-image: url(~@/assets/img/icon_patronage.png);
+        }
+        .rebate > .icon{
+            background-image: url(~@/assets/img/icon_rebate.png);
         }
         .text{
-            font-size: 12px;
+            font-weight: 400;
+            font-size: 13px;
+            color: #fff;
         }
     }
+    .club-warp{
+        height: 160rpx;
+        padding: 0 24rpx;
+        .club-card{
+            position: relative;
+            top: 40rpx;
+            height: 184rpx;
+            background-color: #262626;
+            background-image: url($img-club_card);
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: 0 0;
+            border-radius: 10rpx;
+            color: #e9e3c3;
+            box-shadow: 1px 1px 4px #eee;
+            .title{
+                font-size: 15px;
+                font-weight: 700;
+                padding: 32rpx 30rpx 20rpx;
+                &::before{
+                    content: '';
+                    display: inline-block;
+                    margin-right: 12rpx;
+                    width: 24rpx;
+                    height: 30rpx;
+                    background-image: url(~@/assets/img/vip.png);
+                    background-repeat: no-repeat;
+                    background-size: contain;
+                    background-position: center;
+                    position: relative;
+                    top: 1rpx;
+                }
+            }
+            .desc{
+                font-size: 13px;
+                font-weight: 400;
+                padding: 20rpx 30rpx 32rpx;
+            }
+            .go{
+                font-size: 13px;
+                font-weight: 400;
+                position: absolute;
+                right: 30rpx;
+                top: 40rpx;
+                &::after{
+                    content: '';
+                    display: inline-block;
+                    width: 16rpx;
+                    height: 16rpx;
+                    border-width: 2rpx;
+                    border-style: solid;
+                    border-color: transparent #e9e3c3 #e9e3c3 transparent;
+                    box-sizing: border-box;
+                    transform: rotate3d(0, 0, 1, -45deg);
+                }
+            }
+        }
 
+    }
+}
+.money-info{
+    height: 184rpx;
+    border-radius: 10rpx;
+    color: #000;
+    box-shadow: 1px 1px 4px #eee;
+    background: #fff;
+    margin: 24rpx;
+    position: relative;
+    .title{
+        padding: 30rpx;
+        font-size: 14px;
+        font-weight: 700;
+        &::before{
+            content: '';
+            float: left;
+            margin-right: 12rpx;
+            width: 40rpx;
+            height: 40rpx;
+            background-image: url(~@/assets/img/money.png);
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+        }
+    }
+    .price{
+        font-size: 26px;
+        font-weight: 700;
+        padding: 0 30rpx;
+    }
+    .btn{
+        width: 160rpx;
+        height: 50rpx;
+        line-height: 50rpx;
+        text-align: center;
+        border-radius: 50rpx;
+        color: #fff;
+        font-weight: 400;
+        font-size: 13px;
+        position: absolute;
+        right: 30rpx;
+        bottom: 27rpx;
+        background: linear-gradient(to right, #00a9ff, #0085ff);
+    }
 }
 .group{
     background: #fff;
-    margin-top: 20rpx;
+    margin: 24rpx;
+    border-radius: 10rpx;
+    box-shadow: 1px 1px 4px #eee;
+    overflow: hidden;
     .group-item{
         position: relative;
         display: flex;

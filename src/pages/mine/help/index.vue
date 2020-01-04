@@ -42,7 +42,7 @@ export default {
 <style lang="scss" scoped>
 .empty{
     height: 100%;
-    background: #f5f5f5;
+    background: #f2f2f2;
     text-align: center;
     .icon{
         margin-top: 100rpx;

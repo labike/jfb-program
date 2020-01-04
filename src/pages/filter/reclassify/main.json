@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "减付宝",
+  "navigationBarTextStyle": "black",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle":"dark",
+  "onReachBottomDistance":50,
+  "navigationBarBackgroundColor": "#ffffff",
+  "backgroundColor": "#ffffff"
+}

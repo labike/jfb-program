@@ -54,7 +54,6 @@
 
 <script>
 import LaySwiper from "@c/swiper/Swiper.vue";
-import { getCurrentPageUrlWithArgs } from '@/utils/index'
 export default {
     name: "Menus",
     data() {
@@ -79,7 +78,7 @@ export default {
         }
         console.log(this.menuId);
         
-        let system = wx.getSystemInfoSync();
+        let system = mpvue.getSystemInfoSync();
         this.windowHeight = system.windowHeight;
     },
     onUnload() {        

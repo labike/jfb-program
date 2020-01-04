@@ -44,7 +44,7 @@
                         @click="selectGroup(group)"
                     >
                         <div class="icon">
-                            <ImageView :src="group.img"  mode="aspectFit"  height="120rpx" width="100%"></ImageView>
+                            <ImageView :src="group.img"  mode="aspectFit"  height="100rpx" width="100%"></ImageView>
                         </div>
                         <div class="name">{{group.sort_name}}</div>
                     </li>
@@ -111,7 +111,7 @@ export default {
             
         },
         _calculateHeight(list) {
-            const rat = wx.getSystemInfoSync().windowWidth
+            const rat = mpvue.getSystemInfoSync().windowWidth
             let titleHeight = parseInt(this.titleHeight / 750 * rat) 
             let listHeight = parseInt(this.listHeight / 750 * rat)
             let h = 0
@@ -126,8 +126,8 @@ export default {
             console.log(group);
             let pageUrl = '/pages/filter/all/main'
             if (Number(group.parent_id) === 0) {
-                let ary = ['','repast','hotel','pastime','icar','health','education','fransnana']
-                pageUrl = `/pages/filter/${ary[group.id]}/main`
+                pageUrl = `/pages/filter/reclassify/main?industry=${group.id}`
+                
             } else {
                 pageUrl = `/pages/filter/category/main?top_sort=${group.parent_id}&sort_one=${group.id}`
             }
@@ -237,7 +237,7 @@ export default {
             width: 33.333%;
             .icon {
                 margin-top: 10rpx;
-                height: 120rpx;
+                height: 100rpx;
                 width: 100%;
                 line-height: 0;
             }

@@ -32,7 +32,8 @@ export default class Timesale {
                 if (!ticketData.pro_name) {
                     reject(new Error("该产品已下架或者被删除"))
                 } else {
-                    that.name = ticketData.pro_name;
+                    that.name = `消费满${ticketData.min_consume}元送价值${ticketData.buyer}元${ticketData.pro_name}${ticketData.number}${ticketData.unit}`;
+                    // that.name = ticketData.description;
                     that.headerImg = ticketData.img;
                     that.price = ticketData.sale_price;
                     that.sale_num = ticketData.sale;

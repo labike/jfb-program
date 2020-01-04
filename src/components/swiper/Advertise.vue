@@ -76,8 +76,8 @@ export default {
                 break;
             }
             if (URL) {
-                wx.navigateTo({
-                    url: URL
+                this.$router.push({
+                    path: URL
                 })
             }
         }

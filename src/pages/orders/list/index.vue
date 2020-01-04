@@ -96,7 +96,7 @@ export default {
         }
     },
     onLoad() {
-        var res = wx.getSystemInfoSync()
+        let res = mpvue.getSystemInfoSync()
         this.stv.lineWidth = res.windowWidth / this.navList.length;
         this.stv.windowWidth = res.windowWidth;
     },
@@ -164,7 +164,7 @@ export default {
             let _current = that.navList[that.activeTab]
             if (!_current.loadMore) {
                 _current.loadMore = false
-                wx.showToast({
+                mpvue.showToast({
                     title: "没有更多数据了",
                     icon: 'none',
                     duration: 2000

@@ -49,7 +49,7 @@ export default {
         }
         that.length = that.text.length * that.size; //文字长度
         setTimeout(() => {
-            const query = wx.createSelectorQuery();
+            const query = mpvue.createSelectorQuery();
             query.select(".marquee").boundingClientRect();
             query.exec(function(rect) {
                 console.log(that.length, rect[0].width);
