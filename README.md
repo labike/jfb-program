@@ -1,6 +1,7 @@
 # mpvue-jfb
 
 > 减付宝小程序
+![演示](http://img.labike.site/jfb.mp4)
 
 ## Build Setup
 
