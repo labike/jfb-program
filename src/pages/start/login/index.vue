@@ -166,6 +166,7 @@ export default {
             if (e.mp.detail.userInfo) {
                 console.log('用户按了允许授权按钮')
                 let { encryptedData, iv, userInfo } = e.mp.detail;
+                console.log(e.mp.detail)
                 apiGetOpenId(self.code).then(confing => {
                     confing = JSON.parse(confing)
                     self.session_key = confing.session_key

@@ -124,8 +124,7 @@ export default {
                 }
             })
         },
-        jumpPages(pageUrl) { 
-            
+        jumpPages(pageUrl) {     
             this.$router.push({
                 path: `/pages/${pageUrl}`
             })
